@@ -1,127 +1,150 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useAuthStore } from '@/lib/store/auth';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Card } from '@/components/ui/Card';
+import { Mail, Lock, LogIn } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const loginSchema = z.object({
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-});
-
-type LoginForm = z.infer<typeof loginSchema>;
-
+/**
+ * Login Page
+ * User authentication with email and password
+ */
 export default function LoginPage() {
-    const router = useRouter();
-    const { login, isLoading } = useAuthStore();
-    const [error, setError] = useState('');
+  const router = useRouter();
+  const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+  });
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<LoginForm>({
-        resolver: zodResolver(loginSchema),
-    });
+  /**
+   * Validate form fields
+   */
+  const validate = () => {
+    const newErrors = { email: '', password: '' };
+    let isValid = true;
 
-    const onSubmit = async (data: LoginForm) => {
-        try {
-            setError('');
-            await login(data);
-            toast.success('Login successful!');
-            router.push('/dashboard');
-        } catch (err: any) {
-            const message = err.response?.data?.message || 'Login failed';
-            setError(message);
-            toast.error(message);
-        }
-    };
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+      isValid = false;
+    }
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Sign in to your account
-                    </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
-                        Or{' '}
-                        <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-                            create a new account
-                        </Link>
-                    </p>
-                </div>
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+      isValid = false;
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+      isValid = false;
+    }
 
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-                    {error && (
-                        <div className="rounded-md bg-red-50 p-4">
-                            <p className="text-sm text-red-800">{error}</p>
-                        </div>
-                    )}
+    setErrors(newErrors);
+    return isValid;
+  };
 
-                    <div className="rounded-md shadow-sm -space-y-px">
-                        <div>
-                            <label htmlFor="email" className="sr-only">
-                                Email address
-                            </label>
-                            <input
-                                {...register('email')}
-                                id="email"
-                                type="email"
-                                autoComplete="email"
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Email address"
-                            />
-                            {errors.email && (
-                                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-                            )}
-                        </div>
+  /**
+   * Handle form submission
+   */
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-                        <div>
-                            <label htmlFor="password" className="sr-only">
-                                Password
-                            </label>
-                            <input
-                                {...register('password')}
-                                id="password"
-                                type="password"
-                                autoComplete="current-password"
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Password"
-                            />
-                            {errors.password && (
-                                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
-                            )}
-                        </div>
-                    </div>
+    if (!validate()) return;
 
-                    <div className="flex items-center justify-between">
-                        <div className="text-sm">
-                            <Link
-                                href="/reset-password"
-                                className="font-medium text-indigo-600 hover:text-indigo-500"
-                            >
-                                Forgot your password?
-                            </Link>
-                        </div>
-                    </div>
+    setLoading(true);
 
-                    <div>
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {isLoading ? 'Signing in...' : 'Sign in'}
-                        </button>
-                    </div>
-                </form>
-            </div>
+    try {
+      await login(formData.email, formData.password);
+      toast.success('Welcome back!');
+      // Auth context will handle redirect to dashboard
+    } catch (error: any) {
+      toast.error(error.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 px-4 py-12">
+      <div className="w-full max-w-md">
+        {/* Logo/Brand */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-4">
+            <span className="text-white font-bold text-2xl">F</span>
+          </div>
+          <h1 className="text-3xl font-bold text-text-primary">Welcome Back</h1>
+          <p className="text-text-secondary mt-2">Sign in to continue to Fullstack Master</p>
         </div>
-    );
+
+        {/* Login Card */}
+        <Card padding="lg">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email Input */}
+            <Input
+              type="email"
+              label="Email Address"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              error={errors.email}
+              leftIcon={<Mail size={18} />}
+              disabled={loading}
+            />
+
+            {/* Password Input */}
+            <Input
+              type="password"
+              label="Password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              error={errors.password}
+              leftIcon={<Lock size={18} />}
+              disabled={loading}
+            />
+
+            {/* Forgot Password Link */}
+            <div className="text-right">
+              <Link
+                href="/reset-password"
+                className="text-sm text-primary hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
+            {/* Submit Button */}
+            <Button type="submit" fullWidth loading={loading}>
+              <LogIn size={18} className="mr-2" />
+              Sign In
+            </Button>
+          </form>
+        </Card>
+
+        {/* Register Link */}
+        <p className="text-center mt-6 text-text-secondary">
+          Don't have an account?{' '}
+          <Link href="/register" className="text-primary font-medium hover:underline">
+            Create one now
+          </Link>
+        </p>
+
+        {/* Footer */}
+        <p className="text-center mt-8 text-xs text-text-muted">
+          © 2025 Fullstack Master. All rights reserved.
+        </p>
+      </div>
+    </div>
+  );
 }
