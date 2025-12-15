@@ -124,11 +124,9 @@ JWT_EXPIRES_IN=7d
 JWT_REFRESH_SECRET=your-super-secret-refresh-key
 JWT_REFRESH_EXPIRES_IN=30d
 
-# Redis
-REDIS_HOST=localhost
-REDIS_PORT=6379
-REDIS_PASSWORD=
-REDIS_TLS=false
+# Redis (Upstash)
+# Get your Redis URL from https://upstash.com/redis
+REDIS_DATABASE_URI=rediss://default:your-password@your-host.upstash.io:6379
 
 # Email
 EMAIL_HOST=smtp.gmail.com
@@ -163,7 +161,27 @@ Update `EMAIL_HOST`, `EMAIL_PORT`, and `EMAIL_SECURE` according to your provider
 
 ## Redis Setup
 
-### Local Development
+### Using Upstash (Recommended)
+
+Upstash provides a serverless Redis service with a generous free tier and built-in TLS support:
+
+1. **Create Account**: Go to [https://upstash.com](https://upstash.com) and sign up
+2. **Create Database**: 
+   - Click "Create Database"
+   - Choose a name and region (select closest to your backend)
+   - Select "Global" for multi-region or "Regional" for single region
+3. **Get Connection URL**:
+   - Copy the connection string (starts with `rediss://`)
+   - Add it to your `.env` file as `REDIS_DATABASE_URI`
+
+**Example:**
+```env
+REDIS_DATABASE_URI=rediss://default:AVcXAAIncDE...@your-host.upstash.io:6379
+```
+
+### Alternative: Local Development
+
+For local development without Upstash:
 
 ```bash
 # Using Docker
@@ -179,15 +197,10 @@ sudo apt-get install redis-server
 sudo systemctl start redis
 ```
 
-### Production with TLS
-
-For production, use a managed Redis service with TLS:
-
-- **Redis Cloud**: Free tier available
-- **AWS ElastiCache**: Managed Redis
-- **Upstash**: Serverless Redis with TLS
-
-Set `REDIS_TLS=true` in production.
+Then use:
+```env
+REDIS_DATABASE_URI=redis://localhost:6379
+```
 
 ## WebSocket Usage
 
@@ -287,9 +300,10 @@ curl -X POST http://localhost:8000/api/auth/reset-password \
 ## Troubleshooting
 
 ### Redis Connection Issues
-- Check Redis is running: `redis-cli ping`
-- Verify host and port in `.env`
-- Check firewall rules
+- **Upstash**: Verify your `REDIS_DATABASE_URI` is correct
+- **Local**: Check Redis is running: `redis-cli ping`
+- Check firewall rules and network connectivity
+- Ensure the URI format is correct (`rediss://` for TLS, `redis://` for non-TLS)
 
 ### Email Not Sending
 - Verify email credentials

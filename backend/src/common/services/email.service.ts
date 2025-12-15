@@ -4,7 +4,7 @@ import { config } from "@config/index";
 let transporter: nodemailer.Transporter;
 
 export const initializeEmailService = () => {
-    transporter = nodemailer.createTransporter({
+    transporter = nodemailer.createTransport({
         host: config.email.host,
         port: config.email.port,
         secure: config.email.secure,

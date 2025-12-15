@@ -195,11 +195,10 @@ JWT_REFRESH_EXPIRES_IN=7d
 # CORS
 CORS_ORIGIN=http://localhost:3000
 
-# Redis (optional, for OTP and caching)
-REDIS_HOST=localhost
-REDIS_PORT=6379
-REDIS_PASSWORD=
-REDIS_TLS=false
+# Redis (Upstash - for OTP and caching)
+# Get your Redis URL from https://upstash.com/redis
+# Format: rediss://default:PASSWORD@HOST:PORT
+REDIS_DATABASE_URI=rediss://default:your-password@your-host.upstash.io:6379
 
 # Email (for OTP delivery)
 EMAIL_HOST=smtp.gmail.com

@@ -15,10 +15,7 @@ interface Config {
         origin: string;
     };
     redis: {
-        host: string;
-        port: number;
-        password?: string;
-        tls: boolean;
+        databaseUri: string;
     };
     email: {
         host: string;
@@ -56,10 +53,7 @@ export const config: Config = {
         origin: process.env.CORS_ORIGIN || "http://localhost:3000",
     },
     redis: {
-        host: process.env.REDIS_HOST || "localhost",
-        port: parseInt(process.env.REDIS_PORT || "6379", 10),
-        password: process.env.REDIS_PASSWORD || undefined,
-        tls: process.env.REDIS_TLS === "true",
+        databaseUri: process.env.REDIS_DATABASE_URI || "redis://localhost:6379",
     },
     email: {
         host: process.env.EMAIL_HOST || "smtp.gmail.com",

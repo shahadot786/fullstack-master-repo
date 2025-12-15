@@ -80,12 +80,14 @@ backend/
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
 - `GET /api/auth/me` - Get current user (protected)
 - `POST /api/auth/logout` - Logout user (protected)
 
 ### TODOs
+
 - `POST /api/todos` - Create TODO (protected)
 - `GET /api/todos` - Get all TODOs with pagination/filtering (protected)
 - `GET /api/todos/:id` - Get TODO by ID (protected)
@@ -103,6 +105,8 @@ JWT_SECRET=your-super-secret-jwt-key
 JWT_EXPIRES_IN=7d
 CORS_ORIGIN=http://localhost:3000
 ```
+
+- node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 
 ## Scripts
 
