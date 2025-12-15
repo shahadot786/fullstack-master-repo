@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export type TodoPriority = "low" | "medium" | "high";
 
 export interface ITodo extends Document {
+  userId: mongoose.Types.ObjectId;
   title: string;
   description?: string;
   completed: boolean;
@@ -14,33 +15,43 @@ export interface ITodo extends Document {
 
 const TodoSchema = new Schema<ITodo>(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     title: {
       type: String,
-      required: true,
+      required: [true, "Title is required"],
       trim: true,
-      maxlength: 100
+      maxlength: [100, "Title cannot exceed 100 characters"],
     },
     description: {
       type: String,
       trim: true,
-      maxlength: 500
+      maxlength: [500, "Description cannot exceed 500 characters"],
     },
     completed: {
       type: Boolean,
-      default: false
+      default: false,
     },
     priority: {
       type: String,
       enum: ["low", "medium", "high"],
-      default: "medium"
+      default: "medium",
     },
     dueDate: {
-      type: Date
-    }
+      type: Date,
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
+
+// Compound index for user-specific queries
+TodoSchema.index({ userId: 1, createdAt: -1 });
+TodoSchema.index({ userId: 1, completed: 1 });
 
 export default mongoose.model<ITodo>("Todo", TodoSchema);

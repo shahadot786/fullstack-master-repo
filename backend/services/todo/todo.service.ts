@@ -1,21 +1,82 @@
 import Todo, { ITodo } from "./todo.model";
+import { TodoQueryInput } from "@fullstack-master/shared";
+import { NotFoundError } from "@common/errors";
 
-export const createTodo = (data: Partial<ITodo>) => {
-  return Todo.create(data);
+export const createTodo = async (
+  userId: string,
+  data: Partial<ITodo>
+): Promise<ITodo> => {
+  return Todo.create({ ...data, userId });
 };
 
-export const getTodos = () => {
-  return Todo.find().sort({ createdAt: -1 });
+export const getTodos = async (
+  userId: string,
+  query: TodoQueryInput
+): Promise<{ todos: ITodo[]; total: number }> => {
+  const { page = 1, limit = 10, completed, priority, sortBy = "createdAt", sortOrder = "desc" } = query;
+
+  // Build filter
+  const filter: any = { userId };
+  if (completed !== undefined) {
+    filter.completed = completed;
+  }
+  if (priority) {
+    filter.priority = priority;
+  }
+
+  // Build sort
+  const sort: any = {};
+  sort[sortBy] = sortOrder === "asc" ? 1 : -1;
+
+  // Execute query with pagination
+  const skip = (page - 1) * limit;
+  const [todos, total] = await Promise.all([
+    Todo.find(filter).sort(sort).skip(skip).limit(limit),
+    Todo.countDocuments(filter),
+  ]);
+
+  return { todos, total };
 };
 
-export const updateTodo = (id: string, data: Partial<ITodo>) => {
-  return Todo.findByIdAndUpdate(id, data, { new: true });
+export const getTodoById = async (
+  userId: string,
+  todoId: string
+): Promise<ITodo> => {
+  const todo = await Todo.findOne({ _id: todoId, userId });
+  if (!todo) {
+    throw new NotFoundError("Todo not found");
+  }
+  return todo;
 };
 
-export const deleteTodo = (id: string) => {
-  return Todo.findByIdAndDelete(id);
+export const updateTodo = async (
+  userId: string,
+  todoId: string,
+  data: Partial<ITodo>
+): Promise<ITodo> => {
+  const todo = await Todo.findOneAndUpdate(
+    { _id: todoId, userId },
+    data,
+    { new: true, runValidators: true }
+  );
+
+  if (!todo) {
+    throw new NotFoundError("Todo not found");
+  }
+
+  return todo;
 };
 
-export const deleteAllTodos = async ()=>{
-  return await Todo.deleteMany({});
-}
+export const deleteTodo = async (
+  userId: string,
+  todoId: string
+): Promise<void> => {
+  const todo = await Todo.findOneAndDelete({ _id: todoId, userId });
+  if (!todo) {
+    throw new NotFoundError("Todo not found");
+  }
+};
+
+export const deleteAllTodos = async (userId: string) => {
+  return await Todo.deleteMany({ userId });
+};

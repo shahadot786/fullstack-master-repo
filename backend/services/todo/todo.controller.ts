@@ -1,102 +1,54 @@
-import { Request, Response, NextFunction } from "express";
+import { Response } from "express";
 import * as todoService from "./todo.service";
-import Todo, { ITodo } from "./todo.model";
+import { asyncHandler } from "@common/utils/async-handler.util";
+import { sendSuccess, sendPaginated } from "@common/utils/response.util";
+import { AuthRequest } from "@middleware/auth.middleware";
+import { HTTP_STATUS } from "@fullstack-master/shared";
 
-export const createTodo = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const {title} = req.body;
+export const createTodo = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const userId = req.user!.id;
+  const todo = await todoService.createTodo(userId, req.body);
 
-    //check the title is not empty
-    if(!title){
-      return res.status(409).json({success:false,message:"Title is Required!"})
-    }
+  sendSuccess(res, todo, "Todo created successfully", HTTP_STATUS.CREATED);
+});
 
-    //check the todo is already exists
-    const isTodoExists = await Todo.findOne({title});
+export const getTodos = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const userId = req.user!.id;
+  const { todos, total } = await todoService.getTodos(userId, req.query as any);
 
-    if(isTodoExists){
-      return res.status(409).json({success:false,message:"Todo is already exists!"})
-    }
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
 
-    const todo = await todoService.createTodo(req.body);
-    res.status(201).json({success:true,message:"Todo created successfully!",todo});
-  } catch (error) {
-    next(error);
-  }
-};
+  sendPaginated(res, todos, page, limit, total);
+});
 
-export const getTodos = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const todos = await todoService.getTodos();
-    res.json(todos);
-  } catch (error) {
-    next(error);
-  }
-};
+export const getTodoById = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const userId = req.user!.id;
+  const todo = await todoService.getTodoById(userId, req.params.id);
 
-export const updateTodo = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const {title} = req.body;
+  sendSuccess(res, todo);
+});
 
-    //check the title is not empty
-    if(!title){
-      return res.status(409).json({success:false,message:"Title is Required!"})
-    }
+export const updateTodo = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const userId = req.user!.id;
+  const todo = await todoService.updateTodo(userId, req.params.id, req.body);
 
-    //check the todo is already exists
-    const isTodoExists = await Todo.findOne({title});
+  sendSuccess(res, todo, "Todo updated successfully");
+});
 
-    if(isTodoExists){
-      return res.status(409).json({success:false,message:"Todo is already exists!"})
-    }
-    const todo = await todoService.updateTodo(req.params.id, req.body);
-    res.json(todo);
-  } catch (error) {
-    next(error);
-  }
-};
+export const deleteTodo = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const userId = req.user!.id;
+  await todoService.deleteTodo(userId, req.params.id);
 
-export const deleteTodo = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    await todoService.deleteTodo(req.params.id);
-    res.status(204).send();
-  } catch (error) {
-    next(error);
-  }
-};
+  sendSuccess(res, null, "Todo deleted successfully", HTTP_STATUS.NO_CONTENT);
+});
 
-export const deleteAllTodos = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const result = await todoService.deleteAllTodos();
+export const deleteAllTodos = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const userId = req.user!.id;
+  const result = await todoService.deleteAllTodos(userId);
 
-    return res.status(200).json({
-      message: "All todos deleted successfully",
-      deletedCount: result.deletedCount
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  sendSuccess(res, { deletedCount: result.deletedCount }, "All todos deleted successfully");
+});
 
 
 
