@@ -7,7 +7,7 @@ import { config } from "@config/index";
 import { swaggerSpec } from "@config/swagger";
 import { errorHandler } from "@middleware/error.middleware";
 import authRoutes from "@services/auth/auth.routes";
-import todoRoutes from "./services/todo/todo.routes";
+import todoRoutes from "@services/todo/todo.routes";
 
 const app = express();
 
