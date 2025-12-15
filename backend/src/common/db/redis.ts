@@ -17,4 +17,8 @@ export const connectRedis = (): void => {
     });
 };
 
+export const getRedisClient = (): Redis => {
+    return redis;
+};
+
 export default redis;

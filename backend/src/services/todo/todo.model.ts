@@ -54,4 +54,7 @@ const TodoSchema = new Schema<ITodo>(
 TodoSchema.index({ userId: 1, createdAt: -1 });
 TodoSchema.index({ userId: 1, completed: 1 });
 
+// Unique index to prevent duplicate titles per user
+TodoSchema.index({ userId: 1, title: 1 }, { unique: true });
+
 export default mongoose.model<ITodo>("Todo", TodoSchema);

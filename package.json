@@ -1,0 +1,38 @@
+{
+  "name": "fullstack-master-repo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack master repository with shared packages, backend, web, and mobile applications",
+  "workspaces": [
+    "shared",
+    "backend",
+    "web",
+    "mobile"
+  ],
+  "scripts": {
+    "build:shared": "cd shared && yarn build",
+    "dev:shared": "cd shared && yarn dev",
+    "dev:backend": "cd backend && yarn dev",
+    "dev:web": "cd web && yarn dev",
+    "dev:mobile": "cd mobile && yarn start",
+    "build:backend": "yarn build:shared && cd backend && yarn build",
+    "build:web": "yarn build:shared && cd web && yarn build",
+    "build:all": "yarn build:shared && yarn workspaces run build",
+    "start:backend": "cd backend && yarn start",
+    "start:web": "cd web && yarn start",
+    "dev": "yarn build:shared && concurrently \"yarn dev:shared\" \"yarn dev:backend\" \"yarn dev:web\"",
+    "install:all": "yarn install && yarn workspaces run install",
+    "clean": "yarn workspaces run clean && rm -rf node_modules",
+    "test": "yarn workspaces run test",
+    "lint": "yarn workspaces run lint"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "yarn": ">=1.22.0"
+  },
+  "author": "",
+  "license": "MIT"
+}

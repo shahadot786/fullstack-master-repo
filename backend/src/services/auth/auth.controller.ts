@@ -7,29 +7,30 @@ import { HTTP_STATUS } from "@fullstack-master/shared";
 
 export const register = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { email, password, name } = req.body;
-    const { user, accessToken, refreshToken } = await authService.register(
-        email,
-        password,
-        name
+    const { message } = await authService.register(email, password, name);
+
+    sendSuccess(
+        res,
+        { message },
+        "Registration initiated successfully",
+        HTTP_STATUS.OK
     );
+});
+
+
+export const verifyEmail = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const { email, otp } = req.body;
+    const { user, accessToken, refreshToken } = await authService.verifyEmail(email, otp);
 
     sendSuccess(
         res,
         {
             user,
             tokens: { accessToken, refreshToken },
-            message: "Registration successful. Please check your email for verification code.",
         },
-        "User registered successfully",
+        "Email verified successfully",
         HTTP_STATUS.CREATED
     );
-});
-
-export const verifyEmail = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const { email, otp } = req.body;
-    await authService.verifyEmail(email, otp);
-
-    sendSuccess(res, null, "Email verified successfully");
 });
 
 export const resendVerificationOTP = asyncHandler(

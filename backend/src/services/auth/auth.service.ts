@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import User, { IUser } from "./auth.model";
 import { config } from "@config/index";
 import { ConflictError, UnauthorizedError, NotFoundError } from "@common/errors";
@@ -13,26 +13,33 @@ import {
     verifyRefreshToken,
     deleteRefreshToken,
 } from "@common/utils/otp.util";
+import {
+    storePendingUser,
+    getPendingUser,
+    deletePendingUser,
+    pendingUserExists,
+} from "@common/utils/pending-user.util";
 import { sendOTPEmail } from "@common/services/email.service";
 
 export const register = async (
     email: string,
     password: string,
     name: string
-): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
-    // Check if user already exists
+): Promise<{ message: string }> => {
+    // Check if user already exists in MongoDB (verified users)
     const existingUser = await User.findOne({ email });
     if (existingUser) {
         throw new ConflictError(ERROR_MESSAGES.AUTH.EMAIL_EXISTS);
     }
 
-    // Create new user (email not verified yet)
-    const user = await User.create({
-        email,
-        password,
-        name,
-        isEmailVerified: false,
-    });
+    // Check if user has pending registration
+    const hasPendingRegistration = await pendingUserExists(email);
+    if (hasPendingRegistration) {
+        throw new ConflictError("Registration already pending. Please check your email for verification code or request a new one.");
+    }
+
+    // Store pending user data in Redis (password will be hashed inside)
+    await storePendingUser(email, password, name);
 
     // Generate OTP for email verification
     const otp = generateOTP();
@@ -42,17 +49,16 @@ export const register = async (
     // Send OTP email
     await sendOTPEmail(email, otp, "verification");
 
-    // Generate tokens
-    const accessToken = generateAccessToken(user._id.toString(), user.email);
-    const refreshToken = generateRefreshToken(user._id.toString(), user.email);
-
-    // Store refresh token in Redis
-    await storeRefreshToken(user._id.toString(), refreshToken);
-
-    return { user, accessToken, refreshToken };
+    return {
+        message: "Registration initiated. Please check your email for verification code.",
+    };
 };
 
-export const verifyEmail = async (email: string, otp: string): Promise<void> => {
+
+export const verifyEmail = async (
+    email: string,
+    otp: string
+): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
     const otpKey = getEmailVerificationKey(email);
     const isValid = await verifyOTP(otpKey, otp);
 
@@ -60,24 +66,48 @@ export const verifyEmail = async (email: string, otp: string): Promise<void> => 
         throw new UnauthorizedError("Invalid or expired OTP");
     }
 
-    // Update user email verification status
-    await User.findOneAndUpdate(
-        { email },
-        {
-            isEmailVerified: true,
-            emailVerifiedAt: new Date(),
-        }
-    );
-};
-
-export const resendVerificationOTP = async (email: string): Promise<void> => {
-    const user = await User.findOne({ email });
-    if (!user) {
-        throw new NotFoundError("User not found");
+    // Retrieve pending user data from Redis
+    const pendingUser = await getPendingUser(email);
+    if (!pendingUser) {
+        throw new NotFoundError("Pending registration not found. Please register again.");
     }
 
-    if (user.isEmailVerified) {
-        throw new ConflictError("Email already verified");
+    // Create user in MongoDB with verified status
+    const user = await User.create({
+        email: pendingUser.email,
+        password: pendingUser.password, // Already hashed
+        name: pendingUser.name,
+        isEmailVerified: true,
+        emailVerifiedAt: new Date(),
+    });
+
+    // Delete pending user data from Redis
+    await deletePendingUser(email);
+
+    // Generate tokens
+    const accessToken = generateAccessToken(user._id.toString(), user.email);
+    const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+    // Store refresh token in Redis
+    await storeRefreshToken(user._id.toString(), refreshToken);
+
+    // Remove password from response
+    user.password = undefined as any;
+
+    return { user, accessToken, refreshToken };
+};
+
+
+export const resendVerificationOTP = async (email: string): Promise<void> => {
+    // Check if user has pending registration in Redis
+    const pendingUser = await getPendingUser(email);
+    if (!pendingUser) {
+        // Check if user already exists and is verified
+        const user = await User.findOne({ email });
+        if (user && user.isEmailVerified) {
+            throw new ConflictError("Email already verified");
+        }
+        throw new NotFoundError("Pending registration not found. Please register again.");
     }
 
     // Generate and send new OTP
@@ -198,12 +228,12 @@ export const getUserById = async (userId: string): Promise<IUser | null> => {
 const generateAccessToken = (id: string, email: string): string => {
     return jwt.sign({ id, email }, config.jwt.secret, {
         expiresIn: config.jwt.expiresIn,
-    });
+    } as SignOptions);
 };
 
 // Helper function to generate refresh token
 const generateRefreshToken = (id: string, email: string): string => {
     return jwt.sign({ id, email }, config.jwt.refreshSecret, {
         expiresIn: config.jwt.refreshExpiresIn,
-    });
+    } as SignOptions);
 };

@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API Documentation
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", ...swaggerUi.serve as any, swaggerUi.setup(swaggerSpec) as any);
 
 // Health check
 app.get("/health", (req, res) => {

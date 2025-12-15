@@ -1,12 +1,28 @@
 import Todo, { ITodo } from "./todo.model";
 import { TodoQueryInput } from "@fullstack-master/shared";
-import { NotFoundError } from "@common/errors";
+import { NotFoundError, ConflictError } from "@common/errors";
 
 export const createTodo = async (
   userId: string,
   data: Partial<ITodo>
 ): Promise<ITodo> => {
-  return Todo.create({ ...data, userId });
+  // Check for duplicate title
+  if (data.title) {
+    const existingTodo = await Todo.findOne({ userId, title: data.title });
+    if (existingTodo) {
+      throw new ConflictError("A todo with this title already exists");
+    }
+  }
+
+  try {
+    return await Todo.create({ ...data, userId });
+  } catch (error: any) {
+    // Handle MongoDB duplicate key error
+    if (error.code === 11000) {
+      throw new ConflictError("A todo with this title already exists");
+    }
+    throw error;
+  }
 };
 
 export const getTodos = async (
@@ -54,17 +70,34 @@ export const updateTodo = async (
   todoId: string,
   data: Partial<ITodo>
 ): Promise<ITodo> => {
-  const todo = await Todo.findOneAndUpdate(
-    { _id: todoId, userId },
-    data,
-    { new: true, runValidators: true }
-  );
-
-  if (!todo) {
-    throw new NotFoundError("Todo not found");
+  // Check for duplicate title if title is being updated
+  if (data.title) {
+    const existingTodo = await Todo.findOne({ userId, title: data.title });
+    // Allow update if the existing todo is the same one being updated
+    if (existingTodo && existingTodo._id.toString() !== todoId) {
+      throw new ConflictError("A todo with this title already exists");
+    }
   }
 
-  return todo;
+  try {
+    const todo = await Todo.findOneAndUpdate(
+      { _id: todoId, userId },
+      data,
+      { new: true, runValidators: true }
+    );
+
+    if (!todo) {
+      throw new NotFoundError("Todo not found");
+    }
+
+    return todo;
+  } catch (error: any) {
+    // Handle MongoDB duplicate key error
+    if (error.code === 11000) {
+      throw new ConflictError("A todo with this title already exists");
+    }
+    throw error;
+  }
 };
 
 export const deleteTodo = async (

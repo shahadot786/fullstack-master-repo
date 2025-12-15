@@ -52,6 +52,30 @@ describe("TODO E2E Tests", () => {
 
             expect(response.status).toBe(400);
         });
+
+        it("should fail when creating todo with duplicate title", async () => {
+            // Create first todo
+            await request(app)
+                .post("/api/todos")
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    title: "Duplicate Title Test",
+                    description: "First todo",
+                });
+
+            // Try to create second todo with same title
+            const response = await request(app)
+                .post("/api/todos")
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    title: "Duplicate Title Test",
+                    description: "Second todo",
+                });
+
+            expect(response.status).toBe(409);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toContain("already exists");
+        });
     });
 
     describe("GET /api/todos", () => {
@@ -129,6 +153,40 @@ describe("TODO E2E Tests", () => {
                 .send({ title: "Updated" });
 
             expect(response.status).toBe(404);
+        });
+
+        it("should fail when updating to a duplicate title", async () => {
+            // Create another todo with a different title
+            await request(app)
+                .post("/api/todos")
+                .set("Authorization", `Bearer ${token}`)
+                .send({ title: "Existing Title" });
+
+            // Try to update the first todo to the existing title
+            const response = await request(app)
+                .put(`/api/todos/${todoId}`)
+                .set("Authorization", `Bearer ${token}`)
+                .send({ title: "Existing Title" });
+
+            expect(response.status).toBe(409);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toContain("already exists");
+        });
+
+        it("should allow updating todo with same title", async () => {
+            // Update todo with same title but different description
+            const response = await request(app)
+                .put(`/api/todos/${todoId}`)
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    title: "Update Test", // Same title
+                    description: "Updated description",
+                });
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.title).toBe("Update Test");
+            expect(response.body.data.description).toBe("Updated description");
         });
     });
 
