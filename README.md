@@ -1,63 +1,85 @@
-# Fullstack Master Boilerplate
+# Fullstack Master Monorepo
 
-A production-ready, type-safe fullstack boilerplate with **Backend (Node.js/Express/MongoDB)**, **Web (Next.js)**, and **Mobile (React Native)** applications. Built with TypeScript, featuring JWT authentication, API documentation, testing, and CI/CD.
+A production-ready, type-safe fullstack monorepo with **Backend (Node.js/Express/MongoDB)**, **Web (Next.js)**, and **Mobile (React Native/Expo)** applications. Built with TypeScript, featuring complete authentication flows, real-time capabilities, and shared type safety across all platforms.
 
 ## 🚀 Features
 
 ### Backend
-- ✅ **TypeScript** - Full type safety
-- ✅ **Authentication** - JWT with bcrypt
-- ✅ **Email Verification** - 6-digit OTP via email
+- ✅ **TypeScript** - Full type safety with path aliases
+- ✅ **Authentication** - JWT with bcrypt password hashing
+- ✅ **Email Verification** - 6-digit OTP via Nodemailer
 - ✅ **Refresh Tokens** - Long-lived tokens with rotation
 - ✅ **Password Reset** - Secure OTP-based flow
 - ✅ **Redis Caching** - ioredis with TLS support
 - ✅ **WebSocket** - Real-time notifications with Socket.IO
-- ✅ **Validation** - Zod schemas
+- ✅ **Validation** - Zod schemas for request validation
 - ✅ **API Docs** - Swagger/OpenAPI at `/api-docs`
 - ✅ **Testing** - Jest + Supertest E2E tests
 - ✅ **Security** - Helmet, CORS, rate limiting
-- ✅ **Path Aliases** - Clean imports with `@` prefixes
+- ✅ **TODO Service** - Complete CRUD example with user scoping
 
 ### Shared Module
-- ✅ **Types** - Shared TypeScript interfaces
+- ✅ **Types** - Shared TypeScript interfaces across all apps
 - ✅ **Validation** - Reusable Zod schemas
 - ✅ **Constants** - API endpoints, error messages
 - ✅ **Utils** - Common helper functions
 
-### Web (Coming Soon)
-- Next.js 14+ with App Router
-- TailwindCSS styling
-- Zustand state management
-- React Hook Form + Zod validation
+### Web
+- ✅ **Next.js 16** - App Router with React 19
+- ✅ **TailwindCSS 4** - Modern styling with PostCSS
+- ✅ **TypeScript** - Full type safety
+- ✅ **ESLint** - Code quality and consistency
 
-### Mobile (Coming Soon)
-- React Native with TypeScript
-- Bottom tab navigation
-- AsyncStorage for persistence
-- Shared API client
+### Mobile
+- ✅ **React Native** - Expo SDK 54
+- ✅ **Navigation** - React Navigation with bottom tabs and stack
+- ✅ **State Management** - Zustand with MMKV persistence
+- ✅ **Forms** - React Hook Form + Zod validation
+- ✅ **UI Components** - React Native Paper
+- ✅ **Authentication** - Complete auth flow (login, register, verify, reset)
+- ✅ **TODO Management** - Full CRUD with optimistic updates
+- ✅ **TypeScript** - Shared types from monorepo
 
 ## 📁 Project Structure
 
 ```
 fullstack-master-repo/
-├── backend/          # Node.js/Express API
+├── backend/              # Node.js/Express API
 │   ├── src/
-│   │   ├── common/   # Shared utilities
-│   │   ├── config/   # Configuration
-│   │   ├── middleware/
-│   │   └── services/ # Business logic
-│   ├── __tests__/    # Test files
+│   │   ├── common/       # Shared utilities (db, services)
+│   │   ├── config/       # Configuration files
+│   │   ├── middleware/   # Express middleware
+│   │   └── services/     # Business logic (auth, todos, etc.)
+│   ├── __tests__/        # Test files
+│   ├── server.ts         # Entry point
+│   ├── app.ts            # Express app setup
 │   └── package.json
-├── shared/           # Shared types & validation
+├── shared/               # Shared types & validation
 │   ├── src/
-│   │   ├── types/
-│   │   ├── validation/
-│   │   ├── constants/
-│   │   └── utils/
+│   │   ├── types/        # TypeScript interfaces
+│   │   ├── validation/   # Zod schemas
+│   │   ├── constants/    # Shared constants
+│   │   └── utils/        # Helper functions
 │   └── package.json
-├── web/              # Next.js application
-├── mobile/           # React Native app
-└── docs/             # Documentation
+├── web/                  # Next.js application
+│   ├── app/              # App router pages
+│   ├── public/           # Static assets
+│   └── package.json
+├── mobile/               # React Native (Expo) app
+│   ├── src/
+│   │   ├── api/          # API client
+│   │   ├── components/   # Reusable components
+│   │   ├── navigation/   # Navigation setup
+│   │   ├── screens/      # Screen components
+│   │   ├── store/        # Zustand stores
+│   │   ├── types/        # TypeScript types
+│   │   └── utils/        # Helper functions
+│   ├── index.ts          # Entry point
+│   └── package.json
+└── docs/                 # Documentation
+    ├── ADVANCED_AUTH.md
+    ├── CREATING_NEW_SERVICE.md
+    └── DEPLOYMENT.md
 ```
 
 ## 🏃 Quick Start
@@ -65,9 +87,25 @@ fullstack-master-repo/
 ### Prerequisites
 - Node.js 18+
 - MongoDB (local or Atlas)
+- Redis (optional, for caching)
 - npm or yarn
+- For mobile: Expo Go app on your phone or Android/iOS emulator
 
-### Backend Setup
+### 1. Clone and Install
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd fullstack-master-repo
+
+# Install shared module first
+cd shared
+npm install
+npm run build
+cd ..
+```
+
+### 2. Backend Setup
 
 ```bash
 # Navigate to backend
@@ -79,7 +117,11 @@ npm install
 # Copy environment file
 cp .env.example .env
 
-# Update .env with your MongoDB URI and JWT secret
+# Update .env with your configuration:
+# - MongoDB URI
+# - JWT secrets
+# - Email credentials (for OTP)
+# - Redis URL (optional)
 
 # Run development server
 npm run dev
@@ -88,12 +130,35 @@ npm run dev
 # Swagger docs at http://localhost:8000/api-docs
 ```
 
-### Shared Module Setup
+### 3. Web Setup
 
 ```bash
-cd shared
+# Navigate to web (in a new terminal)
+cd web
+
+# Install dependencies
 npm install
-npm run build
+
+# Run development server
+npm run dev
+
+# Web app will be available at http://localhost:3000
+```
+
+### 4. Mobile Setup
+
+```bash
+# Navigate to mobile (in a new terminal)
+cd mobile
+
+# Install dependencies
+npm install
+
+# Start Expo
+npm start
+
+# Scan QR code with Expo Go app (iOS/Android)
+# Or press 'a' for Android emulator, 'i' for iOS simulator
 ```
 
 ### Run Tests
@@ -102,9 +167,105 @@ npm run build
 cd backend
 npm test              # Unit tests
 npm run test:e2e      # E2E tests
+npm run test:watch    # Watch mode
 ```
 
-## 📚 Documentation
+## 🔧 Environment Variables
+
+### Backend (.env)
+
+Create a `.env` file in the `backend` directory with the following variables:
+
+```env
+# Server
+PORT=8000
+NODE_ENV=development
+
+# MongoDB
+MONGO_URI=mongodb://localhost:27017/fullstack-master
+# Or use MongoDB Atlas:
+# MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/dbname
+
+# JWT
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-this-in-production
+JWT_REFRESH_EXPIRES_IN=7d
+
+# CORS
+CORS_ORIGIN=http://localhost:3000
+
+# Redis (optional, for OTP and caching)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_TLS=false
+
+# Email (for OTP delivery)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_SECURE=false
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
+EMAIL_FROM=noreply@fullstack-master.com
+
+# OTP Configuration
+OTP_EXPIRY_MINUTES=10
+```
+
+### Mobile (src/api/config.ts)
+
+Update the API base URL in `mobile/src/api/config.ts`:
+
+```typescript
+// For iOS simulator
+export const API_BASE_URL = 'http://localhost:8000';
+
+// For Android emulator
+export const API_BASE_URL = 'http://10.0.2.2:8000';
+
+// For physical device (use your computer's IP)
+export const API_BASE_URL = 'http://192.168.x.x:8000';
+```
+
+## 📱 Mobile Application Features
+
+The React Native mobile app includes a complete, production-ready implementation:
+
+### Authentication Flow
+- **Registration** - Create account with email and password
+- **Email Verification** - 6-digit OTP verification
+- **Login** - Secure JWT-based authentication
+- **Password Reset** - OTP-based password recovery
+- **Persistent Sessions** - Auto-login with MMKV storage
+- **Token Refresh** - Automatic token refresh handling
+
+### TODO Management
+- **Create TODOs** - Add tasks with title, description, priority, and due date
+- **View TODOs** - List all tasks with filtering and sorting
+- **Update TODOs** - Edit task details and mark as complete
+- **Delete TODOs** - Remove individual or all tasks
+- **Optimistic Updates** - Instant UI feedback with rollback on error
+- **User-Scoped Data** - Each user sees only their own tasks
+
+### Technical Features
+- **Type-Safe API Client** - Axios with TypeScript interfaces
+- **Form Validation** - React Hook Form + Zod schemas
+- **State Management** - Zustand stores with MMKV persistence
+- **Navigation** - Stack and bottom tab navigation
+- **Error Handling** - User-friendly error messages
+- **Loading States** - Proper loading indicators throughout
+
+### Screens
+- Login Screen
+- Register Screen
+- Email Verification Screen
+- Forgot Password Screen
+- Reset Password Screen
+- Home Screen (TODO list)
+- Profile Screen
+
+## �📚 Documentation
 
 - [Backend Setup](./backend/README.md)
 - [Advanced Authentication](./docs/ADVANCED_AUTH.md)
@@ -114,12 +275,31 @@ npm run test:e2e      # E2E tests
 
 ## 🔐 Authentication
 
-The boilerplate includes a complete JWT-based authentication system:
+The monorepo includes a complete, production-ready JWT-based authentication system:
 
-- User registration with password hashing (bcrypt)
-- Login with JWT token generation
-- Protected routes with authentication middleware
-- Token-based authorization
+### Features
+- **User Registration** - Password hashing with bcrypt (10 rounds)
+- **Email Verification** - 6-digit OTP sent via email
+- **Login** - JWT access token (15min) + refresh token (7 days)
+- **Token Refresh** - Automatic token rotation
+- **Password Reset** - Secure OTP-based flow
+- **Protected Routes** - Authentication middleware
+- **User Profile** - Get and update user information
+
+### API Endpoints
+
+```
+POST   /api/auth/register              # Register new user
+POST   /api/auth/verify-email          # Verify email with OTP
+POST   /api/auth/resend-verification   # Resend verification OTP
+POST   /api/auth/login                 # Login user
+POST   /api/auth/refresh-token         # Refresh access token
+POST   /api/auth/forgot-password       # Request password reset OTP
+POST   /api/auth/reset-password        # Reset password with OTP
+GET    /api/auth/me                    # Get current user (protected)
+PUT    /api/auth/me                    # Update user profile (protected)
+POST   /api/auth/logout                # Logout user (protected)
+```
 
 ### Example Usage
 
@@ -129,12 +309,15 @@ curl -X POST http://localhost:8000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com","password":"Test1234","name":"Test User"}'
 
+# Verify Email
+curl -X POST http://localhost:8000/api/auth/verify-email \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","otp":"123456"}'
+
 # Login
 curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com","password":"Test1234"}'
-
-# Access protected route
 curl -X GET http://localhost:8000/api/auth/me \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
@@ -192,53 +375,65 @@ See [Deployment Guide](./docs/DEPLOYMENT.md) for detailed instructions on deploy
 
 ### Backend
 - **Runtime**: Node.js 18+
-- **Framework**: Express.js
-- **Database**: MongoDB with Mongoose
+- **Framework**: Express.js 4.21+
+- **Database**: MongoDB with Mongoose 9.0+
+- **Cache**: Redis with ioredis 5.3+
 - **Authentication**: JWT + bcrypt
-- **Validation**: Zod
-- **Testing**: Jest + Supertest
+- **Email**: Nodemailer 6.9+
+- **WebSocket**: Socket.IO 4.6+
+- **Validation**: Zod 3.22+
+- **Testing**: Jest 29+ + Supertest
 - **Documentation**: Swagger/OpenAPI
-- **Security**: Helmet, CORS
+- **Security**: Helmet, CORS, rate limiting
 
 ### Shared
-- **Language**: TypeScript
+- **Language**: TypeScript 5.9+
 - **Validation**: Zod
 - **Build**: TypeScript Compiler
 
-### Web (Planned)
-- **Framework**: Next.js 14+
-- **Styling**: TailwindCSS
-- **State**: Zustand
-- **Forms**: React Hook Form
-- **HTTP**: Axios
+### Web
+- **Framework**: Next.js 16
+- **React**: React 19
+- **Styling**: TailwindCSS 4 with PostCSS
+- **Language**: TypeScript 5+
+- **Linting**: ESLint 9
 
-### Mobile (Planned)
-- **Framework**: React Native
-- **Navigation**: React Navigation
-- **State**: Zustand
-- **HTTP**: Axios
+### Mobile
+- **Framework**: React Native 0.81 with Expo 54
+- **React**: React 19
+- **Navigation**: React Navigation 7
+- **State**: Zustand 5 with MMKV 4 persistence
+- **Forms**: React Hook Form 7 + Zod 4
+- **UI**: React Native Paper 5
+- **HTTP**: Axios 1.13+
+- **Language**: TypeScript 5.9+
 
 ## 📖 Learning Resources
 
-This boilerplate is designed as a learning project. Key concepts covered:
+This monorepo demonstrates modern fullstack development practices:
 
-1. **Multi-service Architecture** - Organize code by business domains
+1. **Monorepo Architecture** - Shared code across backend, web, and mobile
 2. **Type Safety** - End-to-end TypeScript with shared types
-3. **Authentication** - JWT-based auth with proper security
-4. **Validation** - Schema validation with Zod
-5. **Testing** - Unit and E2E testing strategies
-6. **API Documentation** - Swagger/OpenAPI best practices
-7. **Error Handling** - Centralized error management
-8. **Path Aliases** - Clean import statements
-9. **CI/CD** - Automated testing and deployment
+3. **Authentication** - Complete JWT-based auth with email verification
+4. **State Management** - Zustand with persistence (MMKV for mobile)
+5. **Validation** - Schema validation with Zod across all platforms
+6. **Testing** - Unit and E2E testing strategies
+7. **API Documentation** - Swagger/OpenAPI best practices
+8. **Error Handling** - Centralized error management
+9. **Path Aliases** - Clean import statements with TypeScript
+10. **Real-time Communication** - WebSocket integration with Socket.IO
+11. **Mobile Development** - React Native with Expo and navigation
+12. **Form Handling** - React Hook Form with Zod validation
 
 ## 🤝 Contributing
 
-This is a learning project. Feel free to:
-- Add new services following the TODO example
+This is a learning-focused monorepo. Contributions welcome:
+- Add new backend services following the TODO example
+- Enhance web and mobile UI/UX
 - Improve documentation
-- Add more tests
-- Suggest best practices
+- Add more tests (backend, web, mobile)
+- Suggest best practices for monorepo management
+- Add new features to any of the three apps
 
 ## 📄 License
 
@@ -252,3 +447,7 @@ Built with best practices from:
 - TypeScript handbook
 - Jest testing library
 - Swagger/OpenAPI specification
+- Next.js documentation
+- React Native and Expo guides
+- React Navigation documentation
+- Zustand state management patterns
