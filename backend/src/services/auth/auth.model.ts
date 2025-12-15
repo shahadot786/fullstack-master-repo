@@ -5,6 +5,8 @@ export interface IUser extends Document {
     email: string;
     password: string;
     name: string;
+    isEmailVerified: boolean;
+    emailVerifiedAt?: Date;
     createdAt: Date;
     updatedAt: Date;
     comparePassword(candidatePassword: string): Promise<boolean>;
@@ -32,6 +34,13 @@ const UserSchema = new Schema<IUser>(
             trim: true,
             minlength: [2, "Name must be at least 2 characters"],
             maxlength: [50, "Name cannot exceed 50 characters"],
+        },
+        isEmailVerified: {
+            type: Boolean,
+            default: false,
+        },
+        emailVerifiedAt: {
+            type: Date,
         },
     },
     {

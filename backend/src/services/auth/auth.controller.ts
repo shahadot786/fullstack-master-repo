@@ -7,61 +7,90 @@ import { HTTP_STATUS } from "@fullstack-master/shared";
 
 export const register = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { email, password, name } = req.body;
-
-    const { user, token } = await authService.register(email, password, name);
+    const { user, accessToken, refreshToken } = await authService.register(
+        email,
+        password,
+        name
+    );
 
     sendSuccess(
         res,
         {
-            user: {
-                _id: user._id,
-                email: user.email,
-                name: user.name,
-                createdAt: user.createdAt,
-                updatedAt: user.updatedAt,
-            },
-            tokens: {
-                accessToken: token,
-            },
+            user,
+            tokens: { accessToken, refreshToken },
+            message: "Registration successful. Please check your email for verification code.",
         },
         "User registered successfully",
         HTTP_STATUS.CREATED
     );
 });
 
-export const login = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const { email, password } = req.body;
+export const verifyEmail = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const { email, otp } = req.body;
+    await authService.verifyEmail(email, otp);
 
-    const { user, token } = await authService.login(email, password);
-
-    sendSuccess(res, {
-        user: {
-            _id: user._id,
-            email: user.email,
-            name: user.name,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-        },
-        tokens: {
-            accessToken: token,
-        },
-    }, "Login successful");
+    sendSuccess(res, null, "Email verified successfully");
 });
 
-export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const user = await authService.getUserById(req.user!.id);
+export const resendVerificationOTP = asyncHandler(
+    async (req: AuthRequest, res: Response) => {
+        const { email } = req.body;
+        await authService.resendVerificationOTP(email);
+
+        sendSuccess(res, null, "Verification code sent to your email");
+    }
+);
+
+export const login = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const { email, password } = req.body;
+    const { user, accessToken, refreshToken } = await authService.login(
+        email,
+        password
+    );
 
     sendSuccess(res, {
-        _id: user!._id,
-        email: user!.email,
-        name: user!.name,
-        createdAt: user!.createdAt,
-        updatedAt: user!.updatedAt,
+        user,
+        tokens: { accessToken, refreshToken },
     });
 });
 
+export const refreshToken = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const { refreshToken } = req.body;
+    const tokens = await authService.refreshAccessToken(refreshToken);
+
+    sendSuccess(res, { tokens }, "Token refreshed successfully");
+});
+
+export const requestPasswordReset = asyncHandler(
+    async (req: AuthRequest, res: Response) => {
+        const { email } = req.body;
+        await authService.requestPasswordReset(email);
+
+        sendSuccess(
+            res,
+            null,
+            "If the email exists, a password reset code has been sent"
+        );
+    }
+);
+
+export const resetPassword = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const { email, otp, newPassword } = req.body;
+    await authService.resetPassword(email, otp, newPassword);
+
+    sendSuccess(res, null, "Password reset successfully");
+});
+
+export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+    const user = await authService.getUserById(userId);
+
+    sendSuccess(res, user);
+});
+
 export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
-    // In a stateless JWT setup, logout is handled client-side
-    // Here we just send a success response
-    sendSuccess(res, null, "Logout successful");
+    const userId = req.user!.id;
+    await authService.logout(userId);
+
+    sendSuccess(res, null, "Logged out successfully");
 });

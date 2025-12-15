@@ -7,6 +7,11 @@ A production-ready, type-safe fullstack boilerplate with **Backend (Node.js/Expr
 ### Backend
 - ✅ **TypeScript** - Full type safety
 - ✅ **Authentication** - JWT with bcrypt
+- ✅ **Email Verification** - 6-digit OTP via email
+- ✅ **Refresh Tokens** - Long-lived tokens with rotation
+- ✅ **Password Reset** - Secure OTP-based flow
+- ✅ **Redis Caching** - ioredis with TLS support
+- ✅ **WebSocket** - Real-time notifications with Socket.IO
 - ✅ **Validation** - Zod schemas
 - ✅ **API Docs** - Swagger/OpenAPI at `/api-docs`
 - ✅ **Testing** - Jest + Supertest E2E tests
@@ -102,6 +107,7 @@ npm run test:e2e      # E2E tests
 ## 📚 Documentation
 
 - [Backend Setup](./backend/README.md)
+- [Advanced Authentication](./docs/ADVANCED_AUTH.md)
 - [Creating New Service](./docs/CREATING_NEW_SERVICE.md)
 - [Deployment Guide](./docs/DEPLOYMENT.md)
 - [API Documentation](http://localhost:8000/api-docs) (when running)
