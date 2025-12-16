@@ -90,24 +90,51 @@ nexus-monorepo/
 - Node.js 18+
 - MongoDB (local or Atlas)
 - Redis (optional, for caching)
-- npm or yarn
+- Yarn (recommended) or npm
 - For mobile: Expo Go app on your phone or Android/iOS emulator
 
-### 1. Clone and Install
+### Installation
+
+This repository is configured so that **each project maintains its own `node_modules`** folder instead of using Yarn workspaces. This ensures proper dependency isolation, especially important for React Native/Expo.
+
+#### Option 1: Automated Setup (Recommended)
 
 ```bash
 # Clone the repository
 git clone <your-repo-url>
-cd nexus-monorepo
+cd fullstack-master-repo
 
-# Install shared module first
-cd shared
-npm install
-npm run build
-cd ..
+# Run the setup script
+./setup.sh
 ```
 
+The setup script will:
+1. Clean all existing `node_modules`
+2. Install dependencies for each project (shared, backend, web, mobile)
+3. Build the shared package
+4. Verify all installations
+
+#### Option 2: Manual Setup
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd fullstack-master-repo
+
+# Install all projects at once
+yarn install:all
+
+# Or install individually:
+cd shared && yarn install && yarn build && cd ..
+cd backend && yarn install && cd ..
+cd web && yarn install && cd ..
+cd mobile && yarn install && cd ..
+```
+
+> **📖 For detailed installation instructions, troubleshooting, and best practices, see [INSTALLATION_GUIDE.md](./INSTALLATION_GUIDE.md)**
+
 ### 2. Backend Setup
+
 
 ```bash
 # Navigate to backend

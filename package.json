@@ -3,12 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "description": "Full-stack master repository with shared packages, backend, web, and mobile applications",
-  "workspaces": [
-    "shared",
-    "backend",
-    "web",
-    "mobile"
-  ],
   "scripts": {
     "build:shared": "cd shared && yarn build",
     "dev:shared": "cd shared && yarn dev",
@@ -17,14 +11,18 @@
     "dev:mobile": "cd mobile && yarn start",
     "build:backend": "yarn build:shared && cd backend && yarn build",
     "build:web": "yarn build:shared && cd web && yarn build",
-    "build:all": "yarn build:shared && yarn workspaces run build",
+    "build:all": "yarn build:shared && cd backend && yarn build && cd ../web && yarn build",
     "start:backend": "cd backend && yarn start",
     "start:web": "cd web && yarn start",
     "dev": "yarn build:shared && concurrently \"yarn dev:shared\" \"yarn dev:backend\" \"yarn dev:web\"",
-    "install:all": "yarn install && yarn workspaces run install",
-    "clean": "yarn workspaces run clean && rm -rf node_modules",
-    "test": "yarn workspaces run test",
-    "lint": "yarn workspaces run lint"
+    "install:all": "cd shared && yarn install && cd ../backend && yarn install && cd ../web && yarn install && cd ../mobile && yarn install",
+    "clean": "rm -rf node_modules && cd shared && rm -rf node_modules && cd ../backend && rm -rf node_modules && cd ../web && rm -rf node_modules && cd ../mobile && rm -rf node_modules",
+    "clean:shared": "cd shared && rm -rf node_modules",
+    "clean:backend": "cd backend && rm -rf node_modules",
+    "clean:web": "cd web && rm -rf node_modules",
+    "clean:mobile": "cd mobile && rm -rf node_modules",
+    "test": "cd backend && yarn test",
+    "lint": "cd backend && yarn lint && cd ../web && yarn lint"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
