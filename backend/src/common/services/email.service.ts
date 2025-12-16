@@ -73,13 +73,13 @@ export const sendOTPEmail = async (
         .header { background: #4F46E5; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
         .content { background: #f9fafb; padding: 30px; border-radius: 0 0 5px 5px; }
         .otp-box { background: white; border: 2px solid #4F46E5; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 8px; margin: 20px 0; border-radius: 5px; }
-        .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
       </style>
     </head>
     <body>
       <div class="container">
         <div class="header">
-          <h1>Fullstack Master</h1>
+          <h1>Nexus</h1>
+          <p style="color: #e0e0e0; font-size: 14px; margin-top: 5px;">Your Digital Nexus</p>
         </div>
         <div class="content">
           <h2>${purpose === "verification" ? "Email Verification" : "Password Reset"}</h2>
@@ -88,8 +88,11 @@ export const sendOTPEmail = async (
           <p>This code will expire in ${config.otp.expiryMinutes} minutes.</p>
           <p>If you didn't request this code, please ignore this email.</p>
         </div>
-        <div class="footer">
-          <p>© 2024 Fullstack Master. All rights reserved.</p>
+        <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #dee2e6;">
+          <p style="color: #6c757d; font-size: 12px; margin: 0;">
+            This is an automated email from Nexus. Please do not reply.
+          </p>
+          <p style="color: #6c757d; font-size: 12px; margin: 5px 0 0;">© 2024 Nexus. All rights reserved.</p>
         </div>
       </div>
     </body>

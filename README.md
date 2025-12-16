@@ -1,6 +1,8 @@
-# Fullstack Master Monorepo
+# Nexus Monorepo
 
 A production-ready, type-safe fullstack monorepo with **Backend (Node.js/Express/MongoDB)**, **Web (Next.js)**, and **Mobile (React Native/Expo)** applications. Built with TypeScript, featuring complete authentication flows, real-time capabilities, and shared type safety across all platforms.
+
+**Nexus** - Your Digital Nexus for productivity and services.
 
 ## 🚀 Features
 
@@ -43,7 +45,7 @@ A production-ready, type-safe fullstack monorepo with **Backend (Node.js/Express
 ## 📁 Project Structure
 
 ```
-fullstack-master-repo/
+nexus-monorepo/
 ├── backend/              # Node.js/Express API
 │   ├── src/
 │   │   ├── common/       # Shared utilities (db, services)
@@ -96,7 +98,7 @@ fullstack-master-repo/
 ```bash
 # Clone the repository
 git clone <your-repo-url>
-cd fullstack-master-repo
+cd nexus-monorepo
 
 # Install shared module first
 cd shared
@@ -182,7 +184,7 @@ PORT=8000
 NODE_ENV=development
 
 # MongoDB
-MONGO_URI=mongodb://localhost:27017/fullstack-master
+MONGO_URI=mongodb://localhost:27017/nexus
 # Or use MongoDB Atlas:
 # MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/dbname
 
@@ -206,7 +208,7 @@ EMAIL_PORT=587
 EMAIL_SECURE=false
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASSWORD=your-app-password
-EMAIL_FROM=noreply@fullstack-master.com
+EMAIL_FROM=noreply@nexus.app
 
 # OTP Configuration
 OTP_EXPIRY_MINUTES=10

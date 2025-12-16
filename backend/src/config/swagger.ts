@@ -4,9 +4,9 @@ const options: swaggerJsdoc.Options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "Fullstack Master API",
+            title: "Nexus API",
             version: "1.0.0",
-            description: "API documentation for Fullstack Master multi-service application",
+            description: "API documentation for Nexus - Your Digital Nexus platform",
             contact: {
                 name: "API Support",
             },

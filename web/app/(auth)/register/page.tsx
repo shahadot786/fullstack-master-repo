@@ -71,15 +71,25 @@ export default function RegisterPage() {
   };
 
   return (
-    <Card>
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-center">
-          Create Account
-        </CardTitle>
-        <CardDescription className="text-center">
-          Enter your details to get started
-        </CardDescription>
-      </CardHeader>
+    <div className="flex flex-col items-center gap-6">
+      {/* Logo */}
+      <div className="w-20 h-20 rounded-2xl overflow-hidden flex items-center justify-center bg-white shadow-lg">
+        <img 
+          src="/nexus-logo.png" 
+          alt="Nexus Logo" 
+          className="w-full h-full object-contain"
+        />
+      </div>
+      
+      <Card>
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">
+            Create Account
+          </CardTitle>
+          <CardDescription className="text-center">
+            Enter your details to get started
+          </CardDescription>
+        </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -167,5 +177,6 @@ export default function RegisterPage() {
         </div>
       </CardFooter>
     </Card>
+    </div>
   );
 }

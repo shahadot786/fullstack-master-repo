@@ -49,20 +49,23 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-      {/* Project Info */}
       <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-3 mb-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-xl">FM</span>
+          <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-white">
+            <img 
+              src="/nexus-logo.png" 
+              alt="Nexus Logo" 
+              className="w-full h-full object-contain"
+            />
           </div>
           <div>
             <h2 className="text-md font-bold text-gray-900 dark:text-white">
-              Full-Stack Master
+              Nexus
             </h2>
           </div>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          All-in-one service platform
+          Your Digital Nexus
         </p>
       </div>
 

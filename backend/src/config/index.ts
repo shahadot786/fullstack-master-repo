@@ -61,7 +61,7 @@ export const config: Config = {
         secure: process.env.EMAIL_SECURE === "true",
         user: process.env.EMAIL_USER || "",
         password: process.env.EMAIL_PASSWORD || "",
-        from: process.env.EMAIL_FROM || "noreply@fullstack-master.com",
+        from: process.env.EMAIL_FROM || "noreply@nexus.app",
     },
     otp: {
         expiryMinutes: parseInt(process.env.OTP_EXPIRY_MINUTES || "10", 10),

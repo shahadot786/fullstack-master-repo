@@ -100,7 +100,7 @@ backend/
 ```env
 PORT=8000
 NODE_ENV=development
-MONGO_URI=mongodb://localhost:27017/fullstack-master
+MONGO_URI=mongodb://localhost:27017/nexus
 JWT_SECRET=your-super-secret-jwt-key
 JWT_EXPIRES_IN=7d
 CORS_ORIGIN=http://localhost:3000
