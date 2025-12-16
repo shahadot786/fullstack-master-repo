@@ -26,7 +26,16 @@
       "predictiveBackGestureEnabled": false
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26,
+            "ndkVersion": "26.1.10909125"
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {
