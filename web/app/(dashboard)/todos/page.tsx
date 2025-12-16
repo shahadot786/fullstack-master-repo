@@ -65,25 +65,25 @@ export default function TodosPage() {
     <div className="max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
               My Todos
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
               {todos?.length || 0} total tasks
             </p>
           </div>
-          <Button onClick={handleCreateNew}>
+          <Button onClick={handleCreateNew} className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             New Todo
           </Button>
         </div>
 
         {/* Filters */}
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <Select value={completedFilter} onValueChange={setCompletedFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -94,7 +94,7 @@ export default function TodosPage() {
           </Select>
 
           <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter by priority" />
             </SelectTrigger>
             <SelectContent>

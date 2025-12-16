@@ -118,22 +118,22 @@ export default function ProfilePage() {
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
           Profile
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm sm:text-base">
           Manage your account settings and preferences
         </p>
       </div>
 
       {/* Success/Error Messages */}
       {success && (
-        <div className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 p-4 rounded-lg">
+        <div className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 p-4 rounded-lg text-sm">
           {success}
         </div>
       )}
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-lg text-sm">
           {error}
         </div>
       )}
@@ -141,14 +141,14 @@ export default function ProfilePage() {
       {/* Profile Information Card */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <CardTitle>Personal Information</CardTitle>
               <CardDescription>
                 Your account details and verification status
               </CardDescription>
             </div>
-            <Button onClick={() => setIsEditDialogOpen(true)} variant="outline">
+            <Button onClick={() => setIsEditDialogOpen(true)} variant="outline" className="w-full sm:w-auto">
               <Edit className="w-4 h-4 mr-2" />
               Edit Profile
             </Button>
@@ -156,8 +156,8 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Avatar */}
-          <div className="flex items-center space-x-4">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-2xl">
                 {user.name
                   .split(" ")
@@ -167,38 +167,38 @@ export default function ProfilePage() {
                   .slice(0, 2)}
               </span>
             </div>
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <div className="text-center sm:text-left">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
                 {user.name}
               </h3>
-              <p className="text-gray-500 dark:text-gray-400">{user.email}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
             </div>
           </div>
 
           {/* Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <div className="space-y-2">
-              <Label className="text-gray-500 dark:text-gray-400 flex items-center">
+              <Label className="text-gray-500 dark:text-gray-400 flex items-center text-sm">
                 <User className="w-4 h-4 mr-2" />
                 Full Name
               </Label>
-              <p className="text-gray-900 dark:text-white font-medium">
+              <p className="text-gray-900 dark:text-white font-medium text-sm sm:text-base">
                 {user.name}
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-gray-500 dark:text-gray-400 flex items-center">
+              <Label className="text-gray-500 dark:text-gray-400 flex items-center text-sm">
                 <Mail className="w-4 h-4 mr-2" />
                 Email Address
               </Label>
-              <p className="text-gray-900 dark:text-white font-medium">
+              <p className="text-gray-900 dark:text-white font-medium text-sm sm:text-base break-all">
                 {user.email}
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-gray-500 dark:text-gray-400 flex items-center">
+              <Label className="text-gray-500 dark:text-gray-400 flex items-center text-sm">
                 <CheckCircle2 className="w-4 h-4 mr-2" />
                 Email Verification
               </Label>
@@ -217,11 +217,11 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-gray-500 dark:text-gray-400 flex items-center">
+              <Label className="text-gray-500 dark:text-gray-400 flex items-center text-sm">
                 <Calendar className="w-4 h-4 mr-2" />
                 Member Since
               </Label>
-              <p className="text-gray-900 dark:text-white font-medium">
+              <p className="text-gray-900 dark:text-white font-medium text-sm sm:text-base">
                 {format(new Date(user.createdAt), "MMMM dd, yyyy")}
               </p>
             </div>
@@ -238,18 +238,19 @@ export default function ProfilePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h4 className="font-medium text-gray-900 dark:text-white">
+              <h4 className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">
                 Password
               </h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 Last changed: {format(new Date(user.updatedAt), "MMMM dd, yyyy")}
               </p>
             </div>
             <Button
               onClick={() => setIsPasswordDialogOpen(true)}
               variant="outline"
+              className="w-full sm:w-auto"
             >
               <Key className="w-4 h-4 mr-2" />
               Change Password

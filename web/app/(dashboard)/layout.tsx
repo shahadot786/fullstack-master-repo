@@ -15,6 +15,7 @@ export default function DashboardLayout({
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     setIsHydrated(true);
@@ -42,10 +43,10 @@ export default function DashboardLayout({
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      <Sidebar />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <Header onMenuClick={() => setIsSidebarOpen(true)} />
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );

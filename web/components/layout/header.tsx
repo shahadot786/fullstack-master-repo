@@ -13,10 +13,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Bell, Search, LogOut, User } from "lucide-react";
+import { Bell, Search, LogOut, User, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function Header() {
+export function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuthStore();
@@ -53,30 +53,42 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4">
       <div className="flex items-center justify-between">
-        {/* Route Path */}
-        <div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {getRouteName()}
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {pathname}
-          </p>
+        {/* Left Section - Menu + Route Path */}
+        <div className="flex items-center gap-3">
+          {/* Hamburger Menu - Mobile Only */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={onMenuClick}
+          >
+            <Menu className="w-5 h-5" />
+          </Button>
+
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+              {getRouteName()}
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hidden sm:block">
+              {pathname}
+            </p>
+          </div>
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-4">
-          {/* Search */}
-          <Button variant="ghost" size="icon" className="rounded-full">
+        <div className="flex items-center gap-2 sm:gap-4">
+          {/* Search - Hidden on mobile */}
+          <Button variant="ghost" size="icon" className="rounded-full hidden sm:flex">
             <Search className="w-5 h-5" />
           </Button>
 
           {/* Theme Toggle */}
           <ThemeToggle />
 
-          {/* Notifications */}
-          <Button variant="ghost" size="icon" className="rounded-full relative">
+          {/* Notifications - Hidden on mobile */}
+          <Button variant="ghost" size="icon" className="rounded-full relative hidden sm:flex">
             <Bell className="w-5 h-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
           </Button>
