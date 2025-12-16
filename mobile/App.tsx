@@ -7,7 +7,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import tamaguiConfig from './tamagui.config';
 import ErrorBoundary from '@components/ErrorBoundary';
-import { useTheme } from '@hooks/useTheme';
+import AppNavigator from '@navigation/AppNavigator';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
 /**
@@ -43,7 +43,6 @@ const queryClient = new QueryClient({
  */
 function AppContent() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const { mode } = useTheme();
 
   useEffect(() => {
     async function prepare() {
@@ -89,16 +88,8 @@ function AppContent() {
     );
   }
 
-  // TODO: Replace with actual navigation
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Welcome to Nexus Mobile!</Text>
-      <Text style={styles.subtext}>Theme: {mode}</Text>
-      <Text style={styles.info}>
-        The app is ready! Navigation and screens will be added next.
-      </Text>
-    </View>
-  );
+  // Render the navigation system
+  return <AppNavigator />;
 }
 
 /**
@@ -135,29 +126,5 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     color: '#2563eb',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#262626',
-    marginBottom: 12,
-  },
-  subtext: {
-    fontSize: 16,
-    color: '#525252',
-    marginBottom: 24,
-  },
-  info: {
-    fontSize: 14,
-    color: '#737373',
-    textAlign: 'center',
-    maxWidth: 300,
   },
 });
