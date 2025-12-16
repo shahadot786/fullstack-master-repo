@@ -56,9 +56,9 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
             <span className="text-white font-bold text-xl">FM</span>
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-900 dark:text-white">
+            <h2 className="text-md font-bold text-gray-900 dark:text-white">
               Full-Stack Master
-            </h1>
+            </h2>
           </div>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400">
