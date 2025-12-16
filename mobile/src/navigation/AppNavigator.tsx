@@ -7,10 +7,9 @@ import { useAppStore } from '@store/appStore';
 
 // Import navigators and screens
 import AuthNavigator from './AuthNavigator';
+import MainNavigator from './MainNavigator';
 import SplashScreen from '@screens/SplashScreen';
 import OnboardingScreen from '@screens/onboarding/OnboardingScreen';
-// MainNavigator will be created next
-// import MainNavigator from './MainNavigator';
 
 /**
  * Root App Navigator
@@ -50,37 +49,9 @@ export default function AppNavigator() {
           <Stack.Screen name="Auth" component={AuthNavigator} />
         ) : (
           // Show main app if authenticated
-          // TODO: Replace with MainNavigator once created
-          <Stack.Screen name="Main" component={PlaceholderMainScreen} />
+          <Stack.Screen name="Main" component={MainNavigator} />
         )}
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
-/**
- * Temporary placeholder for main app
- * This will be replaced with MainNavigator
- */
-function PlaceholderMainScreen() {
-  const { logout } = useAuth();
-  
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ fontSize: 24, marginBottom: 20 }}>Main App (Coming Soon)</Text>
-      <TouchableOpacity
-        onPress={logout}
-        style={{
-          backgroundColor: '#2563eb',
-          padding: 16,
-          borderRadius: 8,
-        }}
-      >
-        <Text style={{ color: '#fff', fontSize: 16 }}>Logout</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-// Import View, Text, TouchableOpacity for placeholder
-import { View, Text, TouchableOpacity } from 'react-native';
