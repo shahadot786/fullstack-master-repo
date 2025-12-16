@@ -9,8 +9,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nexus",
-  description: "Your Digital Nexus - All-in-one platform for productivity and services",
+  title: "Nexus - Full-Stack MERN Application",
+  description: "Full-Stack MERN Application - MongoDB, Express, React, Node.js with TypeScript",
   icons: {
     icon: [
       { url: '/favicon.png', sizes: '32x32', type: 'image/png' },
@@ -19,14 +19,14 @@ export const metadata: Metadata = {
     apple: '/nexus-logo.png',
   },
   openGraph: {
-    title: 'Nexus',
-    description: 'Your Digital Nexus - All-in-one platform for productivity and services',
+    title: 'Nexus - Full-Stack MERN Application',
+    description: 'Full-Stack MERN Application - MongoDB, Express, React, Node.js with TypeScript',
     images: ['/nexus-logo.png'],
   },
   twitter: {
     card: 'summary',
-    title: 'Nexus',
-    description: 'Your Digital Nexus - All-in-one platform for productivity and services',
+    title: 'Nexus - Full-Stack MERN Application',
+    description: 'Full-Stack MERN Application - MongoDB, Express, React, Node.js with TypeScript',
     images: ['/nexus-logo.png'],
   },
 };

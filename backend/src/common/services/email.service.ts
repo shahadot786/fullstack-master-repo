@@ -79,7 +79,7 @@ export const sendOTPEmail = async (
       <div class="container">
         <div class="header">
           <h1>Nexus</h1>
-          <p style="color: #e0e0e0; font-size: 14px; margin-top: 5px;">Your Digital Nexus</p>
+          <p style="color: #e0e0e0; font-size: 14px; margin-top: 5px;">Full-Stack MERN Application</p>
         </div>
         <div class="content">
           <h2>${purpose === "verification" ? "Email Verification" : "Password Reset"}</h2>

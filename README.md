@@ -2,7 +2,7 @@
 
 A production-ready, type-safe fullstack monorepo with **Backend (Node.js/Express/MongoDB)**, **Web (Next.js)**, and **Mobile (React Native/Expo)** applications. Built with TypeScript, featuring complete authentication flows, real-time capabilities, and shared type safety across all platforms.
 
-**Nexus** - Your Digital Nexus for productivity and services.
+**Nexus** - Full-Stack MERN Application showcasing MongoDB, Express.js, React, and Node.js with TypeScript.
 
 ## 🚀 Features
 

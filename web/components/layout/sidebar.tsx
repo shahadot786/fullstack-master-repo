@@ -65,7 +65,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           </div>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          Your Digital Nexus
+          Full-Stack MERN Application
         </p>
       </div>
 

@@ -6,7 +6,7 @@ const options: swaggerJsdoc.Options = {
         info: {
             title: "Nexus API",
             version: "1.0.0",
-            description: "API documentation for Nexus - Your Digital Nexus platform",
+            description: "API documentation for Nexus - Full-Stack MERN Application with TypeScript",
             contact: {
                 name: "API Support",
             },
