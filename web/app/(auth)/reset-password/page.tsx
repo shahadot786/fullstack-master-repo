@@ -98,9 +98,9 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-6 w-full max-w-md sm:max-w-lg">
       {/* Logo */}
-      <div className="w-20 h-20 rounded-2xl overflow-hidden flex items-center justify-center bg-white shadow-lg">
+      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden flex items-center justify-center bg-white shadow-lg">
         <img 
           src="/nexus-logo.png" 
           alt="Nexus Logo" 
@@ -108,7 +108,7 @@ export default function ResetPasswordPage() {
         />
       </div>
       
-      <Card>
+      <Card className="w-full">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
             Reset Password
