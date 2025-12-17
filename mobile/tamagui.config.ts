@@ -104,6 +104,10 @@ const customColors = {
   neutral700: "#404040",
   neutral800: "#262626",
   neutral900: "#171717",
+
+  // Base colors
+  white: "#ffffff",
+  black: "#000000",
 };
 
 /**
@@ -225,7 +229,7 @@ export type TamaguiConfig = typeof tamaguiConfig;
 
 declare module "@tamagui/core" {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface TamaguiCustomConfig extends TamaguiConfig {}
+  interface TamaguiCustomConfig extends TamaguiConfig { }
 }
 
 export default tamaguiConfig;

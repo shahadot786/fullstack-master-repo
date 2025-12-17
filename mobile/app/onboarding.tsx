@@ -1,27 +1,30 @@
 import React, { useState, useRef } from 'react';
 import { useRouter, Href } from 'expo-router';
-import { View, Dimensions, StyleSheet, FlatList } from 'react-native';
-import { YStack, Text, H1, Button as TamaguiButton } from 'tamagui';
+import { View, Dimensions, StyleSheet, FlatList, Image } from 'react-native';
+import { YStack, XStack, Text, H1, Button as TamaguiButton } from 'tamagui';
 import { Button } from '@/components/common/Button';
 import { useAppStore } from '@/store/appStore';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const slides = [
     {
         id: '1',
         title: 'Welcome to Nexus',
         description: 'Your all-in-one productivity companion for managing tasks and notes',
+        image: require('../assets/images/onboarding-welcome.png'),
     },
     {
         id: '2',
         title: 'Manage Your Tasks',
         description: 'Create, organize, and track your todos with priorities and due dates',
+        image: require('../assets/images/onboarding-tasks.png'),
     },
     {
         id: '3',
         title: 'Stay Organized',
         description: 'Keep your notes and tasks synced across all your devices',
+        image: require('../assets/images/onboarding-sync.png'),
     },
 ];
 
@@ -51,19 +54,38 @@ export default function OnboardingScreen() {
     const renderItem = ({ item }: { item: typeof slides[0] }) => (
         <View style={styles.slide}>
             <YStack flex={1} justifyContent="center" alignItems="center" padding="$6" gap="$6">
-                <View style={styles.placeholder} />
-                <H1 color="$color" textAlign="center">
-                    {item.title}
-                </H1>
-                <Text color="$color" opacity={0.7} textAlign="center" fontSize="$5">
-                    {item.description}
-                </Text>
+                <Image
+                    source={require('../assets/images/logo.png')}
+                    style={{ width: 60, height: 60, marginBottom: 8 }}
+                    resizeMode="contain"
+                />
+                <View style={styles.imageContainer}>
+                    <Image
+                        source={item.image}
+                        style={styles.image}
+                        resizeMode="contain"
+                    />
+                </View>
+                <YStack gap="$4" alignItems="center" maxWidth={340}>
+                    <H1 color="$color" textAlign="center" fontSize="$9" fontWeight="700">
+                        {item.title}
+                    </H1>
+                    <Text
+                        color="$color"
+                        opacity={0.75}
+                        textAlign="center"
+                        fontSize="$5"
+                        lineHeight="$6"
+                    >
+                        {item.description}
+                    </Text>
+                </YStack>
             </YStack>
         </View>
     );
 
     return (
-        <View style={styles.container}>
+        <YStack flex={1} backgroundColor="$background">
             <FlatList
                 ref={flatListRef}
                 data={slides}
@@ -78,74 +100,64 @@ export default function OnboardingScreen() {
                 keyExtractor={(item) => item.id}
             />
 
-            <View style={styles.footer}>
-                <View style={styles.pagination}>
+            <YStack paddingBottom="$8" paddingTop="$6" backgroundColor="$background">
+                <XStack justifyContent="center" alignItems="center" marginBottom="$6" gap="$2">
                     {slides.map((_, index) => (
                         <View
                             key={index}
                             style={[
                                 styles.dot,
-                                index === currentIndex && styles.activeDot,
+                                {
+                                    width: index === currentIndex ? 32 : 8,
+                                    opacity: index === currentIndex ? 1 : 0.3,
+                                },
                             ]}
                         />
                     ))}
-                </View>
+                </XStack>
 
-                <YStack gap="$3" width="100%" paddingHorizontal="$6" paddingBottom="$6">
+                <YStack gap="$3" paddingHorizontal="$6">
                     {currentIndex < slides.length - 1 ? (
                         <>
                             <Button title="Next" onPress={handleNext} fullWidth />
                             <TamaguiButton
                                 onPress={handleSkip}
-                                variant="outlined"
                                 backgroundColor="transparent"
                                 borderWidth={0}
+                                pressStyle={{ opacity: 0.7 }}
                             >
-                                <Text color="$primary">Skip</Text>
+                                <Text color="$primary" fontSize="$5" fontWeight="600">
+                                    Skip
+                                </Text>
                             </TamaguiButton>
                         </>
                     ) : (
                         <Button title="Get Started" onPress={handleGetStarted} fullWidth />
                     )}
                 </YStack>
-            </View>
-        </View>
+            </YStack>
+        </YStack>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
     slide: {
         width,
         flex: 1,
     },
-    placeholder: {
-        width: 200,
-        height: 200,
-        borderRadius: 100,
-        backgroundColor: '#e0e0e0',
-    },
-    footer: {
-        paddingTop: 20,
-    },
-    pagination: {
-        flexDirection: 'row',
+    imageContainer: {
+        width: 280,
+        height: 280,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 20,
+    },
+    image: {
+        width: '100%',
+        height: '100%',
     },
     dot: {
-        width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: '#ccc',
-        marginHorizontal: 4,
-    },
-    activeDot: {
-        width: 24,
         backgroundColor: '#3b82f6',
     },
 });

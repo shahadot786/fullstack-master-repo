@@ -46,7 +46,7 @@ export default function CreateTodoScreen() {
                 contentContainerStyle={{ flexGrow: 1 }}
                 keyboardShouldPersistTaps="handled"
             >
-                <YStack padding="$4" gap="$4" backgroundColor="$background">
+                <YStack padding="$6" gap="$5" backgroundColor="$background">
                     <Controller
                         control={control}
                         name="title"
