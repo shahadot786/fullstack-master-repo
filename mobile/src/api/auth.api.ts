@@ -1,0 +1,102 @@
+import apiClient from './client';
+import { API_ENDPOINTS } from '@/config/constants';
+import {
+    RegisterRequest,
+    LoginRequest,
+    LoginResponse,
+    VerifyEmailRequest,
+    ResendOTPRequest,
+    RefreshTokenRequest,
+    RequestPasswordResetRequest,
+    ResetPasswordRequest,
+    User,
+} from '@/types';
+
+/**
+ * Authentication API
+ * 
+ * All authentication-related API endpoints.
+ */
+
+export const authApi = {
+    /**
+     * Register a new user
+     * POST /auth/register
+     */
+    register: async (data: RegisterRequest): Promise<{ message: string }> => {
+        const response = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, data);
+        return response.data;
+    },
+
+    /**
+     * Verify email with OTP
+     * POST /auth/verify-email
+     */
+    verifyEmail: async (data: VerifyEmailRequest): Promise<{ message: string }> => {
+        const response = await apiClient.post(API_ENDPOINTS.AUTH.VERIFY_EMAIL, data);
+        return response.data;
+    },
+
+    /**
+     * Resend verification OTP
+     * POST /auth/resend-verification
+     */
+    resendOTP: async (data: ResendOTPRequest): Promise<{ message: string }> => {
+        const response = await apiClient.post(API_ENDPOINTS.AUTH.RESEND_VERIFICATION, data);
+        return response.data;
+    },
+
+    /**
+     * Login user
+     * POST /auth/login
+     */
+    login: async (data: LoginRequest): Promise<LoginResponse> => {
+        const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, data);
+        return response.data;
+    },
+
+    /**
+     * Refresh access token
+     * POST /auth/refresh-token
+     */
+    refreshToken: async (data: RefreshTokenRequest): Promise<{ accessToken: string; refreshToken: string }> => {
+        const response = await apiClient.post(API_ENDPOINTS.AUTH.REFRESH_TOKEN, data);
+        return response.data;
+    },
+
+    /**
+     * Logout user
+     * POST /auth/logout
+     */
+    logout: async (): Promise<{ message: string }> => {
+        const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
+        return response.data;
+    },
+
+    /**
+     * Get current user
+     * GET /auth/me
+     */
+    getMe: async (): Promise<User> => {
+        const response = await apiClient.get(API_ENDPOINTS.AUTH.ME);
+        return response.data;
+    },
+
+    /**
+     * Request password reset OTP
+     * POST /auth/request-password-reset
+     */
+    requestPasswordReset: async (data: RequestPasswordResetRequest): Promise<{ message: string }> => {
+        const response = await apiClient.post(API_ENDPOINTS.AUTH.REQUEST_PASSWORD_RESET, data);
+        return response.data;
+    },
+
+    /**
+     * Reset password with OTP
+     * POST /auth/reset-password
+     */
+    resetPassword: async (data: ResetPasswordRequest): Promise<{ message: string }> => {
+        const response = await apiClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, data);
+        return response.data;
+    },
+};
