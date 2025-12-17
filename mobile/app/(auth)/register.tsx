@@ -124,11 +124,12 @@ export default function RegisterScreen() {
             render={({ field: { onChange, value } }) => (
               <Input
                 label="Password"
-                placeholder="Enter your password"
+                placeholder="Create a password"
                 value={value}
                 onChangeText={onChange}
                 error={errors.password?.message}
                 secureTextEntry
+                showPasswordToggle={true}
               />
             )}
           />

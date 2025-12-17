@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter, Href } from 'expo-router';
 import { ScrollView, Alert, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { YStack, XStack, Text, H2, Switch, Separator } from 'tamagui';
 import { Button } from '@/components/common/Button';
 import { useAuth } from '@/hooks/useAuth';
@@ -117,10 +118,11 @@ export default function SettingsScreen() {
     );
 
     return (
-        <ScrollView
-            style={{ flex: 1, backgroundColor: isDark ? '#0a0a0a' : '#f9fafb' }}
-            contentContainerStyle={{ paddingBottom: 100 }}
-        >
+        <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#0a0a0a' : '#f9fafb' }} edges={['top']}>
+            <ScrollView
+                style={{ flex: 1, backgroundColor: isDark ? '#0a0a0a' : '#f9fafb' }}
+                contentContainerStyle={{ paddingBottom: 100 }}
+            >
             <YStack backgroundColor="$background">
                 {/* Header */}
                 <YStack padding="$5" paddingBottom="$4">
@@ -350,5 +352,6 @@ export default function SettingsScreen() {
                 </YStack>
             </YStack>
         </ScrollView>
+        </SafeAreaView>
     );
 }

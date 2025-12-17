@@ -127,6 +127,7 @@ export default function LoginScreen() {
                 onChangeText={onChange}
                 error={errors.password?.message}
                 secureTextEntry
+                showPasswordToggle={true}
               />
             )}
           />

@@ -47,6 +47,7 @@ export default function CreateTodoScreen() {
                 },
             ]);
         } catch (error: any) {
+            console.log(JSON.stringify(error,null,4),"error");
             Alert.alert('Error', error.message || 'Failed to create todo');
         }
     };

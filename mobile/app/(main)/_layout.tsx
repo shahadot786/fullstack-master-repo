@@ -161,11 +161,25 @@ export default function MainLayout() {
             <Drawer.Screen
                 name="settings"
                 options={{
-                    drawerLabel: 'Settings',
-                    title: 'Settings',
-                    drawerIcon: ({ color, size }) => (
-                        <Ionicons name="settings" size={size} color={color} />
-                    ),
+                    drawerItemStyle: { display: 'none' },
+                }}
+            />
+            <Drawer.Screen
+                name="webview"
+                options={{
+                    drawerItemStyle: { display: 'none' },
+                }}
+            />
+            <Drawer.Screen
+                name="edit-profile"
+                options={{
+                    drawerItemStyle: { display: 'none' },
+                }}
+            />
+            <Drawer.Screen
+                name="change-password"
+                options={{
+                    drawerItemStyle: { display: 'none' },
                 }}
             />
         </Drawer>

@@ -21,7 +21,8 @@ export const todosApi = {
      */
     getTodos: async (params?: GetTodosParams): Promise<TodosResponse> => {
         const response = await apiClient.get(API_ENDPOINTS.TODOS.BASE, { params });
-        return response.data;
+        console.log(JSON.stringify(response.data.data,null,4),"todos");
+        return response.data.data;
     },
 
     /**
@@ -30,7 +31,7 @@ export const todosApi = {
      */
     getTodo: async (id: string): Promise<Todo> => {
         const response = await apiClient.get(API_ENDPOINTS.TODOS.BY_ID(id));
-        return response.data;
+        return response.data.data;
     },
 
     /**
@@ -39,7 +40,7 @@ export const todosApi = {
      */
     createTodo: async (data: CreateTodoRequest): Promise<Todo> => {
         const response = await apiClient.post(API_ENDPOINTS.TODOS.BASE, data);
-        return response.data;
+        return response.data.data;
     },
 
     /**
@@ -48,7 +49,7 @@ export const todosApi = {
      */
     updateTodo: async (id: string, data: UpdateTodoRequest): Promise<Todo> => {
         const response = await apiClient.put(API_ENDPOINTS.TODOS.BY_ID(id), data);
-        return response.data;
+        return response.data.data;
     },
 
     /**
@@ -65,6 +66,6 @@ export const todosApi = {
      */
     toggleTodo: async (id: string, completed: boolean): Promise<Todo> => {
         const response = await apiClient.put(API_ENDPOINTS.TODOS.BY_ID(id), { completed });
-        return response.data;
+        return response.data.data;
     },
 };

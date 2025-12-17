@@ -120,6 +120,7 @@ export default function ResetPasswordScreen() {
                                 onChangeText={onChange}
                                 error={errors.newPassword?.message}
                                 secureTextEntry
+                                showPasswordToggle={true}
                             />
                         )}
                     />

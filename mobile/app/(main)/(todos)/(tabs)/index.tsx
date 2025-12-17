@@ -5,46 +5,19 @@ import { YStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { TodoCard } from '@/components/TodoCard';
 import { useTodos } from '@/hooks/useTodos';
-import { useNavigation } from '@react-navigation/native';
-import { DrawerActions } from '@react-navigation/native';
-import { useTheme } from '@/hooks/useTheme';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { HeaderIcons } from '@/components/common/HeaderIcons';
 
 export default function AllTodosScreen() {
     const router = useRouter();
-    const navigation = useNavigation();
     const { data, isLoading, refetch } = useTodos();
-    const { isDark } = useTheme();
-    const insets = useSafeAreaInsets();
 
     const handleCreate = () => {
         router.push('/(main)/(todos)/create' as any);
     };
 
-    const handleOpenDrawer = () => {
-        navigation.dispatch(DrawerActions.openDrawer());
-    };
-
     return (
         <YStack flex={1} backgroundColor="$background">
-            {/* Menu Icon */}
-            <Pressable
-                onPress={handleOpenDrawer}
-                style={{
-                    position: 'absolute',
-                    top: insets.top + 16,
-                    left: 16,
-                    zIndex: 10,
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    backgroundColor: isDark ? '#1a1a1a' : '#f5f5f5',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-            >
-                <Ionicons name="menu" size={24} color={isDark ? '#fafafa' : '#171717'} />
-            </Pressable>
+            <HeaderIcons />
 
             <FlatList
                 data={data?.todos || []}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { YStack, Text, XStack } from 'tamagui';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -65,10 +66,11 @@ export default function ChangePasswordScreen() {
     };
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
-        >
+        <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#0a0a0a' : '#f9fafb' }} edges={['top']}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
             <ScrollView
                 style={{ flex: 1, backgroundColor: isDark ? '#0a0a0a' : '#f9fafb' }}
                 contentContainerStyle={{ flexGrow: 1 }}
@@ -181,5 +183,6 @@ export default function ChangePasswordScreen() {
                 </YStack>
             </ScrollView>
         </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }
