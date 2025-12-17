@@ -1,101 +1,238 @@
-# Nexus Monorepo
+# Nexus Fullstack Monorepo
 
-A production-ready, type-safe fullstack monorepo with **Backend (Node.js/Express/MongoDB)**, **Web (Next.js)**, and **Mobile (React Native/Expo)** applications. Built with TypeScript, featuring complete authentication flows, real-time capabilities, and shared type safety across all platforms.
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org/)
+[![React Native](https://img.shields.io/badge/React%20Native-0.81-61dafb.svg)](https://reactnative.dev/)
+[![Expo](https://img.shields.io/badge/Expo-54-000020.svg)](https://expo.dev/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Nexus** - Full-Stack MERN Application showcasing MongoDB, Express.js, React, and Node.js with TypeScript.
+A production-ready, type-safe fullstack monorepo template featuring **Backend (Node.js/Express/MongoDB)**, **Web (Next.js)**, and **Mobile (React Native/Expo)** applications. Built with TypeScript, featuring complete authentication flows, real-time capabilities, and shared type safety across all platforms.
+
+**Perfect for**: Learning fullstack development, starting new projects, or as a reference implementation for modern MERN stack applications.
+
+---
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Project Status](#-project-status)
+- [Project Structure](#-project-structure)
+- [Quick Start](#-quick-start)
+- [Environment Variables](#-environment-variables)
+- [Available Scripts](#-available-scripts)
+- [Authentication](#-authentication)
+- [API Endpoints](#-api-endpoints)
+- [Documentation](#-documentation)
+- [Tech Stack](#️-tech-stack)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
 
 ## 🚀 Features
 
-### Backend
-- ✅ **TypeScript** - Full type safety with path aliases
-- ✅ **Authentication** - JWT with bcrypt password hashing
-- ✅ **Email Verification** - 6-digit OTP via Nodemailer
-- ✅ **Refresh Tokens** - Long-lived tokens with rotation
-- ✅ **Password Reset** - Secure OTP-based flow
-- ✅ **Redis Caching** - ioredis with TLS support
-- ✅ **WebSocket** - Real-time notifications with Socket.IO
-- ✅ **Validation** - Zod schemas for request validation
-- ✅ **API Docs** - Swagger/OpenAPI at `/api-docs`
-- ✅ **Testing** - Jest + Supertest E2E tests
-- ✅ **Security** - Helmet, CORS, rate limiting
-- ✅ **TODO Service** - Complete CRUD example with user scoping
+### Backend (Node.js/Express)
 
-### Shared Module
-- ✅ **Types** - Shared TypeScript interfaces across all apps
-- ✅ **Validation** - Reusable Zod schemas
-- ✅ **Constants** - API endpoints, error messages
-- ✅ **Utils** - Common helper functions
+#### ✅ Production-Ready Features
+- **TypeScript** - Full type safety with path aliases (`@common`, `@services`, etc.)
+- **Authentication Service** - Complete JWT-based auth system
+  - User registration with email verification (6-digit OTP)
+  - Login with access tokens (15min) and refresh tokens (7 days)
+  - Password reset flow with OTP
+  - Token refresh and rotation
+  - Protected routes with middleware
+- **TODO Service** - Full CRUD example with user scoping
+- **Redis Caching** - Upstash Redis integration with TLS support
+- **WebSocket** - Real-time notifications with Socket.IO
+- **Validation** - Zod schemas for request validation
+- **API Documentation** - Swagger/OpenAPI at `/api-docs`
+- **Testing** - Jest + Supertest E2E tests with 80%+ coverage
+- **Security** - Helmet, CORS, rate limiting, bcrypt password hashing
+- **Email Service** - Nodemailer integration for OTP delivery
 
-### Web
-- ✅ **Next.js 16** - App Router with React 19
-- ✅ **TailwindCSS 4** - Modern styling with PostCSS
-- ✅ **TypeScript** - Full type safety
-- ✅ **ESLint** - Code quality and consistency
+#### 🚧 Placeholder Services (Ready for Implementation)
+The monorepo includes placeholder service directories for common application features:
+- `aiqa` - AI/QA service
+- `chat` - Real-time chat
+- `delivery` - Delivery tracking
+- `expense` - Expense management
+- `notes` - Note-taking
+- `shop` - E-commerce
+- `social` - Social features
+- `urlshort` - URL shortener
+- `weather` - Weather service
 
-### Mobile
-- ✅ **React Native** - Expo SDK 54
-- ✅ **Navigation** - React Navigation with bottom tabs and stack
-- ✅ **State Management** - Zustand with MMKV persistence
-- ✅ **Forms** - React Hook Form + Zod validation
-- ✅ **UI Components** - React Native Paper
-- ✅ **Authentication** - Complete auth flow (login, register, verify, reset)
-- ✅ **TODO Management** - Full CRUD with optimistic updates
-- ✅ **TypeScript** - Shared types from monorepo
+> See [Creating New Service Guide](./docs/CREATING_NEW_SERVICE.md) to implement these services.
+
+### Shared Package
+
+- **Types** - Shared TypeScript interfaces across all apps
+- **Validation** - Reusable Zod schemas for consistent validation
+- **Constants** - API endpoints, error messages, HTTP status codes
+- **Utils** - Common helper functions
+
+### Web Application (Next.js)
+
+- **Next.js 16** - Latest App Router with React 19
+- **Modern UI** - TailwindCSS 4 with Radix UI primitives
+- **Authentication Pages** - Login, register, email verification, password reset
+- **Dashboard Layout** - Responsive sidebar navigation with theme toggle
+- **Feature Modules** - 11 feature pages matching backend services
+  - Todos (fully functional)
+  - Profile management
+  - Placeholder pages for all services (aiqa, chat, delivery, expense, notes, shop, social, urlshort, weather)
+- **State Management** - Zustand stores with React Query for server state
+- **Form Handling** - React Hook Form with Zod validation
+- **Real-time Updates** - Socket.IO client integration
+- **Theme Support** - Dark/light mode with next-themes
+- **Type Safety** - Full TypeScript with shared types from monorepo
+
+### Mobile Application (React Native/Expo)
+
+- **Expo SDK 54** - Latest Expo with React Native 0.81
+- **Navigation** - Expo Router with file-based routing
+- **Complete Auth Flow** - All authentication screens
+  - Login, Register, Email Verification
+  - Forgot Password, Reset Password
+  - Persistent sessions with MMKV storage
+- **TODO Management** - Full CRUD with optimistic updates
+- **UI Components** - Tamagui + React Native Paper
+- **State Management** - Zustand with MMKV persistence
+- **Forms** - React Hook Form + Zod validation
+- **API Client** - Axios with TypeScript interfaces
+- **Error Handling** - User-friendly error messages
+- **Loading States** - Proper loading indicators throughout
+
+---
+
+## 📊 Project Status
+
+### Fully Implemented ✅
+- **Backend**: Authentication service, TODO service, WebSocket, Redis caching
+- **Web**: Auth pages, dashboard layout, todos page, profile page
+- **Mobile**: Complete auth flow, todo management, profile screen
+- **Shared**: Types, validation schemas, constants, utilities
+
+### Ready for Implementation 🚧
+- 9 backend service placeholders with corresponding web/mobile pages
+- Additional features: notifications, file uploads, search, analytics
+
+### Documentation 📚
+- ✅ Advanced authentication guide
+- ✅ Service creation tutorial
+- ✅ Deployment guide
+- ✅ Architecture documentation
+- ✅ Project structure guide
+
+---
 
 ## 📁 Project Structure
 
 ```
-nexus-monorepo/
-├── backend/              # Node.js/Express API
+fullstack-master-repo/
+├── backend/                    # Node.js/Express API
 │   ├── src/
-│   │   ├── common/       # Shared utilities (db, services)
-│   │   ├── config/       # Configuration files
-│   │   ├── middleware/   # Express middleware
-│   │   └── services/     # Business logic (auth, todos, etc.)
-│   ├── __tests__/        # Test files
-│   ├── server.ts         # Entry point
-│   ├── app.ts            # Express app setup
+│   │   ├── common/             # Shared utilities
+│   │   │   ├── db/             # Database connection
+│   │   │   ├── errors/         # Custom error classes
+│   │   │   ├── services/       # Common services (email, redis, websocket)
+│   │   │   └── utils/          # Helper functions
+│   │   ├── config/             # Configuration
+│   │   │   ├── index.ts        # Environment config
+│   │   │   └── swagger.ts      # API documentation config
+│   │   ├── middleware/         # Express middleware
+│   │   │   ├── auth.middleware.ts
+│   │   │   ├── error.middleware.ts
+│   │   │   └── validation.middleware.ts
+│   │   └── services/           # Business logic by service
+│   │       ├── auth/           # ✅ Authentication (IMPLEMENTED)
+│   │       ├── todo/           # ✅ TODO CRUD (IMPLEMENTED)
+│   │       ├── aiqa/           # 🚧 Placeholder
+│   │       ├── chat/           # 🚧 Placeholder
+│   │       ├── delivery/       # 🚧 Placeholder
+│   │       ├── expense/        # 🚧 Placeholder
+│   │       ├── notes/          # 🚧 Placeholder
+│   │       ├── shop/           # 🚧 Placeholder
+│   │       ├── social/         # 🚧 Placeholder
+│   │       ├── urlshort/       # 🚧 Placeholder
+│   │       └── weather/        # 🚧 Placeholder
+│   ├── __tests__/              # Test files
+│   ├── app.ts                  # Express app setup
+│   ├── server.ts               # Server entry point
 │   └── package.json
-├── shared/               # Shared types & validation
+│
+├── shared/                     # Shared types & validation
 │   ├── src/
-│   │   ├── types/        # TypeScript interfaces
-│   │   ├── validation/   # Zod schemas
-│   │   ├── constants/    # Shared constants
-│   │   └── utils/        # Helper functions
+│   │   ├── types/              # TypeScript interfaces
+│   │   ├── validation/         # Zod schemas
+│   │   ├── constants/          # Shared constants
+│   │   └── utils/              # Helper functions
 │   └── package.json
-├── web/                  # Next.js application
-│   ├── app/              # App router pages
-│   ├── public/           # Static assets
+│
+├── web/                        # Next.js application
+│   ├── app/
+│   │   ├── (auth)/             # Auth pages (login, register, verify, reset)
+│   │   ├── (dashboard)/        # Dashboard with sidebar
+│   │   │   ├── todos/          # ✅ TODO management (IMPLEMENTED)
+│   │   │   ├── profile/        # ✅ User profile (IMPLEMENTED)
+│   │   │   ├── aiqa/           # 🚧 Placeholder page
+│   │   │   ├── chat/           # 🚧 Placeholder page
+│   │   │   ├── delivery/       # 🚧 Placeholder page
+│   │   │   ├── expense/        # 🚧 Placeholder page
+│   │   │   ├── notes/          # 🚧 Placeholder page
+│   │   │   ├── shop/           # 🚧 Placeholder page
+│   │   │   ├── social/         # 🚧 Placeholder page
+│   │   │   ├── urlshort/       # 🚧 Placeholder page
+│   │   │   └── weather/        # 🚧 Placeholder page
+│   │   ├── layout.tsx          # Root layout
+│   │   └── providers.tsx       # React Query & theme providers
+│   ├── components/             # Reusable components
+│   ├── lib/                    # Utilities and API client
+│   ├── public/                 # Static assets
 │   └── package.json
-├── mobile/               # React Native (Expo) app
+│
+├── mobile/                     # React Native (Expo) app
+│   ├── app/                    # Expo Router screens
+│   │   ├── (auth)/             # Auth screens
+│   │   ├── (tabs)/             # Tab navigation
+│   │   └── _layout.tsx         # Root layout
 │   ├── src/
-│   │   ├── api/          # API client
-│   │   ├── components/   # Reusable components
-│   │   ├── navigation/   # Navigation setup
-│   │   ├── screens/      # Screen components
-│   │   ├── store/        # Zustand stores
-│   │   ├── types/        # TypeScript types
-│   │   └── utils/        # Helper functions
-│   ├── index.ts          # Entry point
+│   │   ├── api/                # API client
+│   │   ├── components/         # Reusable components
+│   │   ├── hooks/              # Custom hooks
+│   │   ├── store/              # Zustand stores
+│   │   ├── types/              # TypeScript types
+│   │   └── utils/              # Helper functions
 │   └── package.json
-└── docs/                 # Documentation
-    ├── ADVANCED_AUTH.md
-    ├── CREATING_NEW_SERVICE.md
-    └── DEPLOYMENT.md
+│
+└── docs/                       # Documentation
+    ├── ADVANCED_AUTH.md        # Authentication guide
+    ├── ARCHITECTURE.md         # System architecture
+    ├── CREATING_NEW_SERVICE.md # Service creation tutorial
+    ├── DEPLOYMENT.md           # Deployment guide
+    ├── DEVELOPMENT_GUIDE.md    # Developer workflow
+    └── PROJECT_STRUCTURE.md    # Detailed structure guide
 ```
+
+> For detailed structure documentation, see [PROJECT_STRUCTURE.md](./docs/PROJECT_STRUCTURE.md)
+
+---
 
 ## 🏃 Quick Start
 
 ### Prerequisites
-- Node.js 18+
-- MongoDB (local or Atlas)
-- Redis (optional, for caching)
-- Yarn (recommended) or npm
-- For mobile: Expo Go app on your phone or Android/iOS emulator
+
+- **Node.js** 18+ ([Download](https://nodejs.org/))
+- **Yarn** 1.22+ (recommended) or npm
+- **MongoDB** - Local installation or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) (free tier)
+- **Redis** - [Upstash Redis](https://upstash.com/redis) (free tier) or local installation
+- **For Mobile**: [Expo Go](https://expo.dev/client) app on your phone or Android/iOS emulator
 
 ### Installation
 
-This repository is configured so that **each project maintains its own `node_modules`** folder instead of using Yarn workspaces. This ensures proper dependency isolation, especially important for React Native/Expo.
+This monorepo uses **independent `node_modules`** for each package (not Yarn workspaces) to ensure proper dependency isolation, especially important for React Native/Expo.
 
 #### Option 1: Automated Setup (Recommended)
 
@@ -104,13 +241,14 @@ This repository is configured so that **each project maintains its own `node_mod
 git clone <your-repo-url>
 cd fullstack-master-repo
 
-# Run the setup script
+# Run the automated setup script
+chmod +x setup.sh
 ./setup.sh
 ```
 
 The setup script will:
-1. Clean all existing `node_modules`
-2. Install dependencies for each project (shared, backend, web, mobile)
+1. Clean all existing `node_modules` directories
+2. Install dependencies for each package (shared, backend, web, mobile)
 3. Build the shared package
 4. Verify all installations
 
@@ -121,7 +259,7 @@ The setup script will:
 git clone <your-repo-url>
 cd fullstack-master-repo
 
-# Install all projects at once
+# Install all packages at once
 yarn install:all
 
 # Or install individually:
@@ -131,79 +269,76 @@ cd web && yarn install && cd ..
 cd mobile && yarn install && cd ..
 ```
 
-> **📖 For detailed installation instructions, troubleshooting, and best practices, see [INSTALLATION_GUIDE.md](./INSTALLATION_GUIDE.md)**
+### Running the Applications
 
-### 2. Backend Setup
-
+#### 1. Start Backend API
 
 ```bash
-# Navigate to backend
 cd backend
-
-# Install dependencies
-npm install
 
 # Copy environment file
 cp .env.example .env
 
 # Update .env with your configuration:
-# - MongoDB URI
+# - MongoDB URI (local or Atlas)
 # - JWT secrets
 # - Email credentials (for OTP)
-# - Redis URL (optional)
+# - Redis URL (Upstash or local)
 
 # Run development server
-npm run dev
+yarn dev
 
 # API will be available at http://localhost:8000
 # Swagger docs at http://localhost:8000/api-docs
 ```
 
-### 3. Web Setup
+#### 2. Start Web Application
 
 ```bash
-# Navigate to web (in a new terminal)
+# In a new terminal
 cd web
 
-# Install dependencies
-npm install
-
 # Run development server
-npm run dev
+yarn dev
 
 # Web app will be available at http://localhost:3000
 ```
 
-### 4. Mobile Setup
+#### 3. Start Mobile Application
 
 ```bash
-# Navigate to mobile (in a new terminal)
+# In a new terminal
 cd mobile
 
-# Install dependencies
-npm install
+# Update API base URL in src/api/config.ts:
+# - iOS simulator: http://localhost:8000
+# - Android emulator: http://10.0.2.2:8000
+# - Physical device: http://YOUR_COMPUTER_IP:8000
 
 # Start Expo
-npm start
+yarn start
 
 # Scan QR code with Expo Go app (iOS/Android)
 # Or press 'a' for Android emulator, 'i' for iOS simulator
 ```
 
-### Run Tests
+#### Run All Applications Concurrently
 
 ```bash
-cd backend
-npm test              # Unit tests
-npm run test:e2e      # E2E tests
-npm run test:watch    # Watch mode
+# From root directory
+yarn dev
+
+# This runs: shared (watch mode), backend, and web concurrently
+# Mobile must be started separately
 ```
+
+---
 
 ## 🔧 Environment Variables
 
-### Backend (.env)
+### Backend (`.env`)
 
-Create a `.env` file in the `backend` directory with the following variables:
+Create a `.env` file in the `backend` directory:
 
 ```env
 # Server
@@ -216,9 +351,9 @@ MONGO_URI=mongodb://localhost:27017/nexus
 # MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/dbname
 
 # JWT
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-min-32-chars
 JWT_EXPIRES_IN=15m
-JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-this-in-production
+JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-this-in-production-min-32-chars
 JWT_REFRESH_EXPIRES_IN=7d
 
 # CORS
@@ -241,7 +376,12 @@ EMAIL_FROM=noreply@nexus.app
 OTP_EXPIRY_MINUTES=10
 ```
 
-### Mobile (src/api/config.ts)
+> **Generate secure JWT secrets:**
+> ```bash
+> node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+> ```
+
+### Mobile (`src/api/config.ts`)
 
 Update the API base URL in `mobile/src/api/config.ts`:
 
@@ -252,60 +392,75 @@ export const API_BASE_URL = 'http://localhost:8000';
 // For Android emulator
 export const API_BASE_URL = 'http://10.0.2.2:8000';
 
-// For physical device (use your computer's IP)
+// For physical device (use your computer's local IP)
 export const API_BASE_URL = 'http://192.168.x.x:8000';
 ```
 
-## 📱 Mobile Application Features
+---
 
-The React Native mobile app includes a complete, production-ready implementation:
+## 📜 Available Scripts
 
-### Authentication Flow
-- **Registration** - Create account with email and password
-- **Email Verification** - 6-digit OTP verification
-- **Login** - Secure JWT-based authentication
-- **Password Reset** - OTP-based password recovery
-- **Persistent Sessions** - Auto-login with MMKV storage
-- **Token Refresh** - Automatic token refresh handling
+### Root Directory
 
-### TODO Management
-- **Create TODOs** - Add tasks with title, description, priority, and due date
-- **View TODOs** - List all tasks with filtering and sorting
-- **Update TODOs** - Edit task details and mark as complete
-- **Delete TODOs** - Remove individual or all tasks
-- **Optimistic Updates** - Instant UI feedback with rollback on error
-- **User-Scoped Data** - Each user sees only their own tasks
+```bash
+yarn install:all      # Install dependencies for all packages
+yarn build:shared     # Build shared package
+yarn build:all        # Build shared, backend, and web
+yarn dev              # Run shared (watch), backend, and web concurrently
+yarn dev:backend      # Run backend only
+yarn dev:web          # Run web only
+yarn dev:mobile       # Run mobile only
+yarn clean            # Remove all node_modules
+yarn test             # Run backend tests
+yarn lint             # Lint backend and web
+```
 
-### Technical Features
-- **Type-Safe API Client** - Axios with TypeScript interfaces
-- **Form Validation** - React Hook Form + Zod schemas
-- **State Management** - Zustand stores with MMKV persistence
-- **Navigation** - Stack and bottom tab navigation
-- **Error Handling** - User-friendly error messages
-- **Loading States** - Proper loading indicators throughout
+### Backend
 
-### Screens
-- Login Screen
-- Register Screen
-- Email Verification Screen
-- Forgot Password Screen
-- Reset Password Screen
-- Home Screen (TODO list)
-- Profile Screen
+```bash
+yarn dev              # Start development server with hot reload
+yarn build            # Build TypeScript to JavaScript
+yarn start            # Start production server
+yarn test             # Run unit tests with coverage
+yarn test:watch       # Run tests in watch mode
+yarn test:e2e         # Run E2E tests
+```
 
-## �📚 Documentation
+### Web
 
-- [Backend Setup](./backend/README.md)
-- [Advanced Authentication](./docs/ADVANCED_AUTH.md)
-- [Creating New Service](./docs/CREATING_NEW_SERVICE.md)
-- [Deployment Guide](./docs/DEPLOYMENT.md)
-- [API Documentation](http://localhost:8000/api-docs) (when running)
+```bash
+yarn dev              # Start Next.js development server
+yarn build            # Build for production
+yarn start            # Start production server
+yarn lint             # Run ESLint
+```
+
+### Mobile
+
+```bash
+yarn start            # Start Expo development server
+yarn android          # Run on Android emulator
+yarn ios              # Run on iOS simulator
+yarn web              # Run in web browser
+yarn lint             # Run ESLint
+```
+
+### Shared
+
+```bash
+yarn build            # Build TypeScript to JavaScript
+yarn dev              # Build in watch mode
+yarn clean            # Remove dist directory
+```
+
+---
 
 ## 🔐 Authentication
 
-The monorepo includes a complete, production-ready JWT-based authentication system:
+The monorepo includes a complete, production-ready JWT-based authentication system with email verification.
 
 ### Features
+
 - **User Registration** - Password hashing with bcrypt (10 rounds)
 - **Email Verification** - 6-digit OTP sent via email
 - **Login** - JWT access token (15min) + refresh token (7 days)
@@ -313,8 +468,42 @@ The monorepo includes a complete, production-ready JWT-based authentication syst
 - **Password Reset** - Secure OTP-based flow
 - **Protected Routes** - Authentication middleware
 - **User Profile** - Get and update user information
+- **Logout** - Token invalidation
 
-### API Endpoints
+### Authentication Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant MongoDB
+    participant Redis
+    participant Email
+
+    User->>Frontend: Register
+    Frontend->>Backend: POST /api/auth/register
+    Backend->>MongoDB: Create user
+    Backend->>Redis: Store OTP
+    Backend->>Email: Send OTP
+    Backend->>Frontend: Access + Refresh tokens
+    Frontend->>User: Check email for OTP
+
+    User->>Frontend: Enter OTP
+    Frontend->>Backend: POST /api/auth/verify-email
+    Backend->>Redis: Verify OTP
+    Backend->>MongoDB: Mark email verified
+    Backend->>Frontend: Success
+    Frontend->>User: Email verified
+```
+
+> For detailed authentication documentation, see [ADVANCED_AUTH.md](./docs/ADVANCED_AUTH.md)
+
+---
+
+## 📝 API Endpoints
+
+### Authentication
 
 ```
 POST   /api/auth/register              # Register new user
@@ -329,75 +518,36 @@ PUT    /api/auth/me                    # Update user profile (protected)
 POST   /api/auth/logout                # Logout user (protected)
 ```
 
-### Example Usage
-
-```bash
-# Register
-curl -X POST http://localhost:8000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email":"user@example.com","password":"Test1234","name":"Test User"}'
-
-# Verify Email
-curl -X POST http://localhost:8000/api/auth/verify-email \
-  -H "Content-Type: application/json" \
-  -d '{"email":"user@example.com","otp":"123456"}'
-
-# Login
-curl -X POST http://localhost:8000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"user@example.com","password":"Test1234"}'
-curl -X GET http://localhost:8000/api/auth/me \
-  -H "Authorization: Bearer YOUR_TOKEN_HERE"
-```
-
-## 📝 TODO Service Example
-
-The boilerplate includes a complete TODO service as a reference implementation:
-
-- CRUD operations (Create, Read, Update, Delete)
-- User-scoped data (each user sees only their TODOs)
-- Pagination and filtering
-- Priority levels and due dates
-- Full test coverage
-
-### API Endpoints
+### TODOs
 
 ```
-POST   /api/todos          # Create TODO
-GET    /api/todos          # Get all TODOs (paginated)
-GET    /api/todos/:id      # Get TODO by ID
-PUT    /api/todos/:id      # Update TODO
-DELETE /api/todos/:id      # Delete TODO
-DELETE /api/todos          # Delete all TODOs
+POST   /api/todos          # Create TODO (protected)
+GET    /api/todos          # Get all TODOs with pagination (protected)
+GET    /api/todos/:id      # Get TODO by ID (protected)
+PUT    /api/todos/:id      # Update TODO (protected)
+DELETE /api/todos/:id      # Delete TODO (protected)
+DELETE /api/todos          # Delete all TODOs (protected)
 ```
 
-## 🧪 Testing
+### API Documentation
 
-```bash
-# Run all tests with coverage
-npm test
+Interactive API documentation is available at:
+- **Swagger UI**: `http://localhost:8000/api-docs`
+- **OpenAPI JSON**: `http://localhost:8000/api-docs.json`
 
-# Run tests in watch mode
-npm run test:watch
+---
 
-# Run E2E tests
-npm run test:e2e
-```
+## 📚 Documentation
 
-Test coverage includes:
-- Authentication flow (register, login, protected routes)
-- TODO CRUD operations
-- Validation and error handling
-- User-scoped data access
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - System architecture and design patterns
+- **[PROJECT_STRUCTURE.md](./docs/PROJECT_STRUCTURE.md)** - Detailed project structure guide
+- **[ADVANCED_AUTH.md](./docs/ADVANCED_AUTH.md)** - Authentication features and flows
+- **[CREATING_NEW_SERVICE.md](./docs/CREATING_NEW_SERVICE.md)** - Tutorial for creating new services
+- **[DEPLOYMENT.md](./docs/DEPLOYMENT.md)** - Deployment guide for all platforms
+- **[DEVELOPMENT_GUIDE.md](./docs/DEVELOPMENT_GUIDE.md)** - Developer workflow and best practices
+- **[Backend README](./backend/README.md)** - Backend-specific documentation
 
-## 🚢 Deployment
-
-See [Deployment Guide](./docs/DEPLOYMENT.md) for detailed instructions on deploying to:
-- Render
-- Railway
-- Heroku
-- Docker
-- VPS (DigitalOcean, AWS EC2)
+---
 
 ## 🛠️ Tech Stack
 
@@ -405,77 +555,190 @@ See [Deployment Guide](./docs/DEPLOYMENT.md) for detailed instructions on deploy
 - **Runtime**: Node.js 18+
 - **Framework**: Express.js 4.21+
 - **Database**: MongoDB with Mongoose 9.0+
-- **Cache**: Redis with ioredis 5.3+
+- **Cache**: Redis with ioredis 5.3+ (Upstash)
 - **Authentication**: JWT + bcrypt
 - **Email**: Nodemailer 6.9+
 - **WebSocket**: Socket.IO 4.6+
 - **Validation**: Zod 3.22+
 - **Testing**: Jest 29+ + Supertest
 - **Documentation**: Swagger/OpenAPI
-- **Security**: Helmet, CORS, rate limiting
+- **Security**: Helmet, CORS, express-rate-limit
 
 ### Shared
 - **Language**: TypeScript 5.9+
-- **Validation**: Zod
+- **Validation**: Zod 3.22+
 - **Build**: TypeScript Compiler
 
 ### Web
 - **Framework**: Next.js 16
 - **React**: React 19
 - **Styling**: TailwindCSS 4 with PostCSS
+- **UI Components**: Radix UI primitives
+- **State Management**: Zustand 5 + React Query 5
+- **Forms**: React Hook Form 7 + Zod
+- **HTTP Client**: Axios 1.13+
+- **WebSocket**: Socket.IO Client 4.8+
+- **Theme**: next-themes 0.4+
 - **Language**: TypeScript 5+
 - **Linting**: ESLint 9
 
 ### Mobile
 - **Framework**: React Native 0.81 with Expo 54
 - **React**: React 19
-- **Navigation**: React Navigation 7
-- **State**: Zustand 5 with MMKV 4 persistence
+- **Navigation**: Expo Router 6
+- **UI Components**: Tamagui 1.141 + React Native Paper 5
+- **State Management**: Zustand 5 with MMKV 4 persistence
 - **Forms**: React Hook Form 7 + Zod 4
-- **UI**: React Native Paper 5
-- **HTTP**: Axios 1.13+
+- **HTTP Client**: Axios 1.13+
+- **WebSocket**: Socket.IO Client 4.8+
 - **Language**: TypeScript 5.9+
 
-## 📖 Learning Resources
+---
 
-This monorepo demonstrates modern fullstack development practices:
+## 🚢 Deployment
 
-1. **Monorepo Architecture** - Shared code across backend, web, and mobile
-2. **Type Safety** - End-to-end TypeScript with shared types
-3. **Authentication** - Complete JWT-based auth with email verification
-4. **State Management** - Zustand with persistence (MMKV for mobile)
-5. **Validation** - Schema validation with Zod across all platforms
-6. **Testing** - Unit and E2E testing strategies
-7. **API Documentation** - Swagger/OpenAPI best practices
-8. **Error Handling** - Centralized error management
-9. **Path Aliases** - Clean import statements with TypeScript
-10. **Real-time Communication** - WebSocket integration with Socket.IO
-11. **Mobile Development** - React Native with Expo and navigation
-12. **Form Handling** - React Hook Form with Zod validation
+### Backend Deployment
+
+Deploy to:
+- **Render** - Free tier available
+- **Railway** - Easy deployment with CLI
+- **Heroku** - Classic PaaS
+- **Docker** - Containerized deployment
+- **VPS** - DigitalOcean, AWS EC2, etc.
+
+### Web Deployment
+
+Deploy to:
+- **Vercel** - Optimized for Next.js (recommended)
+- **Netlify** - Great for static sites
+- **Railway** - Full-stack deployment
+- **Docker** - Containerized deployment
+
+### Mobile Deployment
+
+Build and deploy with:
+- **EAS Build** - Expo Application Services
+- **App Store** - iOS deployment
+- **Google Play Store** - Android deployment
+
+> For detailed deployment instructions, see [DEPLOYMENT.md](./docs/DEPLOYMENT.md)
+
+---
+
+## 🧪 Testing
+
+### Backend Tests
+
+```bash
+cd backend
+
+# Run all tests with coverage
+yarn test
+
+# Run tests in watch mode
+yarn test:watch
+
+# Run E2E tests
+yarn test:e2e
+```
+
+Test coverage includes:
+- ✅ Authentication flow (register, login, verify, reset)
+- ✅ TODO CRUD operations
+- ✅ Validation and error handling
+- ✅ User-scoped data access
+- ✅ Token refresh and rotation
+
+---
 
 ## 🤝 Contributing
 
-This is a learning-focused monorepo. Contributions welcome:
-- Add new backend services following the TODO example
-- Enhance web and mobile UI/UX
-- Improve documentation
-- Add more tests (backend, web, mobile)
-- Suggest best practices for monorepo management
-- Add new features to any of the three apps
+Contributions are welcome! This is a learning-focused monorepo.
+
+### Ways to Contribute
+
+1. **Implement Placeholder Services** - Choose from 9 placeholder services
+2. **Enhance UI/UX** - Improve web and mobile interfaces
+3. **Add Tests** - Increase test coverage
+4. **Improve Documentation** - Fix typos, add examples
+5. **Add Features** - File uploads, notifications, search, etc.
+6. **Fix Bugs** - Report and fix issues
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests (`yarn test`)
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
+> See [DEVELOPMENT_GUIDE.md](./docs/DEVELOPMENT_GUIDE.md) for detailed workflow and conventions.
+
+---
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+#### MongoDB Connection Failed
+- Verify `MONGO_URI` in `.env`
+- Check MongoDB is running (local) or IP whitelist (Atlas)
+- Ensure network connectivity
+
+#### Redis Connection Failed
+- Verify `REDIS_DATABASE_URI` format: `rediss://` for TLS
+- Check Upstash dashboard for correct credentials
+- For local Redis: ensure it's running (`redis-cli ping`)
+
+#### Mobile App Not Connecting to Backend
+- Check API base URL in `mobile/src/api/config.ts`
+- Use `10.0.2.2` for Android emulator
+- Use your computer's local IP for physical devices
+- Ensure backend is running and accessible
+
+#### Email OTP Not Sending
+- Verify email credentials in `.env`
+- For Gmail: use App Password, not regular password
+- Check spam folder
+- Review backend logs for email errors
+
+#### Shared Package Changes Not Reflecting
+```bash
+cd shared
+yarn build
+# Restart backend/web/mobile dev servers
+```
+
+---
 
 ## 📄 License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
 
 ## 🙏 Acknowledgments
 
 Built with best practices from:
-- Express.js documentation
-- MongoDB best practices
-- TypeScript handbook
-- Jest testing library
-- Swagger/OpenAPI specification
-- Next.js documentation
-- React Native and Expo guides
-- React Navigation documentation
-- Zustand state management patterns
+- [Express.js Documentation](https://expressjs.com/)
+- [MongoDB Best Practices](https://www.mongodb.com/docs/manual/)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Native Documentation](https://reactnative.dev/)
+- [Expo Documentation](https://docs.expo.dev/)
+- [Jest Testing Library](https://jestjs.io/)
+- [Swagger/OpenAPI Specification](https://swagger.io/specification/)
+
+---
+
+## 📞 Support
+
+- **Documentation**: Check the [docs](./docs) directory
+- **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your-repo/discussions)
+
+---
+
+**Happy Coding! 🚀**
