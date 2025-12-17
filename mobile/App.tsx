@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { TamaguiProvider } from '@tamagui/core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import * as SplashScreen from 'expo-splash-screen';
-import * as Font from 'expo-font';
-import tamaguiConfig from './tamagui.config';
-import ErrorBoundary from '@components/ErrorBoundary';
-import AppNavigator from '@navigation/AppNavigator';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { StatusBar } from "expo-status-bar";
+import { TamaguiProvider } from "@tamagui/core";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import * as SplashScreen from "expo-splash-screen";
+import * as Font from "expo-font";
+import tamaguiConfig from "./tamagui.config";
+import ErrorBoundary from "@components/ErrorBoundary";
+import AppNavigator from "@navigation/AppNavigator";
+import { View, Text, Image, StyleSheet } from "react-native";
 
 /**
  * Main App Component
- * 
+ *
  * This is the root component of the application.
  * It sets up all the providers and handles app initialization.
- * 
+ *
  * Providers:
  * - ErrorBoundary: Catches and handles errors
  * - GestureHandlerRootView: Required for react-native-gesture-handler
@@ -50,15 +50,15 @@ function AppContent() {
         // Load fonts
         await Font.loadAsync({
           // JetBrains Mono fonts (matching web)
-          'JetBrainsMono-Regular': require('./assets/fonts/JetBrainsMono-Regular.ttf'),
-          'JetBrainsMono-Bold': require('./assets/fonts/JetBrainsMono-Bold.ttf'),
-          'JetBrainsMono-Medium': require('./assets/fonts/JetBrainsMono-Medium.ttf'),
+          "JetBrainsMono-Regular": require("./assets/fonts/JetBrainsMono-Regular.ttf"),
+          "JetBrainsMono-Bold": require("./assets/fonts/JetBrainsMono-Bold.ttf"),
+          "JetBrainsMono-Medium": require("./assets/fonts/JetBrainsMono-Medium.ttf"),
         });
 
         // Artificially delay for splash screen demo (remove in production)
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (e) {
-        console.warn('Error loading fonts:', e);
+        console.warn("Error loading fonts:", e);
       } finally {
         setAppIsReady(true);
       }
@@ -66,7 +66,7 @@ function AppContent() {
 
     prepare();
   }, []);
-
+  console.log(appIsReady);
   useEffect(() => {
     if (appIsReady) {
       // Hide splash screen when app is ready
@@ -79,7 +79,7 @@ function AppContent() {
     return (
       <View style={styles.splashContainer}>
         <Image
-          source={require('./assets/images/logo.png')}
+          source={require("./assets/images/logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -113,9 +113,9 @@ export default function App() {
 const styles = StyleSheet.create({
   splashContainer: {
     flex: 1,
-    backgroundColor: '#ffffff',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#ffffff",
+    justifyContent: "center",
+    alignItems: "center",
   },
   logo: {
     width: 120,
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   appName: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#2563eb',
+    fontWeight: "bold",
+    color: "#2563eb",
   },
 });
