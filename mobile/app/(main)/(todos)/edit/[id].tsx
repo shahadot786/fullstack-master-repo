@@ -67,8 +67,7 @@ export default function EditTodoScreen() {
                 },
             ]);
         } catch (error: any) {
-            console.error('Update error:', error);
-            Alert.alert('Error', error.response?.data?.message || error.message || 'Failed to update todo');
+            Alert.alert('Error', error.response?.data?.message || 'Failed to update todo');
         }
     };
 

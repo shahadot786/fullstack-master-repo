@@ -20,7 +20,6 @@ export const createTodo = async (
     const todo = await Todo.create({ ...data, userId });
     
     // Emit WebSocket event for real-time update
-    console.log(`📤 [BACKEND] Emitting todo:created event to user ${userId}`);
     emitToUser(userId, "todo:created", { todo });
     
     return todo;
@@ -100,7 +99,6 @@ export const updateTodo = async (
     }
 
     // Emit WebSocket event for real-time update
-    console.log(`📤 [BACKEND] Emitting todo:updated event to user ${userId}`);
     emitToUser(userId, "todo:updated", { todo });
 
     return todo;
@@ -123,7 +121,6 @@ export const deleteTodo = async (
   }
   
   // Emit WebSocket event for real-time update
-  console.log(`📤 [BACKEND] Emitting todo:deleted event to user ${userId}`);
   emitToUser(userId, "todo:deleted", { todoId });
 };
 
@@ -131,7 +128,6 @@ export const deleteAllTodos = async (userId: string) => {
   const result = await Todo.deleteMany({ userId });
   
   // Emit WebSocket event for real-time update
-  console.log(`📤 [BACKEND] Emitting todos:deleted_all event to user ${userId}`);
   emitToUser(userId, "todos:deleted_all", { deletedCount: result.deletedCount });
   
   return result;

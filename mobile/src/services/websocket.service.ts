@@ -18,7 +18,6 @@ export const initializeWebSocket = (token: string): Socket => {
   }
 
   // Create new socket connection
-  console.log("🔌 Initializing WebSocket connection to:", WEBSOCKET_URL);
   socket = io(WEBSOCKET_URL, {
     auth: {
       token,
@@ -32,17 +31,15 @@ export const initializeWebSocket = (token: string): Socket => {
 
   // Connection event handlers
   socket.on("connect", () => {
-    console.log("✅ WebSocket connected to:", WEBSOCKET_URL);
+    // Connected
   });
 
   socket.on("disconnect", (reason) => {
-    console.log("❌ WebSocket disconnected:", reason);
+    // Disconnected
   });
 
   socket.on("connect_error", (error) => {
-    console.error("❌ WebSocket connection error:", error.message);
-    console.error("   Attempted URL:", WEBSOCKET_URL);
-    console.error("   Error details:", error);
+    // Connection error
   });
 
   return socket;

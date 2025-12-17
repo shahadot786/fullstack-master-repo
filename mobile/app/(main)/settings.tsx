@@ -32,7 +32,7 @@ export default function SettingsScreen() {
                         try {
                             await authApi.logout();
                         } catch (error) {
-                            console.error('Logout error:', error);
+                            // Logout error - silently fail
                         } finally {
                             // Clear React Query cache to remove previous user's data
                             queryClient.clear();

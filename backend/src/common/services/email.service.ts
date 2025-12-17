@@ -15,11 +15,9 @@ export const initializeEmailService = () => {
     });
 
     // Verify connection
-    transporter.verify((error, success) => {
+    transporter.verify((error) => {
         if (error) {
-            console.error("❌ Email service error:", error);
-        } else {
-            console.log("✅ Email service is ready");
+            // Email service error - silently fail
         }
     });
 };
@@ -46,10 +44,8 @@ export const sendEmail = async (options: SendEmailOptions): Promise<void> => {
 
     try {
         await transporter.sendMail(mailOptions);
-        console.log(`📧 Email sent to ${options.to}`);
     } catch (error) {
-        console.error("Email send error:", error);
-        throw new Error("Failed to send email");
+        throw error;
     }
 };
 

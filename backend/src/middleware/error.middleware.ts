@@ -50,7 +50,6 @@ export const errorHandler = (
     }
 
     // Default error
-    console.error("Error:", err);
     return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: "Internal server error",

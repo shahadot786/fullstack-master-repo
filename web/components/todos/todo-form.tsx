@@ -102,7 +102,7 @@ export function TodoForm({ open, onClose, todo }: TodoFormProps) {
       form.reset();
       onClose();
     } catch (error) {
-      console.error("Error saving todo:", error);
+      
     }
   };
 

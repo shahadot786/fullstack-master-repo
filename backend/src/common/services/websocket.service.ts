@@ -36,14 +36,13 @@ export const initializeWebSocket = (server: HTTPServer): Server => {
 
     io.on("connection", (socket: Socket) => {
         const userId = socket.data.user.id;
-        console.log(`✅ User connected: ${userId}`);
 
         // Join user-specific room
         socket.join(`user:${userId}`);
 
         // Handle disconnection
         socket.on("disconnect", () => {
-            console.log(`❌ User disconnected: ${userId}`);
+            // User disconnected
         });
 
         // Example: Handle custom events
@@ -52,7 +51,6 @@ export const initializeWebSocket = (server: HTTPServer): Server => {
         });
     });
 
-    console.log("✅ WebSocket server initialized");
     return io;
 };
 

@@ -27,15 +27,15 @@ export const initializeWebSocket = (token: string): Socket => {
 
   // Connection event handlers
   socket.on("connect", () => {
-    console.log("✅ WebSocket connected");
+    // Connected
   });
 
   socket.on("disconnect", (reason) => {
-    console.log("❌ WebSocket disconnected:", reason);
+    // Disconnected
   });
 
   socket.on("connect_error", (error) => {
-    console.error("❌ WebSocket connection error:", error.message);
+    // Connection error
   });
 
   return socket;
