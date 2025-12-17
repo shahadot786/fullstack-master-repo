@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'expo-router';
-import { FlatList, RefreshControl, Pressable } from 'react-native';
+import { FlatList, Pressable } from 'react-native';
 import { YStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { TodoCard } from '@/components/TodoCard';
@@ -9,15 +9,13 @@ import { ScreenLayout } from '@/components/common/ScreenLayout';
 
 export default function ActiveTodosScreen() {
     const router = useRouter();
-    const { data, isLoading, refetch, isFetching } = useTodos({ completed: false });
+    const { data, isLoading } = useTodos({ completed: false });
 
     const handleCreate = () => {
         router.push('/(main)/(todos)/create' as any);
     };
 
-    const handleRefresh = async () => {
-        await refetch();
-    };
+
 
     return (
         <ScreenLayout>
@@ -26,9 +24,7 @@ export default function ActiveTodosScreen() {
                 renderItem={({ item }) => <TodoCard todo={item} />}
                 keyExtractor={(item) => item._id}
                 contentContainerStyle={{ padding: 16 }}
-                refreshControl={
-                    <RefreshControl refreshing={isFetching} onRefresh={handleRefresh} />
-                }
+
                 ListEmptyComponent={
                     <YStack alignItems="center" justifyContent="center" paddingVertical="$10">
                         <Ionicons name="radio-button-off-outline" size={64} color="#ccc" />

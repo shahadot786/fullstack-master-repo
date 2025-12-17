@@ -29,7 +29,7 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
                 style={{ flex: 1 }} 
                 edges={['top']}
             >
-                <YStack flex={1} paddingTop={showHeader ? "$12" : 0}>
+                <YStack flex={1} paddingTop={showHeader ? "$8" : 0}>
                     {children}
                 </YStack>
             </SafeAreaView>
