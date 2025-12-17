@@ -19,18 +19,11 @@ export default function MainLayout() {
     return (
         <Drawer
             screenOptions={{
-                headerShown: true,
+                headerShown: false,
                 drawerActiveTintColor: '#3b82f6',
                 drawerInactiveTintColor: drawerInactiveTintColor,
-                headerStyle: {
-                    backgroundColor: backgroundColor,
-                },
-                headerTintColor: headerTintColor,
                 drawerStyle: {
                     backgroundColor: drawerBackgroundColor,
-                },
-                drawerLabelStyle: {
-                    marginLeft: -16,
                 },
             }}
             drawerContent={(props) => (
@@ -38,21 +31,20 @@ export default function MainLayout() {
                     <DrawerContentScrollView {...props}>
                         <View
                             style={{
-                                padding: 20,
+                                paddingBottom: 10,
+                                paddingHorizontal: 20,
                                 borderBottomWidth: 1,
                                 borderBottomColor: isDark ? '#262626' : '#e5e5e5',
-                                marginBottom: 10,
-                                flexDirection: 'row',
                                 alignItems: 'center',
+                                justifyContent: 'center',
+                                marginBottom: 10,
                             }}
                         >
                             <Image
-                                source={require('../../assets/images/icon.png')}
-                                style={{ width: 40, height: 40, marginRight: 10 }}
+                                source={require('../../assets/images/logo.png')}
+                                style={{ width: 80, height: 80 }}
+                                resizeMode="contain"
                             />
-                            <Text fontSize="$6" fontWeight="700" color={headerTintColor}>
-                                My App
-                            </Text>
                         </View>
                         <DrawerItemList {...props} />
                     </DrawerContentScrollView>
@@ -72,7 +64,7 @@ export default function MainLayout() {
                         </YStack>
                     ),
                     drawerIcon: ({ color, size }) => (
-                        <Ionicons name="checkmark-circle-outline" size={size} color={color} />
+                        <Ionicons name="checkbox" size={size} color={color} />
                     ),
                 }}
             />
@@ -82,7 +74,7 @@ export default function MainLayout() {
                     drawerLabel: 'Notes',
                     title: 'Notes',
                     drawerIcon: ({ color, size }) => (
-                        <Ionicons name="document-text-outline" size={size} color={color} />
+                        <Ionicons name="document-text" size={size} color={color} />
                     ),
                 }}
             />
@@ -92,7 +84,7 @@ export default function MainLayout() {
                     drawerLabel: 'Settings',
                     title: 'Settings',
                     drawerIcon: ({ color, size }) => (
-                        <Ionicons name="settings-outline" size={size} color={color} />
+                        <Ionicons name="settings" size={size} color={color} />
                     ),
                 }}
             />

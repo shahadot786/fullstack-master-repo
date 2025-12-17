@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter, Href } from 'expo-router';
-import { ScrollView, Alert, Image } from 'react-native';
+import { ScrollView, Alert } from 'react-native';
 import { YStack, XStack, Text, H2, Switch } from 'tamagui';
 import { Card } from '@/components/common/Card';
 import { Button } from '@/components/common/Button';
@@ -43,14 +43,7 @@ export default function SettingsScreen() {
     return (
         <ScrollView style={{ flex: 1 }}>
             <YStack padding="$4" gap="$4" backgroundColor="$background">
-                <XStack alignItems="center" gap="$3" marginBottom="$2">
-                    <Image
-                        source={require('../../assets/images/logo.png')}
-                        style={{ width: 48, height: 48 }}
-                        resizeMode="contain"
-                    />
-                    <H2 color="$color">Settings</H2>
-                </XStack>
+                <H2 color="$color">Settings</H2>
 
                 {/* User Profile */}
                 <Card>
