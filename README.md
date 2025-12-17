@@ -13,6 +13,51 @@ A production-ready, type-safe fullstack monorepo template featuring **Backend (N
 
 ---
 
+## 📸 Screenshots
+
+### Web Application
+
+<details>
+<summary>Click to view screenshots</summary>
+
+#### Registration Page
+![Registration](./docs/images/web-register.png)
+
+#### Todo Dashboard (Dark Mode)
+![Todo Dashboard](./docs/images/web-todo-dashboard.png)
+
+#### Create Todo Dialog
+![Create Todo](./docs/images/web-todo-create.png)
+
+</details>
+
+### Mobile Application
+
+<details>
+<summary>Click to view screenshots</summary>
+
+#### Login Screen
+![Login](./docs/images/mobile-login.png)
+
+#### Navigation Drawer
+![Navigation Drawer](./docs/images/mobile-drawer.png)
+
+#### Todo List (Light Mode)
+![Todo List Light](./docs/images/mobile-todos-light.png)
+
+#### Todo List (Dark Mode)
+![Todo List Dark](./docs/images/mobile-todos-dark.png)
+
+#### Create Todo Modal
+![Create Todo](./docs/images/mobile-create-todo.png)
+
+#### Settings & Profile
+![Settings](./docs/images/mobile-settings.png)
+
+</details>
+
+---
+
 ## 📋 Table of Contents
 
 - [Features](#-features)
