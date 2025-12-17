@@ -6,9 +6,10 @@ export const createTodo = async (
   userId: string,
   data: Partial<ITodo>
 ): Promise<ITodo> => {
-  // Check for duplicate title
+  // Check for duplicate title (case-insensitive via collation)
   if (data.title) {
-    const existingTodo = await Todo.findOne({ userId, title: data.title });
+    const existingTodo = await Todo.findOne({ userId, title: data.title })
+      .collation({ locale: 'en', strength: 2 });
     if (existingTodo) {
       throw new ConflictError("A todo with this title already exists");
     }
@@ -70,9 +71,10 @@ export const updateTodo = async (
   todoId: string,
   data: Partial<ITodo>
 ): Promise<ITodo> => {
-  // Check for duplicate title if title is being updated
+  // Check for duplicate title if title is being updated (case-insensitive via collation)
   if (data.title) {
-    const existingTodo = await Todo.findOne({ userId, title: data.title });
+    const existingTodo = await Todo.findOne({ userId, title: data.title })
+      .collation({ locale: 'en', strength: 2 });
     // Allow update if the existing todo is the same one being updated
     if (existingTodo && existingTodo._id.toString() !== todoId) {
       throw new ConflictError("A todo with this title already exists");
