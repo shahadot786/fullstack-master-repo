@@ -40,11 +40,19 @@ export default function EditTodoScreen() {
 
     const onSubmit = async (data: UpdateTodoFormData) => {
         try {
-            await updateMutation.mutateAsync({ id, data });
+            // Create payload with only the fields that have values
+            const payload: any = {};
+            
+            if (data.title) payload.title = data.title;
+            if (data.description !== undefined) payload.description = data.description;
+            if (data.priority) payload.priority = data.priority;
+
+            await updateMutation.mutateAsync({ id, data: payload });
             Alert.alert('Success', 'Todo updated successfully');
             router.back();
         } catch (error: any) {
-            Alert.alert('Error', error.message || 'Failed to update todo');
+            console.error('Update error:', error);
+            Alert.alert('Error', error.response?.data?.message || error.message || 'Failed to update todo');
         }
     };
 

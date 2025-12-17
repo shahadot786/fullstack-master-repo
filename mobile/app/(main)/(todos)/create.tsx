@@ -39,7 +39,22 @@ export default function CreateTodoScreen() {
 
     const onSubmit = async (data: CreateTodoFormData) => {
         try {
-            await createMutation.mutateAsync(data);
+            // Create payload with only defined values
+            const payload: any = {
+                title: data.title,
+                priority: data.priority,
+            };
+            
+            // Only add optional fields if they have values
+            if (data.description && data.description.trim()) {
+                payload.description = data.description.trim();
+            }
+            
+            if (data.dueDate) {
+                payload.dueDate = data.dueDate;
+            }
+
+            await createMutation.mutateAsync(payload);
             Alert.alert('Success', 'Todo created successfully!', [
                 {
                     text: 'OK',
@@ -47,8 +62,8 @@ export default function CreateTodoScreen() {
                 },
             ]);
         } catch (error: any) {
-            console.log(JSON.stringify(error,null,4),"error");
-            Alert.alert('Error', error.message || 'Failed to create todo');
+            console.error('Create error:', error);
+            Alert.alert('Error', error.response?.data?.message || error.message || 'Failed to create todo');
         }
     };
 

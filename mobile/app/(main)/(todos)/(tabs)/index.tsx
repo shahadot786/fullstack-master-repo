@@ -5,27 +5,29 @@ import { YStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { TodoCard } from '@/components/TodoCard';
 import { useTodos } from '@/hooks/useTodos';
-import { HeaderIcons } from '@/components/common/HeaderIcons';
+import { ScreenLayout } from '@/components/common/ScreenLayout';
 
 export default function AllTodosScreen() {
     const router = useRouter();
-    const { data, isLoading, refetch } = useTodos();
+    const { data, isLoading, refetch, isFetching } = useTodos();
 
     const handleCreate = () => {
         router.push('/(main)/(todos)/create' as any);
     };
 
-    return (
-        <YStack flex={1} backgroundColor="$background">
-            <HeaderIcons />
+    const handleRefresh = async () => {
+        await refetch();
+    };
 
+    return (
+        <ScreenLayout>
             <FlatList
-                data={data?.todos || []}
+                data={data?.data || []}
                 renderItem={({ item }) => <TodoCard todo={item} />}
                 keyExtractor={(item) => item._id}
-                contentContainerStyle={{ padding: 16, paddingTop: 64 }}
+                contentContainerStyle={{ padding: 16 }}
                 refreshControl={
-                    <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+                    <RefreshControl refreshing={isFetching} onRefresh={handleRefresh} />
                 }
                 ListEmptyComponent={
                     <YStack alignItems="center" justifyContent="center" paddingVertical="$10">
@@ -62,6 +64,6 @@ export default function AllTodosScreen() {
             >
                 <Ionicons name="add" size={32} color="white" />
             </Pressable>
-        </YStack>
+        </ScreenLayout>
     );
 }

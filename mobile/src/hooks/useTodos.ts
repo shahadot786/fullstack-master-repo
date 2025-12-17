@@ -33,7 +33,7 @@ export const useTodos = (params?: GetTodosParams) => {
             setLoading(true);
             try {
                 const response = await todosApi.getTodos(params);
-                setTodos(response.todos);
+                setTodos(response.data);
                 setError(null);
                 return response;
             } catch (error: any) {
@@ -62,12 +62,11 @@ export const useTodo = (id: string) => {
  */
 export const useCreateTodo = () => {
     const queryClient = useQueryClient();
-    const addTodo = useTodoStore((state) => state.addTodo);
 
     return useMutation({
         mutationFn: (data: CreateTodoRequest) => todosApi.createTodo(data),
-        onSuccess: (newTodo) => {
-            addTodo(newTodo);
+        onSuccess: () => {
+            // Invalidate and refetch todos
             queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TODOS] });
         },
     });
@@ -78,15 +77,13 @@ export const useCreateTodo = () => {
  */
 export const useUpdateTodo = () => {
     const queryClient = useQueryClient();
-    const updateTodo = useTodoStore((state) => state.updateTodo);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateTodoRequest }) =>
             todosApi.updateTodo(id, data),
-        onSuccess: (updatedTodo) => {
-            updateTodo(updatedTodo._id, updatedTodo);
+        onSuccess: () => {
+            // Invalidate and refetch todos
             queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TODOS] });
-            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODO(updatedTodo._id) });
         },
     });
 };
@@ -96,12 +93,11 @@ export const useUpdateTodo = () => {
  */
 export const useDeleteTodo = () => {
     const queryClient = useQueryClient();
-    const deleteTodo = useTodoStore((state) => state.deleteTodo);
 
     return useMutation({
         mutationFn: (id: string) => todosApi.deleteTodo(id),
-        onSuccess: (_, id) => {
-            deleteTodo(id);
+        onSuccess: () => {
+            // Invalidate and refetch todos
             queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TODOS] });
         },
     });
@@ -112,13 +108,12 @@ export const useDeleteTodo = () => {
  */
 export const useToggleTodo = () => {
     const queryClient = useQueryClient();
-    const updateTodo = useTodoStore((state) => state.updateTodo);
 
     return useMutation({
         mutationFn: ({ id, completed }: { id: string; completed: boolean }) =>
             todosApi.toggleTodo(id, completed),
-        onSuccess: (updatedTodo) => {
-            updateTodo(updatedTodo._id, updatedTodo);
+        onSuccess: () => {
+            // Invalidate and refetch todos
             queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TODOS] });
         },
     });

@@ -1,12 +1,11 @@
 import React from 'react';
 import { YStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
-import { HeaderIcons } from '@/components/common/HeaderIcons';
+import { ScreenLayout } from '@/components/common/ScreenLayout';
 
 export default function WeatherScreen() {
     return (
-        <YStack flex={1} backgroundColor="$background">
-            <HeaderIcons />
+        <ScreenLayout>
 
             <YStack flex={1} alignItems="center" justifyContent="center" paddingTop={64} gap="$3">
                 <YStack
@@ -26,6 +25,6 @@ export default function WeatherScreen() {
                     Weather forecast features coming soon
                 </Text>
             </YStack>
-        </YStack>
+        </ScreenLayout>
     );
 }

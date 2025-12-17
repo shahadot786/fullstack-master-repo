@@ -21,8 +21,11 @@ export const todosApi = {
      */
     getTodos: async (params?: GetTodosParams): Promise<TodosResponse> => {
         const response = await apiClient.get(API_ENDPOINTS.TODOS.BASE, { params });
-        console.log(JSON.stringify(response.data.data,null,4),"todos");
-        return response.data.data;
+        // Backend returns: { success: true, data: [...], pagination: {...} }
+        return {
+            data: response.data.data,
+            pagination: response.data.pagination,
+        };
     },
 
     /**

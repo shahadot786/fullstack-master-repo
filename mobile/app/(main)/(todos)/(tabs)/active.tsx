@@ -5,51 +5,29 @@ import { YStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { TodoCard } from '@/components/TodoCard';
 import { useTodos } from '@/hooks/useTodos';
-import { useNavigation } from '@react-navigation/native';
-import { DrawerActions } from '@react-navigation/native';
-import { useTheme } from '@/hooks/useTheme';
+import { ScreenLayout } from '@/components/common/ScreenLayout';
 
 export default function ActiveTodosScreen() {
     const router = useRouter();
-    const navigation = useNavigation();
-    const { data, isLoading, refetch } = useTodos({ completed: false });
-    const { isDark } = useTheme();
+    const { data, isLoading, refetch, isFetching } = useTodos({ completed: false });
 
     const handleCreate = () => {
         router.push('/(main)/(todos)/create' as any);
     };
 
-    const handleOpenDrawer = () => {
-        navigation.dispatch(DrawerActions.openDrawer());
+    const handleRefresh = async () => {
+        await refetch();
     };
 
     return (
-        <YStack flex={1} backgroundColor="$background">
-            {/* Menu Icon */}
-            <Pressable
-                onPress={handleOpenDrawer}
-                style={{
-                    position: 'absolute',
-                    top: 16,
-                    left: 16,
-                    zIndex: 10,
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    backgroundColor: isDark ? '#1a1a1a' : '#f5f5f5',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-            >
-                <Ionicons name="menu" size={24} color={isDark ? '#fafafa' : '#171717'} />
-            </Pressable>
+        <ScreenLayout>
             <FlatList
-                data={data?.todos || []}
+                data={data?.data || []}
                 renderItem={({ item }) => <TodoCard todo={item} />}
                 keyExtractor={(item) => item._id}
-                contentContainerStyle={{ padding: 16, paddingTop: 64 }}
+                contentContainerStyle={{ padding: 16 }}
                 refreshControl={
-                    <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+                    <RefreshControl refreshing={isFetching} onRefresh={handleRefresh} />
                 }
                 ListEmptyComponent={
                     <YStack alignItems="center" justifyContent="center" paddingVertical="$10">
@@ -82,6 +60,6 @@ export default function ActiveTodosScreen() {
             >
                 <Ionicons name="add" size={32} color="white" />
             </Pressable>
-        </YStack>
+        </ScreenLayout>
     );
 }

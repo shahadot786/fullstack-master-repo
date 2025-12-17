@@ -2,23 +2,24 @@ import React from 'react';
 import { Pressable } from 'react-native';
 import { XStack } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
- * Header Icons Component
+ * HeaderIcons Component
  * 
- * Displays drawer menu icon on the left and settings icon on the right.
- * Automatically handles safe area insets for proper positioning on iOS devices.
+ * Displays menu and settings icons in the header
+ * Used across all main screens for consistent navigation
  */
-export const HeaderIcons = () => {
-    const router = useRouter();
+
+export const HeaderIcons: React.FC = () => {
     const navigation = useNavigation();
-    const insets = useSafeAreaInsets();
+    const router = useRouter();
     const { isDark } = useTheme();
+    const insets = useSafeAreaInsets();
 
     const handleOpenDrawer = () => {
         navigation.dispatch(DrawerActions.openDrawer());
@@ -28,32 +29,43 @@ export const HeaderIcons = () => {
         router.push('/(main)/settings' as any);
     };
 
-    const iconButtonStyle = {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: isDark ? '#1a1a1a' : '#f5f5f5',
-        justifyContent: 'center' as const,
-        alignItems: 'center' as const,
-    };
-
     return (
         <XStack
             position="absolute"
-            top={insets.top + 16}
-            left={16}
-            right={16}
-            zIndex={10}
+            top={insets.top + 8}
+            left={0}
+            right={0}
+            paddingHorizontal="$4"
             justifyContent="space-between"
+            alignItems="center"
+            zIndex={10}
         >
-            {/* Menu Icon */}
-            <Pressable onPress={handleOpenDrawer} style={iconButtonStyle}>
+            <Pressable
+                onPress={handleOpenDrawer}
+                style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: isDark ? '#1a1a1a' : '#f5f5f5',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
                 <Ionicons name="menu" size={24} color={isDark ? '#fafafa' : '#171717'} />
             </Pressable>
 
-            {/* Settings Icon */}
-            <Pressable onPress={handleOpenSettings} style={iconButtonStyle}>
-                <Ionicons name="settings-outline" size={24} color={isDark ? '#fafafa' : '#171717'} />
+            <Pressable
+                onPress={handleOpenSettings}
+                style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: isDark ? '#1a1a1a' : '#f5f5f5',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <Ionicons name="settings-outline" size={22} color={isDark ? '#fafafa' : '#171717'} />
             </Pressable>
         </XStack>
     );

@@ -104,11 +104,15 @@ export interface GetTodosParams {
 }
 
 export interface TodosResponse {
-    todos: Todo[];
-    total: number;
-    page: number;
-    limit: number;
+    data: Todo[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
 }
+
 
 // ============================================================================
 // API Response Types

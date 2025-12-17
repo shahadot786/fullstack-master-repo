@@ -4,11 +4,20 @@ import { TamaguiProvider } from 'tamagui';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { LogBox } from 'react-native';
 import tamaguiConfig from '../tamagui.config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useAuthStore } from '@/store/authStore';
 import { useAppStore } from '@/store/appStore';
 import { useTheme } from '@/hooks/useTheme';
+
+// Suppress known iOS simulator warnings
+LogBox.ignoreLogs([
+  'CHHapticPattern',
+  'RemoteTextInput',
+  'CoreHaptics',
+  'hapticpatternlibrary',
+]);
 
 // Keep splash screen visible while loading
 SplashScreen.preventAutoHideAsync();

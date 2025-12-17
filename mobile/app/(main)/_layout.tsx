@@ -1,7 +1,8 @@
 import { Drawer } from 'expo-router/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import { Image, View, SafeAreaView } from 'react-native';
+import { Image, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, YStack } from 'tamagui';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
