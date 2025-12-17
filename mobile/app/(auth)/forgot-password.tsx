@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useRouter, Href } from 'expo-router';
 import { ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { YStack, Text, H1 } from 'tamagui';
 import { useForm, Controller } from 'react-hook-form';
@@ -34,7 +34,7 @@ export default function ForgotPasswordScreen() {
                 [
                     {
                         text: 'OK',
-                        onPress: () => router.push({ pathname: '/(auth)/reset-password' as Href, params: { email: data.email } }),
+                        onPress: () => router.push(`/(auth)/reset-password?email=${encodeURIComponent(data.email)}` as Href),
                     },
                 ]
             );

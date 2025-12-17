@@ -28,6 +28,7 @@ export default function LoginScreen() {
     });
 
     const onSubmit = async (data: LoginFormData) => {
+        router.replace('/(main)/(todos)' as Href);
         setLoading(true);
         try {
             const response = await authApi.login(data);
@@ -44,7 +45,7 @@ export default function LoginScreen() {
                     [
                         {
                             text: 'Verify Now',
-                            onPress: () => router.push({ pathname: '/(auth)/verify-email' as Href, params: { email: data.email } }),
+                            onPress: () => router.push(`/(auth)/verify-email?email=${encodeURIComponent(data.email)}` as Href),
                         },
                         { text: 'Cancel', style: 'cancel' },
                     ]

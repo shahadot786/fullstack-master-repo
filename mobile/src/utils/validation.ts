@@ -88,8 +88,7 @@ export const createTodoSchema = z.object({
         .trim()
         .optional(),
     priority: z
-        .enum(['low', 'medium', 'high'])
-        .default('medium'),
+        .enum(['low', 'medium', 'high']),
     dueDate: z
         .string()
         .datetime()
