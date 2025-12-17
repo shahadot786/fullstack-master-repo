@@ -1,32 +1,46 @@
 {
   "expo": {
-    "name": "Nexus",
-    "slug": "nexus-mobile",
+    "name": "nexus",
+    "slug": "nexus",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
+    "scheme": "nexus",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/logo.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.nexus.mobile"
+      "bundleIdentifier": "com.shahadot.nexus"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "package": "com.nexus.mobile",
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.shahadot.nexus"
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-font",
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/logo.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "backgroundColor": "#000000"
+          }
+        }
+      ],
       [
         "expo-build-properties",
         {
@@ -36,10 +50,9 @@
         }
       ]
     ],
-    "extra": {
-      "eas": {
-        "projectId": "nexus-mobile"
-      }
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
     }
   }
 }

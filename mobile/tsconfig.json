@@ -3,16 +3,42 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@api/*": ["./src/api/*"],
-      "@components/*": ["./src/components/*"],
-      "@config/*": ["./src/config/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@navigation/*": ["./src/navigation/*"],
-      "@screens/*": ["./src/screens/*"],
-      "@store/*": ["./src/store/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@types/*": ["./src/types/*"],
-      "@assets/*": ["./assets/*"]
+      "@api/*": [
+        "./src/api/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@config/*": [
+        "./src/config/*"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@navigation/*": [
+        "./src/navigation/*"
+      ],
+      "@screens/*": [
+        "./src/screens/*"
+      ],
+      "@store/*": [
+        "./src/store/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@types/*": [
+        "./src/types/*"
+      ],
+      "@assets/*": [
+        "./assets/*"
+      ]
     }
-  }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
 }
