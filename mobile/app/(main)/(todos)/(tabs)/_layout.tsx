@@ -1,29 +1,31 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Image, View } from 'react-native';
-import { Text, XStack } from 'tamagui';
+import { useColorScheme } from 'react-native';
+import { useTheme as useTamaguiTheme } from 'tamagui';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function TodosTabsLayout() {
+    const { isDark } = useTheme();
+    const tamaguiTheme = useTamaguiTheme();
+    const colorScheme = useColorScheme();
+
+    // Determine colors based on theme - using darker scheme for dark mode
+    const backgroundColor = isDark ? '#0a0a0a' : '#ffffff';
+    const headerTintColor = isDark ? '#fafafa' : '#171717';
+    const tabBarBackgroundColor = isDark ? '#1a1a1a' : '#ffffff';
+    const tabBarInactiveTintColor = isDark ? '#6b7280' : '#737373';
+    const borderColor = isDark ? '#262626' : '#e5e5e5';
+
     return (
         <Tabs
             screenOptions={{
-                headerShown: true,
+                headerShown: false, // Remove header to hide logo
                 tabBarActiveTintColor: '#3b82f6',
-                headerStyle: {
-                    backgroundColor: '#ffffff',
+                tabBarInactiveTintColor: tabBarInactiveTintColor,
+                tabBarStyle: {
+                    backgroundColor: tabBarBackgroundColor,
+                    borderTopColor: borderColor,
                 },
-                headerTitle: () => (
-                    <XStack alignItems="center" gap="$3">
-                        <Image
-                            source={require('../../../../assets/images/logo.png')}
-                            style={{ width: 32, height: 32 }}
-                            resizeMode="contain"
-                        />
-                        <Text fontSize="$6" fontWeight="700" color="$color">
-                            Nexus
-                        </Text>
-                    </XStack>
-                ),
             }}
         >
             <Tabs.Screen

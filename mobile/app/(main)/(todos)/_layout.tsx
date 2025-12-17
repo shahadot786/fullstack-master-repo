@@ -1,6 +1,12 @@
 import { Stack } from 'expo-router';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function TodosLayout() {
+    const { isDark } = useTheme();
+
+    const backgroundColor = isDark ? '#0a0a0a' : '#ffffff';
+    const headerTintColor = isDark ? '#fafafa' : '#171717';
+
     return (
         <Stack
             screenOptions={{
@@ -14,6 +20,10 @@ export default function TodosLayout() {
                     presentation: 'modal',
                     headerShown: true,
                     title: 'Create Todo',
+                    headerStyle: {
+                        backgroundColor: backgroundColor,
+                    },
+                    headerTintColor: headerTintColor,
                 }}
             />
             <Stack.Screen
@@ -21,6 +31,10 @@ export default function TodosLayout() {
                 options={{
                     headerShown: true,
                     title: 'Edit Todo',
+                    headerStyle: {
+                        backgroundColor: backgroundColor,
+                    },
+                    headerTintColor: headerTintColor,
                 }}
             />
         </Stack>

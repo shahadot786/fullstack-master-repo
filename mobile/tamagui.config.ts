@@ -171,17 +171,17 @@ const lightTheme = {
  * Dark Theme
  */
 const darkTheme = {
-  background: customColors.neutral900,
-  backgroundHover: customColors.neutral800,
+  background: "#0a0a0a",
+  backgroundHover: "#1a1a1a",
   backgroundPress: customColors.neutral700,
-  backgroundFocus: customColors.neutral800,
+  backgroundFocus: "#1a1a1a",
 
   color: customColors.neutral50,
   colorHover: customColors.neutral100,
   colorPress: customColors.neutral200,
   colorFocus: customColors.neutral100,
 
-  borderColor: customColors.neutral700,
+  borderColor: "#262626",
   borderColorHover: customColors.neutral600,
   borderColorPress: customColors.neutral500,
   borderColorFocus: customColors.primary500,
@@ -209,8 +209,8 @@ const darkTheme = {
   error: customColors.error500,
 
   // Card
-  cardBackground: customColors.neutral800,
-  cardBorder: customColors.neutral700,
+  cardBackground: "#1a1a1a",
+  cardBorder: "#262626",
 };
 
 /**
