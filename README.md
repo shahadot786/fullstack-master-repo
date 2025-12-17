@@ -36,23 +36,52 @@ A production-ready, type-safe fullstack monorepo template featuring **Backend (N
 <details>
 <summary>Click to view screenshots</summary>
 
-#### Login Screen
-![Login](./docs/images/mobile-login.png)
-
-#### Navigation Drawer
-![Navigation Drawer](./docs/images/mobile-drawer.png)
-
-#### Todo List (Light Mode)
-![Todo List Light](./docs/images/mobile-todos-light.png)
-
-#### Todo List (Dark Mode)
-![Todo List Dark](./docs/images/mobile-todos-dark.png)
-
-#### Create Todo Modal
-![Create Todo](./docs/images/mobile-create-todo.png)
-
-#### Settings & Profile
-![Settings](./docs/images/mobile-settings.png)
+<div align="center">
+  <table>
+    <tr>
+      <td width="50%">
+        <h4 align="center">Login Screen</h4>
+        <a href="./docs/images/mobile-login.png">
+          <img src="./docs/images/mobile-login.png" width="100%" style="max-height: 400px; object-fit: contain;" alt="Login Screen">
+        </a>
+      </td>
+      <td width="50%">
+        <h4 align="center">Navigation Drawer</h4>
+        <a href="./docs/images/mobile-drawer.png">
+          <img src="./docs/images/mobile-drawer.png" width="100%" style="max-height: 400px; object-fit: contain;" alt="Navigation Drawer">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td width="50%">
+        <h4 align="center">Todo List (Light Mode)</h4>
+        <a href="./docs/images/mobile-todos-light.png">
+          <img src="./docs/images/mobile-todos-light.png" width="100%" style="max-height: 400px; object-fit: contain;" alt="Todo List Light">
+        </a>
+      </td>
+      <td width="50%">
+        <h4 align="center">Todo List (Dark Mode)</h4>
+        <a href="./docs/images/mobile-todos-dark.png">
+          <img src="./docs/images/mobile-todos-dark.png" width="100%" style="max-height: 400px; object-fit: contain;" alt="Todo List Dark">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td width="50%">
+        <h4 align="center">Create Todo Modal</h4>
+        <a href="./docs/images/mobile-create-todo.png">
+          <img src="./docs/images/mobile-create-todo.png" width="100%" style="max-height: 400px; object-fit: contain;" alt="Create Todo">
+        </a>
+      </td>
+      <td width="50%">
+        <h4 align="center">Settings & Profile</h4>
+        <a href="./docs/images/mobile-settings.png">
+          <img src="./docs/images/mobile-settings.png" width="100%" style="max-height: 400px; object-fit: contain;" alt="Settings">
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>
 
 </details>
 
