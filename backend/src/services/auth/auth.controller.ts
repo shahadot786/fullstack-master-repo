@@ -95,3 +95,19 @@ export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
 
     sendSuccess(res, null, "Logged out successfully");
 });
+
+export const updateProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { name, email } = req.body;
+    const user = await authService.updateProfile(userId, { name, email });
+
+    sendSuccess(res, { user }, "Profile updated successfully");
+});
+
+export const changePassword = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { currentPassword, newPassword } = req.body;
+    await authService.changePassword(userId, currentPassword, newPassword);
+
+    sendSuccess(res, null, "Password changed successfully");
+});

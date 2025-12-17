@@ -10,6 +10,8 @@ import {
     refreshTokenValidation,
     requestPasswordResetValidation,
     resetPasswordValidation,
+    updateProfileValidation,
+    changePasswordValidation,
 } from "./auth.validation";
 
 const router = Router();
@@ -260,5 +262,64 @@ router.get("/me", authenticate, controller.getMe);
  *         description: Unauthorized
  */
 router.post("/logout", authenticate, controller.logout);
+
+/**
+ * @swagger
+ * /api/auth/profile:
+ *   put:
+ *     summary: Update user profile
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Email already in use
+ */
+router.put("/profile", authenticate, validate(updateProfileValidation), controller.updateProfile);
+
+/**
+ * @swagger
+ * /api/auth/change-password:
+ *   put:
+ *     summary: Change user password
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *       401:
+ *         description: Unauthorized or incorrect current password
+ */
+router.put("/change-password", authenticate, validate(changePasswordValidation), controller.changePassword);
 
 export default router;

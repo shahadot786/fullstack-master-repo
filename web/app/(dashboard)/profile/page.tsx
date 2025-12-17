@@ -88,9 +88,7 @@ export default function ProfilePage() {
     try {
       setError("");
       setSuccess("");
-      // Note: Backend doesn't have update profile endpoint yet
-      // This is a placeholder for future implementation
-      console.log("Update profile:", data);
+      await authApi.updateProfile(data);
       setSuccess("Profile updated successfully!");
       setIsEditDialogOpen(false);
     } catch (err: any) {
@@ -102,9 +100,10 @@ export default function ProfilePage() {
     try {
       setError("");
       setSuccess("");
-      // Note: Backend has password reset but not change password endpoint
-      // This is a placeholder for future implementation
-      console.log("Change password");
+      await authApi.changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      });
       setSuccess("Password changed successfully!");
       setIsPasswordDialogOpen(false);
       passwordForm.reset();
@@ -296,12 +295,9 @@ export default function ProfilePage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" {...field} disabled />
+                      <Input type="email" {...field} />
                     </FormControl>
                     <FormMessage />
-                    <p className="text-xs text-gray-500">
-                      Email cannot be changed
-                    </p>
                   </FormItem>
                 )}
               />
@@ -342,9 +338,9 @@ export default function ProfilePage() {
                     <FormLabel>Current Password</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input 
-                          type={showCurrentPassword ? "text" : "password"} 
-                          {...field} 
+                        <Input
+                          type={showCurrentPassword ? "text" : "password"}
+                          {...field}
                           className="pr-10"
                         />
                         <button
@@ -372,9 +368,9 @@ export default function ProfilePage() {
                     <FormLabel>New Password</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input 
-                          type={showNewPassword ? "text" : "password"} 
-                          {...field} 
+                        <Input
+                          type={showNewPassword ? "text" : "password"}
+                          {...field}
                           className="pr-10"
                         />
                         <button
@@ -402,9 +398,9 @@ export default function ProfilePage() {
                     <FormLabel>Confirm New Password</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input 
-                          type={showConfirmPassword ? "text" : "password"} 
-                          {...field} 
+                        <Input
+                          type={showConfirmPassword ? "text" : "password"}
+                          {...field}
                           className="pr-10"
                         />
                         <button

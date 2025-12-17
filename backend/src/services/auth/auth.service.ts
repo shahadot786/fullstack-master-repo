@@ -224,6 +224,59 @@ export const getUserById = async (userId: string): Promise<IUser | null> => {
     return User.findById(userId);
 };
 
+export const updateProfile = async (
+    userId: string,
+    data: { name?: string; email?: string }
+): Promise<IUser> => {
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new NotFoundError("User not found");
+    }
+
+    // Check if email is being changed and if it already exists
+    if (data.email && data.email !== user.email) {
+        const existingUser = await User.findOne({ email: data.email });
+        if (existingUser) {
+            throw new ConflictError("Email already in use");
+        }
+        user.email = data.email;
+        // Reset email verification if email is changed
+        user.isEmailVerified = false;
+        user.emailVerifiedAt = undefined;
+    }
+
+    if (data.name) {
+        user.name = data.name;
+    }
+
+    await user.save();
+    return user;
+};
+
+export const changePassword = async (
+    userId: string,
+    currentPassword: string,
+    newPassword: string
+): Promise<void> => {
+    const user = await User.findById(userId).select("+password");
+    if (!user) {
+        throw new NotFoundError("User not found");
+    }
+
+    // Verify current password
+    const isPasswordValid = await user.comparePassword(currentPassword);
+    if (!isPasswordValid) {
+        throw new UnauthorizedError("Current password is incorrect");
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    // Invalidate all refresh tokens for this user
+    await deleteRefreshToken(user._id.toString());
+};
+
 // Helper function to generate access token
 const generateAccessToken = (id: string, email: string): string => {
     return jwt.sign({ id, email }, config.jwt.secret, {

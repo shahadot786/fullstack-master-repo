@@ -99,4 +99,22 @@ export const authApi = {
         const response = await apiClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, data);
         return response.data;
     },
+
+    /**
+     * Update user profile
+     * PUT /auth/profile
+     */
+    updateProfile: async (data: { name: string; email: string }): Promise<{ user: User }> => {
+        const response = await apiClient.put('/auth/profile', data);
+        return response.data;
+    },
+
+    /**
+     * Change password
+     * PUT /auth/change-password
+     */
+    changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<{ message: string }> => {
+        const response = await apiClient.put('/auth/change-password', data);
+        return response.data;
+    },
 };
