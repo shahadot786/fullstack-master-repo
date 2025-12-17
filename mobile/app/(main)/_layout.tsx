@@ -79,6 +79,86 @@ export default function MainLayout() {
                 }}
             />
             <Drawer.Screen
+                name="chat"
+                options={{
+                    drawerLabel: 'Chat',
+                    title: 'Chat',
+                    drawerIcon: ({ color, size }) => (
+                        <Ionicons name="chatbubbles" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Drawer.Screen
+                name="ai"
+                options={{
+                    drawerLabel: 'AI Assistant',
+                    title: 'AI Assistant',
+                    drawerIcon: ({ color, size }) => (
+                        <Ionicons name="sparkles" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Drawer.Screen
+                name="shop"
+                options={{
+                    drawerLabel: 'Shop',
+                    title: 'Shop',
+                    drawerIcon: ({ color, size }) => (
+                        <Ionicons name="storefront" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Drawer.Screen
+                name="social"
+                options={{
+                    drawerLabel: 'Social',
+                    title: 'Social',
+                    drawerIcon: ({ color, size }) => (
+                        <Ionicons name="people" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Drawer.Screen
+                name="delivery"
+                options={{
+                    drawerLabel: 'Delivery',
+                    title: 'Delivery',
+                    drawerIcon: ({ color, size }) => (
+                        <Ionicons name="bicycle" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Drawer.Screen
+                name="expense"
+                options={{
+                    drawerLabel: 'Expense Tracker',
+                    title: 'Expense Tracker',
+                    drawerIcon: ({ color, size }) => (
+                        <Ionicons name="wallet" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Drawer.Screen
+                name="weather"
+                options={{
+                    drawerLabel: 'Weather',
+                    title: 'Weather',
+                    drawerIcon: ({ color, size }) => (
+                        <Ionicons name="partly-sunny" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Drawer.Screen
+                name="urlshort"
+                options={{
+                    drawerLabel: 'URL Shortener',
+                    title: 'URL Shortener',
+                    drawerIcon: ({ color, size }) => (
+                        <Ionicons name="link" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Drawer.Screen
                 name="settings"
                 options={{
                     drawerLabel: 'Settings',
