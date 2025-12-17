@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
-import { TamaguiProvider } from 'tamagui';
+import { TamaguiProvider, Theme } from 'tamagui';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -62,14 +62,16 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <TamaguiProvider config={tamaguiConfig} defaultTheme={theme}>
-        <QueryClientProvider client={queryClient}>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="onboarding" />
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(main)" />
-          </Stack>
-        </QueryClientProvider>
+        <Theme name={theme}>
+          <QueryClientProvider client={queryClient}>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="onboarding" />
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(main)" />
+            </Stack>
+          </QueryClientProvider>
+        </Theme>
       </TamaguiProvider>
     </ErrorBoundary>
   );

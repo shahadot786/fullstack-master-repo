@@ -8,11 +8,13 @@ import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { authApi } from '@/api/auth.api';
 import { Ionicons } from '@expo/vector-icons';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function SettingsScreen() {
     const router = useRouter();
     const { user, logout } = useAuth();
     const { theme, toggleTheme, isDark } = useTheme();
+    const queryClient = useQueryClient();
 
     const handleLogout = async () => {
         Alert.alert(
@@ -32,6 +34,8 @@ export default function SettingsScreen() {
                         } catch (error) {
                             console.error('Logout error:', error);
                         } finally {
+                            // Clear React Query cache to remove previous user's data
+                            queryClient.clear();
                             logout();
                             router.replace('/(auth)/login' as Href);
                         }
