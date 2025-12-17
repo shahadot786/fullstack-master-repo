@@ -18,7 +18,6 @@ const priorityColors = {
 };
 
 export const TodoCard: React.FC<TodoCardProps> = ({ todo }) => {
-    console.log(JSON.stringify(todo,null,4),"todo");
     const router = useRouter();
     const toggleMutation = useToggleTodo();
     const deleteMutation = useDeleteTodo();

@@ -2,6 +2,7 @@ import React from 'react';
 import { YStack } from 'tamagui';
 import { HeaderIcons } from './HeaderIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 /**
  * ScreenLayout Component
@@ -19,10 +20,13 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
     children, 
     showHeader = true 
 }) => {
+    // Initialize WebSocket connection and get status
+    const { isConnected } = useWebSocket();
+
     return (
         <YStack flex={1} backgroundColor="$background">
             {/* Header Icons - Fixed at top */}
-            {showHeader && <HeaderIcons />}
+            {showHeader && <HeaderIcons isConnected={isConnected} />}
             
             {/* Content Area - With safe area */}
             <SafeAreaView 

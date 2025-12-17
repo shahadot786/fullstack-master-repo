@@ -34,7 +34,6 @@ export default function LoginScreen() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log("Login Data", data);
     setLoading(true);
     try {
       const response = await authApi.login(data);
@@ -62,7 +61,6 @@ export default function LoginScreen() {
           ]
         );
       } else {
-        console.log("Login Failed", message);
         Alert.alert("Login Failed", message);
       }
     } finally {
