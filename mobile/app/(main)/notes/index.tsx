@@ -1,28 +1,46 @@
 import React from 'react';
-import { ScrollView } from 'react-native';
-import { YStack, Text, H2 } from 'tamagui';
-import { Card } from '@/components/common/Card';
+import { Pressable } from 'react-native';
+import { YStack, Text } from 'tamagui';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { DrawerActions } from '@react-navigation/native';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function NotesScreen() {
-    return (
-        <ScrollView style={{ flex: 1 }}>
-            <YStack padding="$4" gap="$4" backgroundColor="$background">
-                <H2 color="$color">Notes</H2>
+    const navigation = useNavigation();
+    const { isDark } = useTheme();
 
-                <Card>
-                    <YStack gap="$3" alignItems="center" paddingVertical="$6">
-                        <Text fontSize="$6" color="$color" opacity={0.5}>
-                            📝
-                        </Text>
-                        <Text color="$color" opacity={0.7} textAlign="center">
-                            Notes feature coming soon!
-                        </Text>
-                        <Text color="$color" opacity={0.5} textAlign="center" fontSize="$3">
-                            This is a placeholder for the notes functionality.
-                        </Text>
-                    </YStack>
-                </Card>
+    const handleOpenDrawer = () => {
+        navigation.dispatch(DrawerActions.openDrawer());
+    };
+
+    return (
+        <YStack flex={1} backgroundColor="$background">
+            {/* Menu Icon */}
+            <Pressable
+                onPress={handleOpenDrawer}
+                style={{
+                    position: 'absolute',
+                    top: 16,
+                    left: 16,
+                    zIndex: 10,
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: isDark ? '#1a1a1a' : '#f5f5f5',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <Ionicons name="menu" size={24} color={isDark ? '#fafafa' : '#171717'} />
+            </Pressable>
+
+            <YStack flex={1} alignItems="center" justifyContent="center" paddingTop={64}>
+                <Ionicons name="document-text-outline" size={64} color="#ccc" />
+                <Text color="$color" opacity={0.5} marginTop="$4">
+                    Notes feature coming soon
+                </Text>
             </YStack>
-        </ScrollView>
+        </YStack>
     );
 }
