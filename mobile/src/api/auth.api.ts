@@ -25,7 +25,7 @@ export const authApi = {
      */
     register: async (data: RegisterRequest): Promise<{ message: string }> => {
         const response = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, data);
-        return response.data;
+        return response.data.data;
     },
 
     /**
@@ -34,7 +34,9 @@ export const authApi = {
      */
     verifyEmail: async (data: VerifyEmailRequest): Promise<{ message: string }> => {
         const response = await apiClient.post(API_ENDPOINTS.AUTH.VERIFY_EMAIL, data);
-        return response.data;
+        // Note: verifyEmail returns user and tokens, but we're not using them here
+        // The actual login happens after verification
+        return response.data.data;
     },
 
     /**
@@ -43,7 +45,7 @@ export const authApi = {
      */
     resendOTP: async (data: ResendOTPRequest): Promise<{ message: string }> => {
         const response = await apiClient.post(API_ENDPOINTS.AUTH.RESEND_VERIFICATION, data);
-        return response.data;
+        return response.data.data;
     },
 
     /**
@@ -52,7 +54,14 @@ export const authApi = {
      */
     login: async (data: LoginRequest): Promise<LoginResponse> => {
         const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, data);
-        return response.data;
+        
+        // Backend returns tokens nested in 'tokens' object
+        const { user, tokens } = response.data.data;
+        return {
+            user,
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+        };
     },
 
     /**
@@ -61,7 +70,7 @@ export const authApi = {
      */
     refreshToken: async (data: RefreshTokenRequest): Promise<{ accessToken: string; refreshToken: string }> => {
         const response = await apiClient.post(API_ENDPOINTS.AUTH.REFRESH_TOKEN, data);
-        return response.data;
+        return response.data.data;
     },
 
     /**
@@ -70,7 +79,7 @@ export const authApi = {
      */
     logout: async (): Promise<{ message: string }> => {
         const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGOUT);
-        return response.data;
+        return response.data.data;
     },
 
     /**
@@ -79,7 +88,7 @@ export const authApi = {
      */
     getMe: async (): Promise<User> => {
         const response = await apiClient.get(API_ENDPOINTS.AUTH.ME);
-        return response.data;
+        return response.data.data;
     },
 
     /**
@@ -88,7 +97,7 @@ export const authApi = {
      */
     requestPasswordReset: async (data: RequestPasswordResetRequest): Promise<{ message: string }> => {
         const response = await apiClient.post(API_ENDPOINTS.AUTH.REQUEST_PASSWORD_RESET, data);
-        return response.data;
+        return response.data.data;
     },
 
     /**
@@ -97,7 +106,7 @@ export const authApi = {
      */
     resetPassword: async (data: ResetPasswordRequest): Promise<{ message: string }> => {
         const response = await apiClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, data);
-        return response.data;
+        return response.data.data;
     },
 
     /**
@@ -106,7 +115,7 @@ export const authApi = {
      */
     updateProfile: async (data: { name: string; email: string }): Promise<{ user: User }> => {
         const response = await apiClient.put('/auth/profile', data);
-        return response.data;
+        return response.data.data;
     },
 
     /**
@@ -115,6 +124,6 @@ export const authApi = {
      */
     changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<{ message: string }> => {
         const response = await apiClient.put('/auth/change-password', data);
-        return response.data;
+        return response.data.data;
     },
 };

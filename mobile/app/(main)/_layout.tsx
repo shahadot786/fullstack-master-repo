@@ -1,7 +1,7 @@
 import { Drawer } from 'expo-router/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import { Image, View } from 'react-native';
+import { Image, View, SafeAreaView } from 'react-native';
 import { Text, YStack } from 'tamagui';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
@@ -27,7 +27,7 @@ export default function MainLayout() {
                 },
             }}
             drawerContent={(props) => (
-                <View style={{ flex: 1 }}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: drawerBackgroundColor }}>
                     <DrawerContentScrollView {...props}>
                         <View
                             style={{
@@ -48,7 +48,7 @@ export default function MainLayout() {
                         </View>
                         <DrawerItemList {...props} />
                     </DrawerContentScrollView>
-                </View>
+                </SafeAreaView>
             )}
         >
             <Drawer.Screen

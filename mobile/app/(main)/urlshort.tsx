@@ -4,11 +4,13 @@ import { YStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/hooks/useTheme';
 
-export default function URLShortenerScreen() {
-    const navigation = useNavigation();
+export default function URLShortScreen() {
     const { isDark } = useTheme();
+    const navigation = useNavigation();
+    const insets = useSafeAreaInsets();
 
     const handleOpenDrawer = () => {
         navigation.dispatch(DrawerActions.openDrawer());
@@ -20,7 +22,7 @@ export default function URLShortenerScreen() {
                 onPress={handleOpenDrawer}
                 style={{
                     position: 'absolute',
-                    top: 16,
+                    top: insets.top + 16,
                     left: 16,
                     zIndex: 10,
                     width: 40,

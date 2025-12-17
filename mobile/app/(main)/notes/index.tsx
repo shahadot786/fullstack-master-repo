@@ -4,11 +4,13 @@ import { YStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/hooks/useTheme';
 
 export default function NotesScreen() {
     const navigation = useNavigation();
     const { isDark } = useTheme();
+    const insets = useSafeAreaInsets();
 
     const handleOpenDrawer = () => {
         navigation.dispatch(DrawerActions.openDrawer());
@@ -21,7 +23,7 @@ export default function NotesScreen() {
                 onPress={handleOpenDrawer}
                 style={{
                     position: 'absolute',
-                    top: 16,
+                    top: insets.top + 16,
                     left: 16,
                     zIndex: 10,
                     width: 40,

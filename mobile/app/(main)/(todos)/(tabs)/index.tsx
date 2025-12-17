@@ -8,12 +8,14 @@ import { useTodos } from '@/hooks/useTodos';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerActions } from '@react-navigation/native';
 import { useTheme } from '@/hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AllTodosScreen() {
     const router = useRouter();
     const navigation = useNavigation();
     const { data, isLoading, refetch } = useTodos();
     const { isDark } = useTheme();
+    const insets = useSafeAreaInsets();
 
     const handleCreate = () => {
         router.push('/(main)/(todos)/create' as any);
@@ -30,7 +32,7 @@ export default function AllTodosScreen() {
                 onPress={handleOpenDrawer}
                 style={{
                     position: 'absolute',
-                    top: 16,
+                    top: insets.top + 16,
                     left: 16,
                     zIndex: 10,
                     width: 40,

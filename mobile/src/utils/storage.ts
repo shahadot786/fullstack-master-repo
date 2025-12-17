@@ -22,6 +22,10 @@ export const StorageUtils = {
      * Set a string value in storage
      */
     setString: (key: string, value: string): void => {
+        if (value === undefined || value === null) {
+            console.warn(`[MMKV] Attempted to store undefined/null value for key: ${key}`);
+            return;
+        }
         storage.set(key, value);
     },
 
@@ -50,6 +54,10 @@ export const StorageUtils = {
      * Set an object in storage (JSON serialized)
      */
     setObject: <T>(key: string, value: T): void => {
+        if (value === undefined || value === null) {
+            console.warn(`[MMKV] Attempted to store undefined/null value for key: ${key}`);
+            return;
+        }
         storage.set(key, JSON.stringify(value));
     },
 
