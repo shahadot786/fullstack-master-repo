@@ -1,5 +1,5 @@
 import apiClient from "./client";
-import { Todo, CreateTodoRequest, UpdateTodoRequest } from "@/types";
+import { Todo, CreateTodoRequest, UpdateTodoRequest, TodosResponse } from "@/types";
 
 export interface GetTodosParams {
   page?: number;
@@ -9,10 +9,13 @@ export interface GetTodosParams {
 }
 
 export const todosApi = {
-  getTodos: async (params?: GetTodosParams): Promise<Todo[]> => {
+  getTodos: async (params?: GetTodosParams): Promise<TodosResponse> => {
     const response = await apiClient.get("/todos", { params });
     // Backend returns: {success, data: [...todos], pagination: {...}}
-    return response.data.data;
+    return {
+      data: response.data.data,
+      pagination: response.data.pagination,
+    };
   },
 
   getTodoById: async (id: string): Promise<Todo> => {

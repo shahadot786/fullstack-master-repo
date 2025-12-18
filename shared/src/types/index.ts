@@ -100,6 +100,17 @@ export interface TodoQueryParams {
     sortOrder?: "asc" | "desc";
 }
 
+export interface TodosResponse {
+    data: Todo[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
+}
+
+
 // ============================================
 // Error Types
 // ============================================

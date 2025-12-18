@@ -7,6 +7,7 @@ import { Todo, TodoPriority } from "@/types";
 import { TodoCard } from "@/components/todos/todo-card";
 import { TodoForm } from "@/components/todos/todo-form";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -21,14 +22,34 @@ export default function TodosPage() {
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [completedFilter, setCompletedFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  const { data: todos, isLoading, error } = useGetTodos({
-    completed: completedFilter === "all" ? undefined : completedFilter === "completed",
-    priority: priorityFilter === "all" ? undefined : (priorityFilter as TodoPriority),
+  const { data, isLoading, error } = useGetTodos({
+    page,
+    limit: pageSize,
+    completed:
+      completedFilter === "all" ? undefined : completedFilter === "completed",
+    priority:
+      priorityFilter === "all" ? undefined : (priorityFilter as TodoPriority),
   });
+
+  const todos = data?.data || [];
+  const pagination = data?.pagination;
 
   // Initialize WebSocket for real-time updates
   const { isConnected } = useWebSocket();
+
+  // Handlers that reset page when filters change
+  const handleCompletedFilterChange = useCallback((value: string) => {
+    setCompletedFilter(value);
+    setPage(1);
+  }, []);
+
+  const handlePriorityFilterChange = useCallback((value: string) => {
+    setPriorityFilter(value);
+    setPage(1);
+  }, []);
 
   const handleEdit = useCallback((todo: Todo) => {
     setEditingTodo(todo);
@@ -47,7 +68,7 @@ export default function TodosPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center min-h-100">
         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
       </div>
     );
@@ -55,7 +76,7 @@ export default function TodosPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center min-h-40">
         <div className="text-center">
           <p className="text-red-600 dark:text-red-400">
             Failed to load todos. Please try again.
@@ -76,14 +97,16 @@ export default function TodosPage() {
             </h1>
             <div className="flex items-center gap-2 mt-1">
               <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                {todos?.length || 0} total tasks
+                {pagination?.total || 0} total tasks
               </p>
               <span className="text-gray-300 dark:text-gray-600">•</span>
               <div className="flex items-center gap-1.5">
                 {isConnected ? (
                   <>
                     <Wifi className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
-                    <span className="text-xs text-green-600 dark:text-green-400">Live</span>
+                    <span className="text-xs text-green-600 dark:text-green-400">
+                      Live
+                    </span>
                   </>
                 ) : (
                   <>
@@ -102,8 +125,11 @@ export default function TodosPage() {
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3">
-          <Select value={completedFilter} onValueChange={setCompletedFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
+          <Select
+            value={completedFilter}
+            onValueChange={handleCompletedFilterChange}
+          >
+            <SelectTrigger className="w-full sm:w-45">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -113,8 +139,11 @@ export default function TodosPage() {
             </SelectContent>
           </Select>
 
-          <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
+          <Select
+            value={priorityFilter}
+            onValueChange={handlePriorityFilterChange}
+          >
+            <SelectTrigger className="w-full sm:w-45">
               <SelectValue placeholder="Filter by priority" />
             </SelectTrigger>
             <SelectContent>
@@ -145,6 +174,23 @@ export default function TodosPage() {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {pagination && pagination.total > 0 && (
+        <div className="mt-6">
+          <Pagination
+            currentPage={page}
+            totalPages={pagination.totalPages}
+            pageSize={pageSize}
+            totalItems={pagination.total}
+            onPageChange={setPage}
+            onPageSizeChange={(newSize: number) => {
+              setPageSize(newSize);
+              setPage(1); // Reset to first page when changing page size
+            }}
+          />
+        </div>
+      )}
 
       {/* Todo Form Dialog */}
       <TodoForm

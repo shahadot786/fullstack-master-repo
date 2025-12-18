@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { todosApi } from '@/api/todos.api';
 import { useTodoStore } from '@/store/todoStore';
 import {
@@ -116,5 +116,39 @@ export const useToggleTodo = () => {
             // Invalidate and refetch todos
             queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TODOS] });
         },
+    });
+};
+
+/**
+ * Infinite todos query for mobile infinite scroll
+ */
+export const useInfiniteTodos = (params?: Omit<GetTodosParams, 'page'>) => {
+    const setLoading = useTodoStore((state) => state.setLoading);
+    const setError = useTodoStore((state) => state.setError);
+
+    return useInfiniteQuery({
+        queryKey: [QUERY_KEYS.TODOS, 'infinite', params],
+        queryFn: async ({ pageParam = 1 }) => {
+            setLoading(true);
+            try {
+                const response = await todosApi.getTodos({
+                    ...params,
+                    page: pageParam,
+                    limit: 20, // Load 20 items per page for mobile
+                });
+                setError(null);
+                return response;
+            } catch (error: any) {
+                setError(error.message || 'Failed to fetch todos');
+                throw error;
+            } finally {
+                setLoading(false);
+            }
+        },
+        getNextPageParam: (lastPage) => {
+            const { page, totalPages } = lastPage.pagination;
+            return page < totalPages ? page + 1 : undefined;
+        },
+        initialPageParam: 1,
     });
 };
