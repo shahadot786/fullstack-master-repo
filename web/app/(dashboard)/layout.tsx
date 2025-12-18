@@ -24,7 +24,7 @@ export default function DashboardLayout({
 
   // Don't show dashboard if not authenticated
   if (!isAuthenticated) {
-    return <LoaderModal text="Redirecting to login..." />;
+    return <LoaderModal text="Loading..." />;
   }
 
   return (
