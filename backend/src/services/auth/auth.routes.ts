@@ -11,6 +11,8 @@ import {
     requestPasswordResetValidation,
     resetPasswordValidation,
     updateProfileValidation,
+    requestEmailChangeValidation,
+    verifyEmailChangeValidation,
     changePasswordValidation,
 } from "./auth.validation";
 
@@ -267,7 +269,7 @@ router.post("/logout", authenticate, controller.logout);
  * @swagger
  * /api/auth/profile:
  *   put:
- *     summary: Update user profile
+ *     summary: Update user profile (name only)
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -280,17 +282,72 @@ router.post("/logout", authenticate, controller.logout);
  *             properties:
  *               name:
  *                 type: string
- *               email:
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully with new tokens
+ *       401:
+ *         description: Unauthorized
+ */
+router.put("/profile", authenticate, validate(updateProfileValidation), controller.updateProfile);
+
+/**
+ * @swagger
+ * /api/auth/request-email-change:
+ *   post:
+ *     summary: Request email change (sends OTP to new email)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newEmail
+ *             properties:
+ *               newEmail:
  *                 type: string
  *     responses:
  *       200:
- *         description: Profile updated successfully
+ *         description: Verification code sent to new email
  *       401:
  *         description: Unauthorized
  *       409:
  *         description: Email already in use
  */
-router.put("/profile", authenticate, validate(updateProfileValidation), controller.updateProfile);
+router.post("/request-email-change", authenticate, validate(requestEmailChangeValidation), controller.requestEmailChange);
+
+/**
+ * @swagger
+ * /api/auth/verify-email-change:
+ *   post:
+ *     summary: Verify email change with OTP
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newEmail
+ *               - otp
+ *             properties:
+ *               newEmail:
+ *                 type: string
+ *               otp:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Email changed successfully with new tokens
+ *       401:
+ *         description: Unauthorized or invalid OTP
+ */
+router.post("/verify-email-change", authenticate, validate(verifyEmailChangeValidation), controller.verifyEmailChange);
 
 /**
  * @swagger

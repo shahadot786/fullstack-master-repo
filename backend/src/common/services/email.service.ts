@@ -52,12 +52,21 @@ export const sendEmail = async (options: SendEmailOptions): Promise<void> => {
 export const sendOTPEmail = async (
     email: string,
     otp: string,
-    purpose: "verification" | "password-reset"
+    purpose: "verification" | "password-reset" | "email-change"
 ): Promise<void> => {
     const subject =
         purpose === "verification"
             ? "Verify Your Email - OTP Code"
+            : purpose === "email-change"
+            ? "Email Change Verification - OTP Code"
             : "Password Reset - OTP Code";
+
+    const purposeText =
+        purpose === "verification"
+            ? "Email Verification"
+            : purpose === "email-change"
+            ? "Email Change Verification"
+            : "Password Reset";
 
     const html = `
     <!DOCTYPE html>
@@ -78,7 +87,7 @@ export const sendOTPEmail = async (
           <p style="color: #e0e0e0; font-size: 14px; margin-top: 5px;">Full-Stack MERN Application</p>
         </div>
         <div class="content">
-          <h2>${purpose === "verification" ? "Email Verification" : "Password Reset"}</h2>
+          <h2>${purposeText}</h2>
           <p>Your OTP code is:</p>
           <div class="otp-box">${otp}</div>
           <p>This code will expire in ${config.otp.expiryMinutes} minutes.</p>

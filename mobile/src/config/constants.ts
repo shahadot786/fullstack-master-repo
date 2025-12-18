@@ -33,6 +33,10 @@ export const API_ENDPOINTS = {
     ME: "/auth/me",
     REQUEST_PASSWORD_RESET: "/auth/request-password-reset",
     RESET_PASSWORD: "/auth/reset-password",
+    PROFILE: "/auth/profile",
+    REQUEST_EMAIL_CHANGE: "/auth/request-email-change",
+    VERIFY_EMAIL_CHANGE: "/auth/verify-email-change",
+    CHANGE_PASSWORD: "/auth/change-password",
   },
   // Todo endpoints
   TODOS: {

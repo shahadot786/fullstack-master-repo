@@ -133,15 +133,39 @@ export const authApi = {
   },
 
   /**
-   * Update user profile
+   * Update user profile (name only)
    * PUT /auth/profile
    */
   updateProfile: async (data: {
-    name: string;
-    email: string;
-  }): Promise<{ user: User }> => {
-    const response = await apiClient.put("/auth/profile", data);
+    name?: string;
+  }): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
+    const response = await apiClient.put(API_ENDPOINTS.AUTH.PROFILE, data);
+    const { user, tokens } = response.data.data;
+    return { user, tokens };
+  },
+
+  /**
+   * Request email change (sends OTP to new email)
+   * POST /auth/request-email-change
+   */
+  requestEmailChange: async (data: {
+    newEmail: string;
+  }): Promise<{ message: string }> => {
+    const response = await apiClient.post(API_ENDPOINTS.AUTH.REQUEST_EMAIL_CHANGE, data);
     return response.data.data;
+  },
+
+  /**
+   * Verify email change with OTP
+   * POST /auth/verify-email-change
+   */
+  verifyEmailChange: async (data: {
+    newEmail: string;
+    otp: string;
+  }): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
+    const response = await apiClient.post(API_ENDPOINTS.AUTH.VERIFY_EMAIL_CHANGE, data);
+    const { user, tokens } = response.data.data;
+    return { user, tokens };
   },
 
   /**
@@ -152,7 +176,7 @@ export const authApi = {
     currentPassword: string;
     newPassword: string;
   }): Promise<{ message: string }> => {
-    const response = await apiClient.put("/auth/change-password", data);
+    const response = await apiClient.put(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, data);
     return response.data.data;
   },
 };

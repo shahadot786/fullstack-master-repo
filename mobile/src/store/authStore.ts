@@ -23,6 +23,7 @@ interface AuthActions {
     setAuth: (user: User, accessToken: string, refreshToken: string) => void;
     setUser: (user: User | null) => void;
     setTokens: (accessToken: string, refreshToken: string) => void;
+    updateUserAndTokens: (user: User, accessToken: string, refreshToken: string) => void;
     logout: () => void;
     setLoading: (loading: boolean) => void;
     setError: (error: string | null) => void;
@@ -71,6 +72,20 @@ export const useAuthStore = create<AuthStore>((set) => ({
         StorageUtils.setString(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
         StorageUtils.setString(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
         set({ accessToken, refreshToken });
+    },
+
+    updateUserAndTokens: (user, accessToken, refreshToken) => {
+        // Save to storage
+        StorageUtils.setObject(STORAGE_KEYS.USER, user);
+        StorageUtils.setString(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+        StorageUtils.setString(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+
+        // Update state
+        set({
+            user,
+            accessToken,
+            refreshToken,
+        });
     },
 
     logout: () => {

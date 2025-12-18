@@ -13,6 +13,7 @@ import {
   verifyOTP,
   getEmailVerificationKey,
   getPasswordResetKey,
+  getEmailChangeKey,
   storeRefreshToken,
   verifyRefreshToken,
   deleteRefreshToken,
@@ -236,31 +237,102 @@ export const getUserById = async (userId: string): Promise<IUser | null> => {
 
 export const updateProfile = async (
   userId: string,
-  data: { name?: string; email?: string }
-): Promise<IUser> => {
+  data: { name?: string }
+): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
   const user = await User.findById(userId);
   if (!user) {
     throw new NotFoundError("User not found");
   }
 
-  // Check if email is being changed and if it already exists
-  if (data.email && data.email !== user.email) {
-    const existingUser = await User.findOne({ email: data.email });
-    if (existingUser) {
-      throw new ConflictError("Email already in use");
-    }
-    user.email = data.email;
-    // Reset email verification if email is changed
-    user.isEmailVerified = false;
-    user.emailVerifiedAt = undefined;
-  }
-
+  // Only update name - email changes go through separate OTP flow
   if (data.name) {
     user.name = data.name;
+    await user.save();
   }
 
+  // Generate new tokens since user data changed
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+  // Store new refresh token
+  await storeRefreshToken(user._id.toString(), refreshToken);
+
+  // Remove password from response
+  user.password = undefined as any;
+
+  return { user, accessToken, refreshToken };
+};
+
+/**
+ * Request email change - sends OTP to new email
+ */
+export const requestEmailChange = async (
+  userId: string,
+  newEmail: string
+): Promise<void> => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  // Check if new email is same as current
+  if (newEmail === user.email) {
+    throw new ConflictError("New email is the same as current email");
+  }
+
+  // Check if new email is already in use
+  const existingUser = await User.findOne({ email: newEmail });
+  if (existingUser) {
+    throw new ConflictError("Email already in use");
+  }
+
+  // Generate and store OTP
+  const otp = generateOTP();
+  const otpKey = getEmailChangeKey(userId, newEmail);
+  await storeOTP(otpKey, otp);
+
+  // Send OTP to new email
+  await sendOTPEmail(newEmail, otp, "email-change");
+};
+
+/**
+ * Verify email change with OTP
+ */
+export const verifyEmailChange = async (
+  userId: string,
+  newEmail: string,
+  otp: string
+): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  // Verify OTP
+  const otpKey = getEmailChangeKey(userId, newEmail);
+  const isValid = await verifyOTP(otpKey, otp);
+
+  if (!isValid) {
+    throw new UnauthorizedError("Invalid or expired OTP");
+  }
+
+  // Update email
+  user.email = newEmail;
+  user.isEmailVerified = true;
+  user.emailVerifiedAt = new Date();
   await user.save();
-  return user;
+
+  // Generate new tokens with updated email
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+  // Store new refresh token
+  await storeRefreshToken(user._id.toString(), refreshToken);
+
+  // Remove password from response
+  user.password = undefined as any;
+
+  return { user, accessToken, refreshToken };
 };
 
 export const changePassword = async (

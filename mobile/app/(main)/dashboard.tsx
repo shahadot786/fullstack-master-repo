@@ -27,15 +27,6 @@ export default function DashboardScreen() {
 
     const textColor = isDark ? '#fafafa' : '#171717';
     const secondaryTextColor = isDark ? '#a3a3a3' : '#737373';
-    
-    console.log('Stats Debug:', { 
-        stats, 
-        isLoading, 
-        isError, 
-        error: error ? JSON.stringify(error) : null,
-        isRefetching,
-        user 
-    });
 
     // Show error state
     if (isError) {

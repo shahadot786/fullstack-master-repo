@@ -84,6 +84,13 @@ export const getPasswordResetKey = (email: string): string => {
 };
 
 /**
+ * Generate OTP key for email change
+ */
+export const getEmailChangeKey = (userId: string, newEmail: string): string => {
+    return `otp:email-change:${userId}:${newEmail}`;
+};
+
+/**
  * Store refresh token in Redis
  */
 export const storeRefreshToken = async (

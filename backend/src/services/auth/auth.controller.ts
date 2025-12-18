@@ -98,10 +98,32 @@ export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
 
 export const updateProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
-    const { name, email } = req.body;
-    const user = await authService.updateProfile(userId, { name, email });
+    const { name } = req.body;
+    const { user, accessToken, refreshToken } = await authService.updateProfile(userId, { name });
 
-    sendSuccess(res, { user }, "Profile updated successfully");
+    sendSuccess(res, { 
+        user,
+        tokens: { accessToken, refreshToken }
+    }, "Profile updated successfully");
+});
+
+export const requestEmailChange = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { newEmail } = req.body;
+    await authService.requestEmailChange(userId, newEmail);
+
+    sendSuccess(res, null, "Verification code sent to your new email");
+});
+
+export const verifyEmailChange = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { newEmail, otp } = req.body;
+    const { user, accessToken, refreshToken } = await authService.verifyEmailChange(userId, newEmail, otp);
+
+    sendSuccess(res, {
+        user,
+        tokens: { accessToken, refreshToken }
+    }, "Email changed successfully");
 });
 
 export const changePassword = asyncHandler(async (req: AuthRequest, res: Response) => {
