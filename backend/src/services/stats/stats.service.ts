@@ -64,87 +64,158 @@ export interface ServiceStats {
  * Get comprehensive stats for all services
  */
 export const getStats = async (userId: string): Promise<ServiceStats> => {
-    // Get real todo statistics
-    const now = new Date();
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const endOfToday = new Date(startOfToday);
-    endOfToday.setDate(endOfToday.getDate() + 1);
+    try {
+        // Get real todo statistics with timeout protection
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const endOfToday = new Date(startOfToday);
+        endOfToday.setDate(endOfToday.getDate() + 1);
 
-    const [
-        totalTodos,
-        activeTodos,
-        completedTodos,
-        highPriorityTodos,
-        todayDueTodos,
-        overdueTodos,
-    ] = await Promise.all([
-        Todo.countDocuments({ userId }),
-        Todo.countDocuments({ userId, completed: false }),
-        Todo.countDocuments({ userId, completed: true }),
-        Todo.countDocuments({ userId, priority: "high", completed: false }),
-        Todo.countDocuments({
-            userId,
-            completed: false,
-            dueDate: { $gte: startOfToday, $lt: endOfToday },
-        }),
-        Todo.countDocuments({
-            userId,
-            completed: false,
-            dueDate: { $lt: now },
-        }),
-    ]);
+        // Create a timeout promise
+        const timeout = (ms: number) => new Promise((_, reject) => 
+            setTimeout(() => reject(new Error(`Stats query timed out after ${ms}ms`)), ms)
+        );
 
-    // Return stats with real todo data and dummy data for other services
-    return {
-        todos: {
-            total: totalTodos,
-            active: activeTodos,
-            completed: completedTodos,
-            highPriority: highPriorityTodos,
-            todayDue: todayDueTodos,
-            overdue: overdueTodos,
-        },
-        notes: {
-            total: 0,
-            categories: 0,
-            recent: 0,
-        },
-        chat: {
-            totalConversations: 0,
-            unreadMessages: 0,
-        },
-        ai: {
-            totalQueries: 0,
-            tokensUsed: 0,
-        },
-        shop: {
-            totalProducts: 0,
-            totalOrders: 0,
-            revenue: 0,
-        },
-        social: {
-            totalPosts: 0,
-            followers: 0,
-            likes: 0,
-        },
-        delivery: {
-            activeDeliveries: 0,
-            completedDeliveries: 0,
-            pendingDeliveries: 0,
-        },
-        expense: {
-            totalExpenses: 0,
-            thisMonth: 0,
-            categories: 0,
-        },
-        weather: {
-            currentLocation: "Not set",
-            savedLocations: 0,
-        },
-        urlShortener: {
-            totalUrls: 0,
-            totalClicks: 0,
-            activeLinks: 0,
-        },
-    };
+        // Fetch all stats with 10 second timeout
+        const statsQueries = Promise.all([
+            Todo.countDocuments({ userId }),
+            Todo.countDocuments({ userId, completed: false }),
+            Todo.countDocuments({ userId, completed: true }),
+            Todo.countDocuments({ userId, priority: "high", completed: false }),
+            Todo.countDocuments({
+                userId,
+                completed: false,
+                dueDate: { $gte: startOfToday, $lt: endOfToday },
+            }),
+            Todo.countDocuments({
+                userId,
+                completed: false,
+                dueDate: { $lt: now },
+            }),
+        ]);
+
+        // Race between queries and timeout
+        const [
+            totalTodos,
+            activeTodos,
+            completedTodos,
+            highPriorityTodos,
+            todayDueTodos,
+            overdueTodos,
+        ] = await Promise.race([
+            statsQueries,
+            timeout(10000) // 10 second timeout
+        ]) as number[];
+
+        // Return stats with real todo data and dummy data for other services
+        return {
+            todos: {
+                total: totalTodos,
+                active: activeTodos,
+                completed: completedTodos,
+                highPriority: highPriorityTodos,
+                todayDue: todayDueTodos,
+                overdue: overdueTodos,
+            },
+            notes: {
+                total: 0,
+                categories: 0,
+                recent: 0,
+            },
+            chat: {
+                totalConversations: 0,
+                unreadMessages: 0,
+            },
+            ai: {
+                totalQueries: 0,
+                tokensUsed: 0,
+            },
+            shop: {
+                totalProducts: 0,
+                totalOrders: 0,
+                revenue: 0,
+            },
+            social: {
+                totalPosts: 0,
+                followers: 0,
+                likes: 0,
+            },
+            delivery: {
+                activeDeliveries: 0,
+                completedDeliveries: 0,
+                pendingDeliveries: 0,
+            },
+            expense: {
+                totalExpenses: 0,
+                thisMonth: 0,
+                categories: 0,
+            },
+            weather: {
+                currentLocation: "Not set",
+                savedLocations: 0,
+            },
+            urlShortener: {
+                totalUrls: 0,
+                totalClicks: 0,
+                activeLinks: 0,
+            },
+        };
+    } catch (error: any) {
+        console.error(`[Stats Service] Error fetching stats for user ${userId}:`, error);
+        
+        // Instead of throwing, return zero stats to prevent client hanging
+        // This ensures the API always responds
+        return {
+            todos: {
+                total: 0,
+                active: 0,
+                completed: 0,
+                highPriority: 0,
+                todayDue: 0,
+                overdue: 0,
+            },
+            notes: {
+                total: 0,
+                categories: 0,
+                recent: 0,
+            },
+            chat: {
+                totalConversations: 0,
+                unreadMessages: 0,
+            },
+            ai: {
+                totalQueries: 0,
+                tokensUsed: 0,
+            },
+            shop: {
+                totalProducts: 0,
+                totalOrders: 0,
+                revenue: 0,
+            },
+            social: {
+                totalPosts: 0,
+                followers: 0,
+                likes: 0,
+            },
+            delivery: {
+                activeDeliveries: 0,
+                completedDeliveries: 0,
+                pendingDeliveries: 0,
+            },
+            expense: {
+                totalExpenses: 0,
+                thisMonth: 0,
+                categories: 0,
+            },
+            weather: {
+                currentLocation: "Not set",
+                savedLocations: 0,
+            },
+            urlShortener: {
+                totalUrls: 0,
+                totalClicks: 0,
+                activeLinks: 0,
+            },
+        };
+    }
 };

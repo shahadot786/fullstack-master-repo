@@ -1,6 +1,8 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/auth-store";
 import { authApi } from "@/lib/api/auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -19,7 +21,15 @@ import { Button } from "@/components/ui/button";
 export function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const queryClient = useQueryClient();
+  const { user, logout, setClearCache } = useAuthStore();
+
+  // Set up cache clearing function on mount
+  useEffect(() => {
+    setClearCache(() => {
+      queryClient.clear();
+    });
+  }, [queryClient, setClearCache]);
 
   const handleLogout = async () => {
     try {

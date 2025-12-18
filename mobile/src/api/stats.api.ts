@@ -14,7 +14,16 @@ export const statsApi = {
      * GET /stats
      */
     getStats: async (): Promise<ServiceStats> => {
-        const response = await apiClient.get(API_ENDPOINTS.STATS);
-        return response.data.data;
+        try {
+            const response = await apiClient.get(API_ENDPOINTS.STATS);
+            
+            if (!response.data.data) {
+                return {} as ServiceStats;
+            }
+            
+            return response.data.data;
+        } catch (error: any) {
+            return {} as ServiceStats;
+        }
     },
 };

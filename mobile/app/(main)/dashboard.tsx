@@ -9,6 +9,7 @@ import { ServiceCard } from '@/components/dashboard/ServiceCard';
 import { useStats } from '@/hooks/useStats';
 import { useAuthStore } from '@/store/authStore';
 import { useTheme } from '@/hooks/useTheme';
+import { Button } from '@/components/common/Button';
 
 export default function DashboardScreen() {
     const router = useRouter();
@@ -16,7 +17,7 @@ export default function DashboardScreen() {
     const user = useAuthStore((state) => state.user);
     const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const { data: stats, isLoading, refetch } = useStats();
+    const { data: stats, isLoading, error, refetch, isError, isRefetching } = useStats();
 
     const handleRefresh = async () => {
         setIsRefreshing(true);
@@ -26,6 +27,38 @@ export default function DashboardScreen() {
 
     const textColor = isDark ? '#fafafa' : '#171717';
     const secondaryTextColor = isDark ? '#a3a3a3' : '#737373';
+    
+    console.log('Stats Debug:', { 
+        stats, 
+        isLoading, 
+        isError, 
+        error: error ? JSON.stringify(error) : null,
+        isRefetching,
+        user 
+    });
+
+    // Show error state
+    if (isError) {
+        return (
+            <ScreenLayout>
+                <YStack flex={1} alignItems="center" justifyContent="center" padding="$4">
+                    <Ionicons name="warning" size={64} color="#ef4444" />
+                    <Text color={textColor} fontSize="$6" fontWeight="600" marginTop="$4" textAlign="center">
+                        Failed to Load Stats
+                    </Text>
+                    <Text color={secondaryTextColor} fontSize="$4" marginTop="$2" textAlign="center">
+                        {(error as any)?.message || 'Unable to connect to server. Please check your connection.'}
+                    </Text>
+                    <YStack marginTop="$4">
+                        <Button 
+                            title="Try Again"
+                            onPress={() => refetch()} 
+                        />
+                    </YStack>
+                </YStack>
+            </ScreenLayout>
+        );
+    }
 
     if (isLoading) {
         return (

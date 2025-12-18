@@ -38,7 +38,7 @@ export default function LoginScreen() {
     try {
       const response = await authApi.login(data);
       setAuth(response.user, response.accessToken, response.refreshToken);
-      router.replace("/(main)/(todos)" as Href);
+      router.replace("/(main)/dashboard" as Href);
     } catch (error: any) {
       const message = error.message || "Login failed";
 

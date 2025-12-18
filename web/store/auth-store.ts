@@ -7,19 +7,22 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
+  clearCache: () => void;
   setUser: (user: User) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
+  setClearCache: (clearFn: () => void) => void;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
+      clearCache: () => {},
 
       setUser: (user) =>
         set({
@@ -41,13 +44,23 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
         }),
 
-      logout: () =>
+      setClearCache: (clearFn) =>
+        set({
+          clearCache: clearFn,
+        }),
+
+      logout: () => {
+        // Clear React Query cache before clearing auth state
+        const { clearCache } = get();
+        clearCache();
+        
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
-        }),
+        });
+      },
     }),
     {
       name: "auth-storage",
