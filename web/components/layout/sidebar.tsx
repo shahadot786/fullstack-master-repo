@@ -14,9 +14,11 @@ import {
   Users,
   Link as LinkIcon,
   Cloud,
+  LayoutGrid,
 } from "lucide-react";
 
 const services = [
+  { name: "Dashboard", href: "/", icon: LayoutGrid, active: true },
   { name: "Todo", href: "/todos", icon: CheckSquare, active: true },
   { name: "Notes", href: "/notes", icon: FileText, active: false },
   { name: "Chat", href: "/chat", icon: MessageSquare, active: false },

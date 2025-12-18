@@ -1,64 +1,12 @@
 import apiClient from './client';
 import { API_ENDPOINTS } from '@/config/constants';
+import { ServiceStats } from '@/types';
 
 /**
  * Stats API
  * 
  * API endpoints for fetching dashboard statistics.
  */
-
-export interface ServiceStats {
-    todos: {
-        total: number;
-        active: number;
-        completed: number;
-        highPriority: number;
-        todayDue: number;
-        overdue: number;
-    };
-    notes: {
-        total: number;
-        categories: number;
-        recent: number;
-    };
-    chat: {
-        totalConversations: number;
-        unreadMessages: number;
-    };
-    ai: {
-        totalQueries: number;
-        tokensUsed: number;
-    };
-    shop: {
-        totalProducts: number;
-        totalOrders: number;
-        revenue: number;
-    };
-    social: {
-        totalPosts: number;
-        followers: number;
-        likes: number;
-    };
-    delivery: {
-        activeDeliveries: number;
-        completedDeliveries: number;
-        pendingDeliveries: number;
-    };
-    expense: {
-        totalExpenses: number;
-        thisMonth: number;
-        categories: number;
-    };
-    weather: {
-        currentLocation: string;
-        savedLocations: number;
-    };
-    urlShortener: {
-        totalUrls: number;
-        totalClicks: number;
-        activeLinks: number;
-    };
-}
 
 export const statsApi = {
     /**

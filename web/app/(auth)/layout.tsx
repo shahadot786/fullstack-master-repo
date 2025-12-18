@@ -19,7 +19,7 @@ export default function AuthLayout({
 
   useEffect(() => {
     if (isHydrated && isAuthenticated) {
-      router.push("/todos");
+      router.push("/");
     }
   }, [isAuthenticated, isHydrated, router]);
 

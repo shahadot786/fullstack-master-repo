@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { statsApi, ServiceStats } from '@/api/stats.api';
+import { statsApi } from '@/api/stats.api';
+import { ServiceStats } from '@/types';
 
 /**
  * useStats Hook
@@ -15,7 +16,7 @@ const QUERY_KEYS = {
  * Fetch comprehensive stats for all services
  */
 export const useStats = () => {
-    return useQuery({
+    return useQuery<ServiceStats>({
         queryKey: [QUERY_KEYS.STATS],
         queryFn: () => statsApi.getStats(),
         staleTime: 1000 * 60 * 5, // 5 minutes

@@ -16,6 +16,7 @@ export default function MainLayout() {
 
   return (
     <Drawer
+      initialRouteName="dashboard"
       screenOptions={{
         headerShown: false,
         drawerActiveTintColor: "#3b82f6",
@@ -195,6 +196,7 @@ export default function MainLayout() {
           drawerItemStyle: { display: "none" },
         }}
       />
+
     </Drawer>
   );
 }

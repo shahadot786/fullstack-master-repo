@@ -24,7 +24,7 @@ export default function Index() {
         router.replace('/(auth)/login' as Href);
       } else if (isAuthenticated && !inMainGroup) {
         // Authenticated, redirect to main app
-        router.replace('/(main)/(todos)' as Href);
+        router.replace('/(main)/dashboard' as Href);
       }
     }, 100);
 
