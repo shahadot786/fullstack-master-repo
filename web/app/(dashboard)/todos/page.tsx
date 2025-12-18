@@ -8,6 +8,7 @@ import { TodoCard } from "@/components/todos/todo-card";
 import { TodoForm } from "@/components/todos/todo-form";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
+import { LoaderModal } from "@/components/ui/loader-modal";
 import {
   Select,
   SelectContent,
@@ -15,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Loader2, Wifi, WifiOff } from "lucide-react";
+import { Plus, Wifi, WifiOff } from "lucide-react";
 
 export default function TodosPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -67,11 +68,7 @@ export default function TodosPage() {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-100">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-      </div>
-    );
+    return <LoaderModal text="Loading Todos..." />;
   }
 
   if (error) {

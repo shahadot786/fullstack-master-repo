@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
-import { Loader2 } from "lucide-react";
+import { LoaderModal } from "@/components/ui/loader-modal";
 
 export default function DashboardLayout({
   children,
@@ -22,22 +22,13 @@ export default function DashboardLayout({
     }
   }, [isAuthenticated, router]);
 
-  // Show loading spinner until hydrated
-  if (!isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
-
   // Don't show dashboard if not authenticated
   if (!isAuthenticated) {
-    return null;
+    return <LoaderModal text="Redirecting to login..." />;
   }
 
   return (
-    <div className="flex bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header onMenuClick={() => setIsSidebarOpen(true)} />
