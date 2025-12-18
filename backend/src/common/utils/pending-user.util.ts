@@ -1,9 +1,8 @@
 import { getRedisClient } from "@common/db/redis";
-import bcrypt from "bcryptjs";
 
 export interface PendingUser {
     email: string;
-    password: string; // hashed
+    password: string; // plain text - will be hashed when creating verified user
     name: string;
     createdAt: string;
 }
@@ -27,14 +26,11 @@ export const storePendingUser = async (
     name: string
 ): Promise<void> => {
     const redis = getRedisClient();
-    
-    // Hash password before storing
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    
+
+    // Store plain password - it will be hashed by the pre-save hook when creating the verified user
     const pendingUser: PendingUser = {
         email: email.toLowerCase(),
-        password: hashedPassword,
+        password: password, // Plain password, not hashed yet
         name,
         createdAt: new Date().toISOString(),
     };
