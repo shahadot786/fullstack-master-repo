@@ -8,6 +8,7 @@ import { swaggerSpec } from "@config/swagger";
 import { errorHandler } from "@middleware/error.middleware";
 import authRoutes from "@services/auth/auth.routes";
 import todoRoutes from "@services/todo/todo.routes";
+import statsRoutes from "@services/stats/stats.routes";
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.get("/health", (req, res) => {
 // API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
+app.use("/api/stats", statsRoutes);
 
 // 404 handler
 app.use((req, res) => {

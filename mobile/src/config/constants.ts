@@ -39,6 +39,8 @@ export const API_ENDPOINTS = {
     BASE: "/todos",
     BY_ID: (id: string) => `/todos/${id}`,
   },
+  // Stats endpoint
+  STATS: "/stats",
 } as const;
 
 // Storage Keys (MMKV)
