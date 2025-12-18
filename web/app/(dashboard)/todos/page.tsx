@@ -84,9 +84,9 @@ export default function TodosPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-6 flex-shrink-0">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
@@ -153,28 +153,32 @@ export default function TodosPage() {
         </div>
       </div>
 
-      {/* Todo List */}
-      <div className="space-y-3">
+      {/* Todo Grid - Fixed height with scroll */}
+      <div className="flex-1 overflow-y-auto min-h-0">
         {todos && todos.length > 0 ? (
-          todos.map((todo) => (
-            <TodoCard key={todo._id} todo={todo} onEdit={handleEdit} />
-          ))
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-4">
+            {todos.map((todo) => (
+              <TodoCard key={todo._id} todo={todo} onEdit={handleEdit} />
+            ))}
+          </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
-              No todos found. Create your first task!
-            </p>
-            <Button onClick={handleCreateNew}>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Todo
-            </Button>
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
+                No todos found. Create your first task!
+              </p>
+              <Button onClick={handleCreateNew}>
+                <Plus className="w-4 h-4 mr-2" />
+                Create Todo
+              </Button>
+            </div>
           </div>
         )}
       </div>
 
       {/* Pagination */}
       {pagination && pagination.total > 0 && (
-        <div className="mt-6">
+        <div className="mt-6 flex-shrink-0">
           <Pagination
             currentPage={page}
             totalPages={pagination.totalPages}
