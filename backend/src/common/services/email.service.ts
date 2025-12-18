@@ -52,7 +52,7 @@ export const sendEmail = async (options: SendEmailOptions): Promise<void> => {
 export const sendOTPEmail = async (
     email: string,
     otp: string,
-    purpose: "verification" | "password-reset" | "email-change"
+    purpose: "verification" | "password-reset" | "email-change" | "email-verification"
 ): Promise<void> => {
     const subject =
         purpose === "verification"

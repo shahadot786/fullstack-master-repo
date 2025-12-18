@@ -73,6 +73,31 @@ export const verifyEmail = async (
     throw new UnauthorizedError("Invalid or expired OTP");
   }
 
+  // Check if this is an email change verification (user already exists with pendingEmail)
+  const existingUser = await User.findOne({ pendingEmail: email });
+  
+  if (existingUser) {
+    // This is an email change verification
+    existingUser.email = email;
+    existingUser.pendingEmail = undefined;
+    existingUser.isEmailVerified = true;
+    existingUser.emailVerifiedAt = new Date();
+    await existingUser.save();
+
+    // Generate new tokens with updated email
+    const accessToken = generateAccessToken(existingUser._id.toString(), existingUser.email);
+    const refreshToken = generateRefreshToken(existingUser._id.toString(), existingUser.email);
+
+    // Store new refresh token
+    await storeRefreshToken(existingUser._id.toString(), refreshToken);
+
+    // Remove password from response
+    existingUser.password = undefined as any;
+
+    return { user: existingUser, accessToken, refreshToken };
+  }
+
+  // This is a new user registration verification
   // Retrieve pending user data from Redis
   const pendingUser = await getPendingUser(email);
   if (!pendingUser) {
@@ -371,4 +396,60 @@ const generateRefreshToken = (id: string, email: string): string => {
   return jwt.sign({ id, email }, config.jwt.refreshSecret, {
     expiresIn: config.jwt.refreshExpiresIn,
   } as SignOptions);
+};
+
+/**
+ * Update user's profile image
+ */
+export const updateProfileImage = async (
+  userId: string,
+  profileImageUrl: string
+): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  user.profileImage = profileImageUrl;
+  await user.save();
+
+  // Generate new tokens since user data changed
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+  // Store new refresh token
+  await storeRefreshToken(user._id.toString(), refreshToken);
+
+  // Remove password from response
+  user.password = undefined as any;
+
+  return { user, accessToken, refreshToken };
+};
+
+/**
+ * Who Am I - Get current user with fresh tokens
+ * Called after login for web/mobile sync
+ */
+export const whoAmI = async (
+  userId: string
+): Promise<{ user: IUser; tokens: { accessToken: string; refreshToken: string } }> => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  // Generate fresh tokens
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+  // Store new refresh token
+  await storeRefreshToken(user._id.toString(), refreshToken);
+
+  // Remove password from response
+  user.password = undefined as any;
+
+  return {
+    user,
+    tokens: { accessToken, refreshToken },
+  };
 };

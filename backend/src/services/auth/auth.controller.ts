@@ -22,6 +22,9 @@ export const verifyEmail = asyncHandler(async (req: AuthRequest, res: Response) 
     const { email, otp } = req.body;
     const { user, accessToken, refreshToken } = await authService.verifyEmail(email, otp);
 
+    // Set cookies for web
+    setAuthCookies(res, accessToken, refreshToken);
+
     sendSuccess(
         res,
         {
@@ -48,6 +51,9 @@ export const login = asyncHandler(async (req: AuthRequest, res: Response) => {
         email,
         password
     );
+
+    // Set cookies for web
+    setAuthCookies(res, accessToken, refreshToken);
 
     sendSuccess(res, {
         user,
@@ -133,3 +139,50 @@ export const changePassword = asyncHandler(async (req: AuthRequest, res: Respons
 
     sendSuccess(res, null, "Password changed successfully");
 });
+
+export const updateProfileImage = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { profileImageUrl } = req.body;
+
+    const { user, accessToken, refreshToken } = await authService.updateProfileImage(userId, profileImageUrl);
+
+    sendSuccess(res, {
+        user,
+        tokens: { accessToken, refreshToken }
+    }, "Profile image updated successfully");
+});
+
+export const whoAmI = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+
+    const { user, tokens } = await authService.whoAmI(userId);
+
+    // Set cookies for web
+    setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+
+    sendSuccess(res, {
+        user,
+        tokens,
+    }, "User data retrieved successfully");
+});
+
+// Helper function to set auth cookies
+export const setAuthCookies = (res: Response, accessToken: string, refreshToken: string) => {
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // Access token - short-lived (15 minutes)
+    res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'strict' : 'lax',
+        maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    // Refresh token - long-lived (7 days)
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'strict' : 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+};

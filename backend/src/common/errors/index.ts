@@ -36,3 +36,21 @@ export class ConflictError extends AppError {
         super(message, HTTP_STATUS.CONFLICT);
     }
 }
+
+export class ForbiddenError extends AppError {
+    constructor(message: string = "Access forbidden") {
+        super(message, HTTP_STATUS.FORBIDDEN);
+    }
+}
+
+export class InternalServerError extends AppError {
+    constructor(message: string = "Internal server error") {
+        super(message, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+    }
+}
+
+export class BadRequestError extends AppError {
+    constructor(message: string = "Bad request") {
+        super(message, HTTP_STATUS.BAD_REQUEST);
+    }
+}

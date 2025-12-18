@@ -379,4 +379,47 @@ router.post("/verify-email-change", authenticate, validate(verifyEmailChangeVali
  */
 router.put("/change-password", authenticate, validate(changePasswordValidation), controller.changePassword);
 
+/**
+ * @swagger
+ * /api/auth/whoAmI:
+ *   get:
+ *     summary: Get current user with fresh tokens (post-login sync)
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User data and tokens retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.get("/whoAmI", authenticate, controller.whoAmI);
+
+/**
+ * @swagger
+ * /api/auth/profile-image:
+ *   put:
+ *     summary: Update user profile image
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - profileImageUrl
+ *             properties:
+ *               profileImageUrl:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profile image updated successfully with new tokens
+ *       401:
+ *         description: Unauthorized
+ */
+router.put("/profile-image", authenticate, controller.updateProfileImage);
+
 export default router;
