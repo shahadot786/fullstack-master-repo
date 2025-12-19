@@ -28,6 +28,8 @@ export interface User {
     _id: string;
     email: string;
     name: string;
+    profileImage?: string;
+    isEmailVerified: boolean;
     createdAt: Date;
     updatedAt: Date;
 }

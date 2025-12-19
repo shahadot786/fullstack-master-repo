@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { ScrollView, KeyboardAvoidingView, Platform, Alert, TouchableOpacity } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, Platform, Alert, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { YStack, Text, XStack } from 'tamagui';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import * as ImagePicker from 'expo-image-picker';
 import { Input } from '@/components/common/Input';
 import { Button } from '@/components/common/Button';
 import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/api/auth.api';
+import { uploadApi } from '@/api/upload.api';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -25,6 +27,7 @@ export default function EditProfileScreen() {
     const updateUserAndTokens = useAuthStore((state) => state.updateUserAndTokens);
     const { isDark } = useTheme();
     const [isLoading, setIsLoading] = useState(false);
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
 
     const {
         control,
@@ -64,6 +67,90 @@ export default function EditProfileScreen() {
             Alert.alert('Error', error?.message || 'Failed to update profile');
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleImagePicker = async () => {
+        Alert.alert(
+            'Profile Picture',
+            'Choose an option',
+            [
+                {
+                    text: 'Take Photo',
+                    onPress: () => pickImage('camera'),
+                },
+                {
+                    text: 'Choose from Library',
+                    onPress: () => pickImage('library'),
+                },
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+            ]
+        );
+    };
+
+    const pickImage = async (source: 'camera' | 'library') => {
+        try {
+            let result;
+
+            if (source === 'camera') {
+                const permission = await ImagePicker.requestCameraPermissionsAsync();
+                if (!permission.granted) {
+                    Alert.alert('Permission Required', 'Camera permission is required to take photos.');
+                    return;
+                }
+                result = await ImagePicker.launchCameraAsync({
+                    mediaTypes: ['images'],
+                    allowsEditing: true,
+                    aspect: [1, 1],
+                    quality: 0.8,
+                });
+            } else {
+                const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (!permission.granted) {
+                    Alert.alert('Permission Required', 'Gallery permission is required to select photos.');
+                    return;
+                }
+                result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ['images'],
+                    allowsEditing: true,
+                    aspect: [1, 1],
+                    quality: 0.8,
+                });
+            }
+
+            if (!result.canceled && result.assets[0]) {
+                await uploadProfileImage(result.assets[0].uri);
+            }
+        } catch (error: any) {
+            Alert.alert('Error', error?.message || 'Failed to pick image');
+        }
+    };
+
+    const uploadProfileImage = async (imageUri: string) => {
+        try {
+            setIsUploadingImage(true);
+
+            // Upload image to Cloudinary
+            const uploadResult = await uploadApi.uploadFile(imageUri, 'profile-images');
+
+            // Update profile with new image URL using the correct endpoint
+            const response = await authApi.updateProfileImage(uploadResult.url);
+
+            // Update user and tokens in store
+            updateUserAndTokens(
+                response.user,
+                response.tokens.accessToken,
+                response.tokens.refreshToken
+            );
+
+            Alert.alert('Success', 'Profile image updated successfully!');
+        } catch (error: any) {
+            Alert.alert('Error', error?.message || 'Failed to upload profile image');
+        } finally {
+            setIsUploadingImage(false);
         }
     };
 
@@ -110,18 +197,52 @@ export default function EditProfileScreen() {
 
                     {/* Avatar Section */}
                     <YStack alignItems="center" gap="$3">
-                        <YStack
-                            width={100}
-                            height={100}
-                            borderRadius={50}
-                            backgroundColor="#3b82f6"
-                            alignItems="center"
-                            justifyContent="center"
-                        >
-                            <Text fontSize="$10" fontWeight="700" color="white">
-                                {user?.name?.charAt(0).toUpperCase()}
-                            </Text>
-                        </YStack>
+                        <TouchableOpacity onPress={handleImagePicker} disabled={isUploadingImage}>
+                            <YStack position="relative">
+                                {user?.profileImage ? (
+                                    <Image
+                                        source={{ uri: user.profileImage }}
+                                        style={{
+                                            width: 100,
+                                            height: 100,
+                                            borderRadius: 50,
+                                        }}
+                                    />
+                                ) : (
+                                    <YStack
+                                        width={100}
+                                        height={100}
+                                        borderRadius={50}
+                                        backgroundColor="#3b82f6"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                    >
+                                        <Text fontSize="$10" fontWeight="700" color="white">
+                                            {user?.name?.charAt(0).toUpperCase()}
+                                        </Text>
+                                    </YStack>
+                                )}
+                                <YStack
+                                    position="absolute"
+                                    bottom={0}
+                                    right={0}
+                                    width={32}
+                                    height={32}
+                                    borderRadius={16}
+                                    backgroundColor="#3b82f6"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    borderWidth={2}
+                                    borderColor={isDark ? '#0a0a0a' : '#f9fafb'}
+                                >
+                                    {isUploadingImage ? (
+                                        <ActivityIndicator size="small" color="white" />
+                                    ) : (
+                                        <Ionicons name="camera" size={16} color="white" />
+                                    )}
+                                </YStack>
+                            </YStack>
+                        </TouchableOpacity>
                         <Text fontSize="$3" color="$color" opacity={0.5}>
                             {user?.email}
                         </Text>

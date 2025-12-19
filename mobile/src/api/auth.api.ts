@@ -145,6 +145,18 @@ export const authApi = {
   },
 
   /**
+   * Update user profile image
+   * PUT /auth/profile-image
+   */
+  updateProfileImage: async (
+    profileImageUrl: string
+  ): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
+    const response = await apiClient.put("/auth/profile-image", { profileImageUrl });
+    const { user, tokens } = response.data.data;
+    return { user, tokens };
+  },
+
+  /**
    * Request email change (sends OTP to new email)
    * POST /auth/request-email-change
    */

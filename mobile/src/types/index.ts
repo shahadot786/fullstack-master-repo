@@ -12,6 +12,7 @@ export interface User {
     _id: string;
     email: string;
     name: string;
+    profileImage?: string;
     isEmailVerified: boolean;
     emailVerifiedAt?: string;
     createdAt: string;

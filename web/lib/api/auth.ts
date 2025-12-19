@@ -75,9 +75,17 @@ export const authApi = {
     await apiClient.post("/auth/reset-password", { email, otp, newPassword });
   },
 
-  updateProfile: async (data: { name: string }): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
+  updateProfile: async (data: { 
+    name?: string;
+  }): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
     const response = await apiClient.put("/auth/profile", data);
     // Extract user and tokens from {success, data: {user, tokens}}
+    const { user, tokens } = response.data.data;
+    return { user, tokens };
+  },
+
+  updateProfileImage: async (profileImageUrl: string): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
+    const response = await apiClient.put("/auth/profile-image", { profileImageUrl });
     const { user, tokens } = response.data.data;
     return { user, tokens };
   },

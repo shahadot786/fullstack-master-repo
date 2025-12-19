@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAuthStore } from "@/store/auth-store";
 import { authApi } from "@/lib/api/auth";
+import { uploadApi } from "@/lib/api/upload";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,7 +34,7 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { CheckCircle2, Mail, User, Calendar, Edit, Key, Eye, EyeOff } from "lucide-react";
+import { CheckCircle2, Mail, User, Calendar, Edit, Key, Eye, EyeOff, Camera, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
 const editProfileSchema = z.object({
@@ -78,6 +79,8 @@ export default function ProfilePage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editForm = useForm<EditProfileFormValues>({
     resolver: zodResolver(editProfileSchema),
@@ -183,6 +186,48 @@ export default function ProfilePage() {
     }
   };
 
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      setError("Invalid file type. Please upload a JPEG, PNG, GIF, or WEBP image.");
+      return;
+    }
+
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setError("File size too large. Maximum size is 10MB.");
+      return;
+    }
+
+    try {
+      setError("");
+      setSuccess("");
+      setIsUploadingImage(true);
+
+      // Upload image to Cloudinary
+      const uploadResult = await uploadApi.uploadFile(file, "profile-images");
+
+      // Update profile with new image URL using the correct endpoint
+      const response = await authApi.updateProfileImage(uploadResult.url);
+
+      // Update user and tokens in store
+      updateUserAndTokens(response.user, response.tokens.accessToken, response.tokens.refreshToken);
+      setSuccess("Profile image updated successfully!");
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to upload profile image");
+    } finally {
+      setIsUploadingImage(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   if (!user) {
     return null;
   }
@@ -230,15 +275,44 @@ export default function ProfilePage() {
         <CardContent className="space-y-6">
           {/* Avatar */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-2xl">
-                {user.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")
-                  .toUpperCase()
-                  .slice(0, 2)}
-              </span>
+            <div className="relative group">
+              {user.profileImage ? (
+                <img
+                  src={user.profileImage}
+                  alt={user.name}
+                  className="w-20 h-20 rounded-full object-cover flex-shrink-0"
+                />
+              ) : (
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white font-bold text-2xl">
+                    {user.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()
+                      .slice(0, 2)}
+                  </span>
+                </div>
+              )}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploadingImage}
+                className="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Upload profile image"
+              >
+                {isUploadingImage ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Camera className="w-4 h-4" />
+                )}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
             </div>
             <div className="text-center sm:text-left">
               <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
