@@ -38,6 +38,12 @@ export const API_ENDPOINTS = {
     VERIFY_EMAIL_CHANGE: "/auth/verify-email-change",
     CHANGE_PASSWORD: "/auth/change-password",
   },
+  // User endpoints
+  USER: {
+    PROFILE: "/user/profile",
+    REQUEST_EMAIL_CHANGE: "/user/request-email-change",
+    ALL: "/user/all",
+  },
   // Todo endpoints
   TODOS: {
     BASE: "/todos",

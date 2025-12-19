@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { Input } from '@/components/common/Input';
 import { Button } from '@/components/common/Button';
 import { useAuthStore } from '@/store/authStore';
-import { authApi } from '@/api/auth.api';
+import { userApi } from '@/api/user.api';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -47,7 +47,7 @@ export default function ChangeEmailScreen() {
 
         try {
             setIsLoading(true);
-            await authApi.requestEmailChange({ newEmail: data.newEmail });
+            await userApi.requestEmailChange(data.newEmail);
             
             // Navigate to verification screen with email param
             Alert.alert(

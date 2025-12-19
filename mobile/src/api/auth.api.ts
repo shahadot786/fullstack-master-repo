@@ -31,17 +31,23 @@ export const authApi = {
   /**
    * Verify email with OTP
    * POST /auth/verify-email
+   * 
+   * Handles both registration verification and email change verification
    */
   verifyEmail: async (
     data: VerifyEmailRequest
-  ): Promise<{ message: string }> => {
+  ): Promise<{ user: User; accessToken: string; refreshToken: string }> => {
     const response = await apiClient.post(
       API_ENDPOINTS.AUTH.VERIFY_EMAIL,
       data
     );
-    // Note: verifyEmail returns user and tokens, but we're not using them here
-    // The actual login happens after verification
-    return response.data.data;
+    // Backend returns: {success, data: {user, tokens: {accessToken, refreshToken}}}
+    const { user, tokens } = response.data.data;
+    return {
+      user,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    };
   },
 
   /**
@@ -183,12 +189,15 @@ export const authApi = {
   /**
    * Change password
    * PUT /auth/change-password
+   * 
+   * Returns new tokens after password change (security best practice)
    */
   changePassword: async (data: {
     currentPassword: string;
     newPassword: string;
-  }): Promise<{ message: string }> => {
+  }): Promise<{ tokens: { accessToken: string; refreshToken: string } }> => {
     const response = await apiClient.put(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, data);
-    return response.data.data;
+    const { tokens } = response.data.data;
+    return { tokens };
   },
 };

@@ -10,7 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Input } from '@/components/common/Input';
 import { Button } from '@/components/common/Button';
 import { useAuthStore } from '@/store/authStore';
-import { authApi } from '@/api/auth.api';
+import { userApi } from '@/api/user.api';
 import { uploadApi } from '@/api/upload.api';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
@@ -48,21 +48,26 @@ export default function EditProfileScreen() {
 
         try {
             setIsLoading(true);
-            const response = await authApi.updateProfile(data);
+            const response = await userApi.updateProfile(data);
             
-            // Update user and tokens in store
-            updateUserAndTokens(
-                response.user,
-                response.tokens.accessToken,
-                response.tokens.refreshToken
-            );
+            // Check if response has tokens (name updated) or message (email change initiated)
+            if ('user' in response && 'tokens' in response) {
+                // Update user and tokens in store
+                updateUserAndTokens(
+                    response.user,
+                    response.tokens.accessToken,
+                    response.tokens.refreshToken
+                );
 
-            Alert.alert('Success', 'Profile updated successfully!', [
-                {
-                    text: 'OK',
-                    onPress: () => router.back(),
-                },
-            ]);
+                Alert.alert('Success', 'Profile updated successfully!', [
+                    {
+                        text: 'OK',
+                        onPress: () => router.back(),
+                    },
+                ]);
+            } else {
+                Alert.alert('Info', response.message);
+            }
         } catch (error: any) {
             Alert.alert('Error', error?.message || 'Failed to update profile');
         } finally {
@@ -136,15 +141,18 @@ export default function EditProfileScreen() {
             // Upload image to Cloudinary
             const uploadResult = await uploadApi.uploadFile(imageUri, 'profile-images');
 
-            // Update profile with new image URL using the correct endpoint
-            const response = await authApi.updateProfileImage(uploadResult.url);
+            // Update profile with new image URL using the new user API
+            const response = await userApi.updateProfile({ profileImage: uploadResult.url });
 
-            // Update user and tokens in store
-            updateUserAndTokens(
-                response.user,
-                response.tokens.accessToken,
-                response.tokens.refreshToken
-            );
+            // Check if response has tokens (should have for profileImage update)
+            if ('user' in response && 'tokens' in response) {
+                // Update user and tokens in store
+                updateUserAndTokens(
+                    response.user,
+                    response.tokens.accessToken,
+                    response.tokens.refreshToken
+                );
+            }
 
             Alert.alert('Success', 'Profile image updated successfully!');
         } catch (error: any) {

@@ -1,36 +1,18 @@
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { TamaguiProvider, Theme } from 'tamagui';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { LogBox } from 'react-native';
 import tamaguiConfig from '../tamagui.config';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useAuthStore } from '@/store/authStore';
 import { useAppStore } from '@/store/appStore';
 import { useTheme } from '@/hooks/useTheme';
-
-// Suppress known iOS simulator warnings
-LogBox.ignoreLogs([
-  'CHHapticPattern',
-  'RemoteTextInput',
-  'CoreHaptics',
-  'hapticpatternlibrary',
-]);
+import { queryClient } from '@/utils/client';
 
 // Keep splash screen visible while loading
 SplashScreen.preventAutoHideAsync();
-
-// Create query client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 2,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-    },
-  },
-});
 
 export default function RootLayout() {
   const { theme } = useTheme();

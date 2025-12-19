@@ -5,18 +5,24 @@ import { z } from 'zod';
  */
 
 export const updateProfileValidation = z.object({
-    name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name cannot exceed 50 characters').optional(),
-    email: z.string().email('Invalid email address').optional(),
-    password: z.string().min(8, 'Password must be at least 8 characters').optional(),
-    currentPassword: z.string().optional(),
-    profileImage: z.string().url('Invalid image URL').optional(),
+    body: z.object({
+        name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name cannot exceed 50 characters').optional(),
+        email: z.string().email('Invalid email address').optional(),
+        password: z.string().min(8, 'Password must be at least 8 characters').optional(),
+        currentPassword: z.string().optional(),
+        profileImage: z.string().url('Invalid image URL').optional(),
+    }),
 });
 
 export const getAllUsersValidation = z.object({
-    limit: z.string().optional(),
-    skip: z.string().optional(),
+    query: z.object({
+        limit: z.string().optional(),
+        skip: z.string().optional(),
+    }),
 });
 
 export const requestEmailChangeValidation = z.object({
-    newEmail: z.string().email('Invalid email address'),
+    body: z.object({
+        newEmail: z.string().email('Invalid email address'),
+    }),
 });

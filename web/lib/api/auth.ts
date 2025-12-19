@@ -90,8 +90,11 @@ export const authApi = {
     return { user, tokens };
   },
 
-  changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<void> => {
-    await apiClient.put("/auth/change-password", data);
+  changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<{ tokens: { accessToken: string; refreshToken: string } }> => {
+    const response = await apiClient.put("/auth/change-password", data);
+    // Backend now returns tokens after password change (security best practice)
+    const { tokens } = response.data.data;
+    return { tokens };
   },
 
   requestEmailChange: async (data: { newEmail: string }): Promise<{ message: string }> => {

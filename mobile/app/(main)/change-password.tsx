@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input } from '@/components/common/Input';
 import { Button } from '@/components/common/Button';
+import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/api/auth.api';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
@@ -31,6 +32,8 @@ type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
 export default function ChangePasswordScreen() {
     const router = useRouter();
+    const user = useAuthStore((state) => state.user);
+    const updateUserAndTokens = useAuthStore((state) => state.updateUserAndTokens);
     const { isDark } = useTheme();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -51,10 +54,14 @@ export default function ChangePasswordScreen() {
     const onSubmit = async (data: ChangePasswordFormData) => {
         try {
             setIsLoading(true);
-            await authApi.changePassword({
+            const response = await authApi.changePassword({
                 currentPassword: data.currentPassword,
                 newPassword: data.newPassword,
             });
+            
+            // Update tokens in store (password change returns new tokens)
+            updateUserAndTokens(user!, response.tokens.accessToken, response.tokens.refreshToken);
+            
             Alert.alert('Success', 'Password changed successfully!', [
                 {
                     text: 'OK',

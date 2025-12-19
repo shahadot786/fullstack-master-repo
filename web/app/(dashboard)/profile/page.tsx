@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useAuthStore } from "@/store/auth-store";
-import { authApi } from "@/lib/api/auth";
+import { authApi, userApi } from "@/lib/api";
 import { uploadApi } from "@/lib/api/upload";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -116,10 +116,14 @@ export default function ProfilePage() {
     try {
       setError("");
       setSuccess("");
-      const response = await authApi.updateProfile(data);
-      // Update user and tokens in store to refresh UI immediately
-      updateUserAndTokens(response.user, response.tokens.accessToken, response.tokens.refreshToken);
-      setSuccess("Profile updated successfully!");
+      const response = await userApi.updateProfile(data);
+      // Check if response has tokens (name updated) or message (email change initiated)
+      if ('user' in response && 'tokens' in response) {
+        updateUserAndTokens(response.user, response.tokens.accessToken, response.tokens.refreshToken);
+        setSuccess("Profile updated successfully!");
+      } else {
+        setSuccess(response.message);
+      }
       setIsEditDialogOpen(false);
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to update profile");
@@ -130,7 +134,7 @@ export default function ProfilePage() {
     try {
       setError("");
       setSuccess("");
-      await authApi.requestEmailChange({ newEmail: data.newEmail });
+      await userApi.requestEmailChange(data.newEmail);
       setNewEmailForVerification(data.newEmail);
       setIsEmailDialogOpen(false);
       setIsVerifyEmailDialogOpen(true);
@@ -144,12 +148,13 @@ export default function ProfilePage() {
     try {
       setError("");
       setSuccess("");
-      const response = await authApi.verifyEmailChange({
-        newEmail: newEmailForVerification,
+      // Use the unified verify-email endpoint
+      const response = await authApi.verifyEmail({
+        email: newEmailForVerification,
         otp: data.otp,
       });
       // Update user and tokens in store to refresh UI immediately
-      updateUserAndTokens(response.user, response.tokens.accessToken, response.tokens.refreshToken);
+      updateUserAndTokens(response.user, response.accessToken, response.refreshToken);
       setSuccess("Email changed successfully!");
       setIsVerifyEmailDialogOpen(false);
       verifyEmailForm.reset();
@@ -163,7 +168,7 @@ export default function ProfilePage() {
   const handleResendEmailOTP = async () => {
     try {
       setError("");
-      await authApi.requestEmailChange({ newEmail: newEmailForVerification });
+      await userApi.requestEmailChange(newEmailForVerification);
       setSuccess("Verification code resent to your new email!");
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to resend code");
@@ -174,10 +179,12 @@ export default function ProfilePage() {
     try {
       setError("");
       setSuccess("");
-      await authApi.changePassword({
+      const response = await authApi.changePassword({
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       });
+      // Update tokens in store (password change returns new tokens)
+      updateUserAndTokens(user!, response.tokens.accessToken, response.tokens.refreshToken);
       setSuccess("Password changed successfully!");
       setIsPasswordDialogOpen(false);
       passwordForm.reset();
@@ -211,11 +218,13 @@ export default function ProfilePage() {
       // Upload image to Cloudinary
       const uploadResult = await uploadApi.uploadFile(file, "profile-images");
 
-      // Update profile with new image URL using the correct endpoint
-      const response = await authApi.updateProfileImage(uploadResult.url);
+      // Update profile with new image URL using the new user API
+      const response = await userApi.updateProfile({ profileImage: uploadResult.url });
 
-      // Update user and tokens in store
-      updateUserAndTokens(response.user, response.tokens.accessToken, response.tokens.refreshToken);
+      // Check if response has tokens (should have for profileImage update)
+      if ('user' in response && 'tokens' in response) {
+        updateUserAndTokens(response.user, response.tokens.accessToken, response.tokens.refreshToken);
+      }
       setSuccess("Profile image updated successfully!");
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to upload profile image");

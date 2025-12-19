@@ -10,6 +10,7 @@ import { Input } from '@/components/common/Input';
 import { Button } from '@/components/common/Button';
 import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/api/auth.api';
+import { userApi } from '@/api/user.api';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -45,16 +46,17 @@ export default function VerifyEmailChangeScreen() {
     const onSubmit = async (data: VerifyEmailFormData) => {
         try {
             setIsLoading(true);
-            const response = await authApi.verifyEmailChange({
-                newEmail,
+            // Use the unified verify-email endpoint
+            const response = await authApi.verifyEmail({
+                email: newEmail,
                 otp: data.otp,
             });
 
-            // Update user and tokens in store
+            // verifyEmail returns user, accessToken, refreshToken (not nested in tokens)
             updateUserAndTokens(
                 response.user,
-                response.tokens.accessToken,
-                response.tokens.refreshToken
+                response.accessToken,
+                response.refreshToken
             );
 
             Alert.alert(
@@ -80,7 +82,7 @@ export default function VerifyEmailChangeScreen() {
     const handleResendCode = async () => {
         try {
             setIsResending(true);
-            await authApi.requestEmailChange({ newEmail });
+            await userApi.requestEmailChange(newEmail);
             Alert.alert('Success', 'Verification code resent to your new email');
         } catch (error: any) {
             Alert.alert('Error', error?.message || 'Failed to resend code');
