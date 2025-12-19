@@ -14,16 +14,18 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    // Only redirect after hydration is complete to avoid false redirects
+    if (hasHydrated && !isAuthenticated) {
       router.push("/login");
     }
-  }, [isAuthenticated, router]);
+  }, [hasHydrated, isAuthenticated, router]);
 
-  // Don't show dashboard if not authenticated
-  if (!isAuthenticated) {
+  // Show loading while hydrating OR not authenticated
+  if (!hasHydrated || !isAuthenticated) {
     return <LoaderModal text="Loading..." />;
   }
 

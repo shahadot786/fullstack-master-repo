@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
+import { LoaderModal } from "@/components/ui/loader-modal";
 
 export default function AuthLayout({
   children,
@@ -11,12 +12,19 @@ export default function AuthLayout({
 }) {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    // Only redirect after hydration is complete
+    if (hasHydrated && isAuthenticated) {
       router.push("/");
     }
-  }, [isAuthenticated, router]);
+  }, [hasHydrated, isAuthenticated, router]);
+
+  // Show loading while hydrating
+  if (!hasHydrated) {
+    return <LoaderModal text="Loading..." />;
+  }
 
   // Don't show login page if already authenticated
   if (isAuthenticated) {
