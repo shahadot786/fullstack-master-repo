@@ -14,14 +14,14 @@ export function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    return <Button variant="ghost" size="icon" className="rounded-full" />;
+    return <Button variant="ghost" size="icon" className="rounded-full cursor-pointer" />;
   }
 
   return (
     <Button
       variant="ghost"
       size="icon"
-      className="rounded-full"
+      className="rounded-full cursor-pointer"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
     >
       {theme === "dark" ? (
