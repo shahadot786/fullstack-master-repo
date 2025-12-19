@@ -365,7 +365,7 @@ export const changePassword = async (
   userId: string,
   currentPassword: string,
   newPassword: string
-): Promise<void> => {
+): Promise<{ accessToken: string; refreshToken: string }> => {
   const user = await User.findById(userId).select("+password");
   if (!user) {
     throw new NotFoundError("User not found");
@@ -381,8 +381,14 @@ export const changePassword = async (
   user.password = newPassword;
   await user.save();
 
-  // Invalidate all refresh tokens for this user
-  await deleteRefreshToken(user._id.toString());
+  // Generate new tokens (security best practice)
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+  // Store new refresh token (this also invalidates old ones)
+  await storeRefreshToken(user._id.toString(), refreshToken);
+
+  return { accessToken, refreshToken };
 };
 
 // Helper function to generate access token

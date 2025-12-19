@@ -16,3 +16,7 @@ export const getAllUsersValidation = z.object({
     limit: z.string().optional(),
     skip: z.string().optional(),
 });
+
+export const requestEmailChangeValidation = z.object({
+    newEmail: z.string().email('Invalid email address'),
+});

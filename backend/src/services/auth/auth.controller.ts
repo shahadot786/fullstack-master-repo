@@ -88,9 +88,18 @@ export const resetPassword = asyncHandler(async (req: AuthRequest, res: Response
     sendSuccess(res, null, "Password reset successfully");
 });
 
+/**
+ * @deprecated Use GET /api/user/profile instead
+ * This endpoint will be removed in a future version
+ */
 export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const user = await authService.getUserById(userId);
+
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/user/profile>; rel="alternate"');
 
     sendSuccess(res, user);
 });
@@ -102,10 +111,19 @@ export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
     sendSuccess(res, null, "Logged out successfully");
 });
 
+/**
+ * @deprecated Use PUT /api/user/profile instead
+ * This endpoint will be removed in a future version
+ */
 export const updateProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const { name } = req.body;
     const { user, accessToken, refreshToken } = await authService.updateProfile(userId, { name });
+
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/user/profile>; rel="alternate"');
 
     sendSuccess(res, { 
         user,
@@ -113,18 +131,36 @@ export const updateProfile = asyncHandler(async (req: AuthRequest, res: Response
     }, "Profile updated successfully");
 });
 
+/**
+ * @deprecated Use POST /api/user/request-email-change instead
+ * This endpoint will be removed in a future version
+ */
 export const requestEmailChange = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const { newEmail } = req.body;
     await authService.requestEmailChange(userId, newEmail);
 
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/user/request-email-change>; rel="alternate"');
+
     sendSuccess(res, null, "Verification code sent to your new email");
 });
 
+/**
+ * @deprecated Use POST /api/auth/verify-email instead (unified endpoint)
+ * This endpoint will be removed in a future version
+ */
 export const verifyEmailChange = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const { newEmail, otp } = req.body;
     const { user, accessToken, refreshToken } = await authService.verifyEmailChange(userId, newEmail, otp);
+
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/auth/verify-email>; rel="alternate"');
 
     sendSuccess(res, {
         user,
@@ -135,16 +171,27 @@ export const verifyEmailChange = asyncHandler(async (req: AuthRequest, res: Resp
 export const changePassword = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const { currentPassword, newPassword } = req.body;
-    await authService.changePassword(userId, currentPassword, newPassword);
+    const { accessToken, refreshToken } = await authService.changePassword(userId, currentPassword, newPassword);
 
-    sendSuccess(res, null, "Password changed successfully");
+    sendSuccess(res, { 
+        tokens: { accessToken, refreshToken }
+    }, "Password changed successfully");
 });
 
+/**
+ * @deprecated Use PUT /api/user/profile instead
+ * This endpoint will be removed in a future version
+ */
 export const updateProfileImage = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const { profileImageUrl } = req.body;
 
     const { user, accessToken, refreshToken } = await authService.updateProfileImage(userId, profileImageUrl);
+
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/user/profile>; rel="alternate"');
 
     sendSuccess(res, {
         user,
@@ -152,10 +199,19 @@ export const updateProfileImage = asyncHandler(async (req: AuthRequest, res: Res
     }, "Profile image updated successfully");
 });
 
+/**
+ * @deprecated Use GET /api/user/profile instead
+ * This endpoint will be removed in a future version
+ */
 export const whoAmI = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
 
     const { user, tokens } = await authService.whoAmI(userId);
+
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/user/profile>; rel="alternate"');
 
     // Set cookies for web
     setAuthCookies(res, tokens.accessToken, tokens.refreshToken);

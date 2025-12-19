@@ -69,6 +69,19 @@ export const getAllUsers = asyncHandler(async (req: AuthRequest, res: Response) 
     sendSuccess(res, result);
 });
 
+/**
+ * Request email change
+ * Sends OTP to new email for verification
+ */
+export const requestEmailChange = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { newEmail } = req.body;
+
+    await userService.requestEmailChange(userId, newEmail);
+
+    sendSuccess(res, null, 'Verification code sent to your new email');
+});
+
 // Helper function to set auth cookies
 const setAuthCookies = (res: Response, accessToken: string, refreshToken: string) => {
     const isProduction = process.env.NODE_ENV === 'production';

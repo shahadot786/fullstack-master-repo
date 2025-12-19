@@ -53,7 +53,13 @@ router.post("/register", validate(registerValidation), controller.register);
  * @swagger
  * /api/auth/verify-email:
  *   post:
- *     summary: Verify email with OTP
+ *     summary: Verify email with OTP (handles both registration and email change)
+ *     description: |
+ *       This endpoint intelligently handles two scenarios:
+ *       1. **Registration verification** - Verifies new user email during registration (unauthenticated)
+ *       2. **Email change verification** - Verifies new email for existing user (authenticated, optional)
+ *       
+ *       The endpoint automatically detects which flow to use based on the email provided.
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -67,12 +73,32 @@ router.post("/register", validate(registerValidation), controller.register);
  *             properties:
  *               email:
  *                 type: string
+ *                 description: Email to verify (new user email for registration, new email for email change)
  *               otp:
  *                 type: string
- *                 description: 6-digit OTP code
+ *                 description: 6-digit OTP code sent to the email
  *     responses:
  *       200:
- *         description: Email verified successfully
+ *         description: Email verified successfully with user data and tokens
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     user:
+ *                       type: object
+ *                     tokens:
+ *                       type: object
+ *                       properties:
+ *                         accessToken:
+ *                           type: string
+ *                         refreshToken:
+ *                           type: string
  *       401:
  *         description: Invalid or expired OTP
  */
@@ -238,6 +264,10 @@ router.post(
  * /api/auth/me:
  *   get:
  *     summary: Get current user
+ *     deprecated: true
+ *     description: |
+ *       **DEPRECATED**: Use GET /api/user/profile instead.
+ *       This endpoint will be removed on 2025-02-01.
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -270,6 +300,10 @@ router.post("/logout", authenticate, controller.logout);
  * /api/auth/profile:
  *   put:
  *     summary: Update user profile (name only)
+ *     deprecated: true
+ *     description: |
+ *       **DEPRECATED**: Use PUT /api/user/profile instead.
+ *       This endpoint will be removed on 2025-02-01.
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -295,6 +329,10 @@ router.put("/profile", authenticate, validate(updateProfileValidation), controll
  * /api/auth/request-email-change:
  *   post:
  *     summary: Request email change (sends OTP to new email)
+ *     deprecated: true
+ *     description: |
+ *       **DEPRECATED**: Use POST /api/user/request-email-change instead.
+ *       This endpoint will be removed on 2025-02-01.
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -324,6 +362,10 @@ router.post("/request-email-change", authenticate, validate(requestEmailChangeVa
  * /api/auth/verify-email-change:
  *   post:
  *     summary: Verify email change with OTP
+ *     deprecated: true
+ *     description: |
+ *       **DEPRECATED**: Use POST /api/auth/verify-email instead (unified endpoint).
+ *       This endpoint will be removed on 2025-02-01.
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -354,6 +396,7 @@ router.post("/verify-email-change", authenticate, validate(verifyEmailChangeVali
  * /api/auth/change-password:
  *   put:
  *     summary: Change user password
+ *     description: Changes the user's password and returns new authentication tokens for security
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -371,9 +414,27 @@ router.post("/verify-email-change", authenticate, validate(verifyEmailChangeVali
  *                 type: string
  *               newPassword:
  *                 type: string
+ *                 minLength: 8
  *     responses:
  *       200:
- *         description: Password changed successfully
+ *         description: Password changed successfully with new tokens
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     tokens:
+ *                       type: object
+ *                       properties:
+ *                         accessToken:
+ *                           type: string
+ *                         refreshToken:
+ *                           type: string
  *       401:
  *         description: Unauthorized or incorrect current password
  */
@@ -384,6 +445,10 @@ router.put("/change-password", authenticate, validate(changePasswordValidation),
  * /api/auth/whoAmI:
  *   get:
  *     summary: Get current user with fresh tokens (post-login sync)
+ *     deprecated: true
+ *     description: |
+ *       **DEPRECATED**: Use GET /api/user/profile instead.
+ *       This endpoint will be removed on 2025-02-01.
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -400,6 +465,10 @@ router.get("/whoAmI", authenticate, controller.whoAmI);
  * /api/auth/profile-image:
  *   put:
  *     summary: Update user profile image
+ *     deprecated: true
+ *     description: |
+ *       **DEPRECATED**: Use PUT /api/user/profile instead.
+ *       This endpoint will be removed on 2025-02-01.
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []

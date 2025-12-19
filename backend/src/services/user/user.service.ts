@@ -193,3 +193,43 @@ export const getAllUsers = async (
         total,
     };
 };
+
+/**
+ * Request email change - sends OTP to new email
+ * This is a dedicated endpoint for email changes
+ */
+export const requestEmailChange = async (
+    userId: string,
+    newEmail: string
+): Promise<void> => {
+    const user = await User.findById(userId);
+    
+    if (!user) {
+        throw new NotFoundError('User not found');
+    }
+
+    // Check if new email is same as current
+    if (newEmail === user.email) {
+        throw new ConflictError('New email is the same as current email');
+    }
+
+    // Check if new email is already in use
+    const existingUser = await User.findOne({ email: newEmail });
+    if (existingUser) {
+        throw new ConflictError('Email already in use');
+    }
+
+    // Generate OTP and store with email verification key
+    // This will be verified using the existing /api/auth/verify-email endpoint
+    const otp = generateOTP();
+    const otpKey = getEmailVerificationKey(newEmail);
+    await storeOTP(otpKey, otp);
+
+    // Store pending email change in user document
+    // The verify-email endpoint will check for this
+    user.pendingEmail = newEmail;
+    await user.save();
+
+    // Send OTP to new email
+    await sendOTPEmail(newEmail, otp, 'email-change');
+};
