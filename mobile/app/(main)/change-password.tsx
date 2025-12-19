@@ -143,6 +143,7 @@ export default function ChangePasswordScreen() {
                                     onChangeText={onChange}
                                     error={errors.currentPassword?.message}
                                     secureTextEntry
+                                    showPasswordToggle
                                 />
                             )}
                         />
@@ -158,6 +159,7 @@ export default function ChangePasswordScreen() {
                                     onChangeText={onChange}
                                     error={errors.newPassword?.message}
                                     secureTextEntry
+                                    showPasswordToggle
                                 />
                             )}
                         />
@@ -173,6 +175,7 @@ export default function ChangePasswordScreen() {
                                     onChangeText={onChange}
                                     error={errors.confirmPassword?.message}
                                     secureTextEntry
+                                    showPasswordToggle
                                 />
                             )}
                         />
