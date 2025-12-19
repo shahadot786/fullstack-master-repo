@@ -9,6 +9,7 @@ import {
     storeOTP,
     getEmailVerificationKey,
 } from '@common/utils/otp.util';
+import { deleteOldProfileImage } from '@common/utils/cloudinary.util';
 import { sendOTPEmail } from '@common/services/email.service';
 
 /**
@@ -77,6 +78,11 @@ export const updateProfile = async (
 
     // Handle profile image update
     if (data.profileImage !== undefined && data.profileImage !== user.profileImage) {
+        // Delete old profile image from Cloudinary if it exists
+        if (user.profileImage) {
+            await deleteOldProfileImage(user.profileImage);
+        }
+        
         user.profileImage = data.profileImage;
         tokensUpdated = true;
     }
@@ -153,6 +159,11 @@ export const deleteProfile = async (userId: string): Promise<void> => {
     
     if (!user) {
         throw new NotFoundError('User not found');
+    }
+
+    // Delete profile image from Cloudinary if it exists
+    if (user.profileImage) {
+        await deleteOldProfileImage(user.profileImage);
     }
 
     // Delete user

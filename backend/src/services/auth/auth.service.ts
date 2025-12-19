@@ -24,6 +24,7 @@ import {
   deletePendingUser,
   pendingUserExists,
 } from "@common/utils/pending-user.util";
+import { deleteOldProfileImage } from "@common/utils/cloudinary.util";
 import { sendOTPEmail } from "@common/services/email.service";
 
 export const register = async (
@@ -408,6 +409,11 @@ export const updateProfileImage = async (
   const user = await User.findById(userId);
   if (!user) {
     throw new NotFoundError("User not found");
+  }
+
+  // Delete old profile image from Cloudinary if it exists
+  if (user.profileImage && user.profileImage !== profileImageUrl) {
+    await deleteOldProfileImage(user.profileImage);
   }
 
   user.profileImage = profileImageUrl;
