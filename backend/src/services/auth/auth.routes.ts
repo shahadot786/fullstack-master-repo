@@ -10,9 +10,6 @@ import {
     refreshTokenValidation,
     requestPasswordResetValidation,
     resetPasswordValidation,
-    updateProfileValidation,
-    requestEmailChangeValidation,
-    verifyEmailChangeValidation,
     changePasswordValidation,
 } from "./auth.validation";
 
@@ -259,25 +256,7 @@ router.post(
     controller.resetPassword
 );
 
-/**
- * @swagger
- * /api/auth/me:
- *   get:
- *     summary: Get current user
- *     deprecated: true
- *     description: |
- *       **DEPRECATED**: Use GET /api/user/profile instead.
- *       This endpoint will be removed on 2025-02-01.
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: User data retrieved
- *       401:
- *         description: Unauthorized
- */
-router.get("/me", authenticate, controller.getMe);
+
 
 /**
  * @swagger
@@ -295,101 +274,11 @@ router.get("/me", authenticate, controller.getMe);
  */
 router.post("/logout", authenticate, controller.logout);
 
-/**
- * @swagger
- * /api/auth/profile:
- *   put:
- *     summary: Update user profile (name only)
- *     deprecated: true
- *     description: |
- *       **DEPRECATED**: Use PUT /api/user/profile instead.
- *       This endpoint will be removed on 2025-02-01.
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *     responses:
- *       200:
- *         description: Profile updated successfully with new tokens
- *       401:
- *         description: Unauthorized
- */
-router.put("/profile", authenticate, validate(updateProfileValidation), controller.updateProfile);
 
-/**
- * @swagger
- * /api/auth/request-email-change:
- *   post:
- *     summary: Request email change (sends OTP to new email)
- *     deprecated: true
- *     description: |
- *       **DEPRECATED**: Use POST /api/user/request-email-change instead.
- *       This endpoint will be removed on 2025-02-01.
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - newEmail
- *             properties:
- *               newEmail:
- *                 type: string
- *     responses:
- *       200:
- *         description: Verification code sent to new email
- *       401:
- *         description: Unauthorized
- *       409:
- *         description: Email already in use
- */
-router.post("/request-email-change", authenticate, validate(requestEmailChangeValidation), controller.requestEmailChange);
 
-/**
- * @swagger
- * /api/auth/verify-email-change:
- *   post:
- *     summary: Verify email change with OTP
- *     deprecated: true
- *     description: |
- *       **DEPRECATED**: Use POST /api/auth/verify-email instead (unified endpoint).
- *       This endpoint will be removed on 2025-02-01.
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - newEmail
- *               - otp
- *             properties:
- *               newEmail:
- *                 type: string
- *               otp:
- *                 type: string
- *     responses:
- *       200:
- *         description: Email changed successfully with new tokens
- *       401:
- *         description: Unauthorized or invalid OTP
- */
-router.post("/verify-email-change", authenticate, validate(verifyEmailChangeValidation), controller.verifyEmailChange);
+
+
+
 
 /**
  * @swagger
@@ -440,55 +329,8 @@ router.post("/verify-email-change", authenticate, validate(verifyEmailChangeVali
  */
 router.put("/change-password", authenticate, validate(changePasswordValidation), controller.changePassword);
 
-/**
- * @swagger
- * /api/auth/whoAmI:
- *   get:
- *     summary: Get current user with fresh tokens (post-login sync)
- *     deprecated: true
- *     description: |
- *       **DEPRECATED**: Use GET /api/user/profile instead.
- *       This endpoint will be removed on 2025-02-01.
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: User data and tokens retrieved successfully
- *       401:
- *         description: Unauthorized
- */
-router.get("/whoAmI", authenticate, controller.whoAmI);
 
-/**
- * @swagger
- * /api/auth/profile-image:
- *   put:
- *     summary: Update user profile image
- *     deprecated: true
- *     description: |
- *       **DEPRECATED**: Use PUT /api/user/profile instead.
- *       This endpoint will be removed on 2025-02-01.
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - profileImageUrl
- *             properties:
- *               profileImageUrl:
- *                 type: string
- *     responses:
- *       200:
- *         description: Profile image updated successfully with new tokens
- *       401:
- *         description: Unauthorized
- */
-router.put("/profile-image", authenticate, controller.updateProfileImage);
+
+
 
 export default router;
