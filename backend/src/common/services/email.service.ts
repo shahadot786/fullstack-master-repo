@@ -92,14 +92,14 @@ export const sendOTPEmail = async (
           text-align: center;
         }
         .logo {
-          width: 100px;
-          height: 100px;
+          width: 120px;
+          height: 120px;
           margin: 0 auto 20px;
           display: block;
-          background: rgba(0, 0, 0, 0.3);
-          padding: 15px;
-          border-radius: 16px;
-          border: 2px solid rgba(255, 255, 255, 0.2);
+          background: rgba(11, 11, 11, 1);
+          padding: 10px;
+          border-radius: 10px;
+          border: 2px solid rgba(43, 43, 43, 1);
         }
         .header p { 
           color: rgba(255, 255, 255, 0.9);
@@ -187,7 +187,7 @@ export const sendOTPEmail = async (
     <body>
       <div class="email-wrapper">
         <div class="header">
-          <img src="https://nexus-web-portal-demo.vercel.app/nexus-logo.png" alt="Nexus Logo" class="logo" />
+          <img src="https://www.teenscore.org/logo.png" alt="Nexus Logo" class="logo" />
           <p>Full-Stack MERN Application</p>
         </div>
         
