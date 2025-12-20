@@ -13,7 +13,11 @@ const options: swaggerJsdoc.Options = {
         },
         servers: [
             {
-                url: "http://localhost:8000",
+                url: process.env.SWAGGER_PROD_URL || "https://nexus-backend001.onrender.com",
+                description: "Production server",
+            },
+            {
+                url: process.env.SWAGGER_DEV_URL || "http://localhost:8000",
                 description: "Development server",
             },
         ],
