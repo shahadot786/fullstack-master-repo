@@ -17,8 +17,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "moduleResolution": "Node16",
-    "types": ["node", "jest"]
+    "moduleResolution": "Node16"
   },
   "include": ["src/**/*", "__tests__/**/*", "*.ts"],
   "exclude": ["node_modules", "dist"]
