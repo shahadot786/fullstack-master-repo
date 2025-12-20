@@ -18,11 +18,7 @@ interface Config {
         databaseUri: string;
     };
     email: {
-        host: string;
-        port: number;
-        secure: boolean;
-        user: string;
-        password: string;
+        resendApiKey: string;
         from: string;
     };
     otp: {
@@ -56,12 +52,8 @@ export const config: Config = {
         databaseUri: process.env.REDIS_DATABASE_URI || "redis://localhost:6379",
     },
     email: {
-        host: process.env.EMAIL_HOST || "smtp.gmail.com",
-        port: parseInt(process.env.EMAIL_PORT || "587", 10),
-        secure: process.env.EMAIL_SECURE === "true",
-        user: process.env.EMAIL_USER || "",
-        password: process.env.EMAIL_PASSWORD || "",
-        from: process.env.EMAIL_FROM || "noreply@nexus.app",
+        resendApiKey: process.env.RESEND_API_KEY || "",
+        from: process.env.EMAIL_FROM || "onboarding@resend.dev",
     },
     otp: {
         expiryMinutes: parseInt(process.env.OTP_EXPIRY_MINUTES || "10", 10),
