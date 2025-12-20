@@ -16,7 +16,7 @@
     "build:all": "yarn build:shared && cd backend && yarn build && cd ../web && yarn build",
     "build:backend:prod": "cd shared && yarn install && yarn build && cd ../backend && yarn install && yarn build",
     "start:backend": "cd backend && yarn start",
-    "start:backend:prod": "cd backend && node -r ./dist/config/module-alias.js dist/server.js",
+    "start:backend:prod": "cd backend && node -r ./module-alias.js dist/server.js",
     "start:web": "cd web && yarn start",
     "dev": "yarn build:shared && concurrently \"yarn dev:shared\" \"yarn dev:backend\" \"yarn dev:web\"",
     "install:all": "cd backend && yarn install && cd ../web && yarn install && cd ../mobile && yarn install",
