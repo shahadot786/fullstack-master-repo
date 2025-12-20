@@ -33,14 +33,18 @@ CORS_ORIGIN=https://your-frontend-domain.com
 2. **Configure Service**
    - **Name**: `fullstack-backend`
    - **Environment**: `Node`
-   - **Build Command**: `npm install && npm run build`
-   - **Start Command**: `npm start`
+   - **Root Directory**: Leave empty (deploy from repository root)
+   - **Build Command**: `yarn build:backend:prod`
+   - **Start Command**: `yarn start:backend:prod`
    - **Instance Type**: Free or Starter
+
+   > **Important for Monorepo**: Since this project uses a monorepo structure with a shared package, you must deploy from the repository root (not the `backend` directory). The build command will automatically build both the `shared` package and the `backend`.
 
 3. **Add Environment Variables**
    - Click "Environment" tab
    - Add all variables from `.env.example`
    - Set `NODE_ENV=production`
+   - Set `PORT=8000` (or your preferred port)
 
 4. **Deploy**
    - Click "Create Web Service"
@@ -266,6 +270,33 @@ pm2 monit
 - Check Node.js version (18+)
 - Verify all dependencies installed
 - Review build logs for errors
+
+### Monorepo/Shared Package Issues
+
+**Error**: `Cannot find module '@fullstack-master/shared'` or `Cannot find module './dist/config/module-alias.js'`
+
+**Solution**: This happens when deploying only the `backend` directory instead of the repository root.
+
+1. **On Render**:
+   - Set **Root Directory** to empty (deploy from repository root)
+   - Use build command: `yarn build:backend:prod`
+   - Use start command: `yarn start:backend:prod`
+
+2. **On Railway/Heroku**:
+   - Deploy from repository root
+   - Set build command to build shared first: `cd shared && yarn install && yarn build && cd ../backend && yarn install && yarn build`
+   - Set start command: `cd backend && yarn start`
+
+3. **Verify locally**:
+   ```bash
+   # Test the production build
+   yarn build:backend:prod
+   
+   # Test the production start
+   yarn start:backend:prod
+   ```
+
+**Why this happens**: The backend depends on the `shared` package (`@fullstack-master/shared`) which is in a sibling directory. When you deploy only the `backend` directory, the build process cannot access `../shared`.
 
 ## Scaling
 

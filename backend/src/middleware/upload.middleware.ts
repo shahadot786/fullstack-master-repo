@@ -1,5 +1,4 @@
 import multer from 'multer';
-import { Request } from 'express';
 import { BadRequestError } from '@common/errors';
 import { HTTP_STATUS } from '@fullstack-master/shared';
 
@@ -15,7 +14,11 @@ import { HTTP_STATUS } from '@fullstack-master/shared';
 const storage = multer.memoryStorage();
 
 // File filter - only allow images and videos
-const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (
+    req: Express.Request, 
+    file: Express.Multer.File, 
+    cb: multer.FileFilterCallback
+): void => {
     // Allowed mime types
     const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     const allowedVideoTypes = ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo'];
