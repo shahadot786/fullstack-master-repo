@@ -12,6 +12,7 @@ import todoRoutes from "@services/todo/todo.routes";
 import statsRoutes from "@services/stats/stats.routes";
 import uploadRoutes from "@services/upload/upload.routes";
 import userRoutes from "@services/user/user.routes";
+import analyticsRoutes from "@services/analytics/analytics.routes";
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use("/api/todos", todoRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 // 404 handler
 app.use((req, res) => {

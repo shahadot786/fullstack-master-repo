@@ -128,3 +128,42 @@ export interface ErrorResponse {
     errors?: ValidationError[];
     statusCode?: number;
 }
+
+// ============================================
+// Analytics Types
+// ============================================
+
+export interface AnalyticsService {
+    name: string;
+    total: number;
+    completed: number;
+    pending: number;
+}
+
+export interface AnalyticsUser {
+    id: string;
+    name: string;
+    imageUrl: string;
+    createdAt: Date;
+    services: AnalyticsService[];
+}
+
+export interface AnalyticsStats {
+    users: AnalyticsUser[];
+    services: AnalyticsService[];
+}
+
+export interface AnalyticsResponse {
+    success: boolean;
+    message: string;
+    data: AnalyticsStats & {
+        pagination: PaginationMeta;
+    };
+}
+
+export interface PaginationMeta {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+}

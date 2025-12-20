@@ -5,7 +5,7 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { Image, View } from "react-native";
-import { Text, YStack } from "tamagui";
+import { Text, XStack, YStack } from "tamagui";
 import { useTheme } from "@/hooks/useTheme";
 
 export default function MainLayout() {
@@ -62,6 +62,23 @@ export default function MainLayout() {
           ),
           drawerIcon: ({ color, size }) => (
             <Ionicons name="grid" size={size} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="analytics"
+        options={{
+          drawerLabel: "Analytics",
+          title: "Analytics",
+          headerTitle: () => (
+            <XStack alignItems="center" gap="$2">
+              <Text fontSize="$6" fontWeight="700" color="$color">
+                Analytics
+              </Text>
+            </XStack>
+          ),
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="analytics" size={size} color={color} />
           ),
         }}
       />
@@ -192,6 +209,18 @@ export default function MainLayout() {
       />
       <Drawer.Screen
         name="change-password"
+        options={{
+          drawerItemStyle: { display: "none" },
+        }}
+      />
+      <Drawer.Screen
+        name="change-email"
+        options={{
+          drawerItemStyle: { display: "none" },
+        }}
+      />
+      <Drawer.Screen
+        name="verify-email-change"
         options={{
           drawerItemStyle: { display: "none" },
         }}
