@@ -6,6 +6,8 @@ export function useGetTodos(params?: GetTodosParams) {
   return useQuery({
     queryKey: ["todos", params],
     queryFn: () => todosApi.getTodos(params),
+    // Keep previous data while fetching new page for smoother transitions
+    placeholderData: (previousData) => previousData,
   });
 }
 

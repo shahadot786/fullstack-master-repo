@@ -5,6 +5,7 @@ import { HTTP_STATUS } from "@fullstack-master/shared";
 export const validate = (schema: AnyZodObject) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
+            console.log(req.body);
             await schema.parseAsync({
                 body: req.body,
                 query: req.query,
@@ -12,6 +13,7 @@ export const validate = (schema: AnyZodObject) => {
             });
             next();
         } catch (error) {
+            console.log(error);
             if (error instanceof ZodError) {
                 return res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,

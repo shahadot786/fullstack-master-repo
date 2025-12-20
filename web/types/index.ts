@@ -2,6 +2,7 @@ export interface User {
   _id: string;
   email: string;
   name: string;
+  profileImage?: string;
   isEmailVerified: boolean;
   emailVerifiedAt?: string;
   createdAt: string;
@@ -71,6 +72,17 @@ export interface UpdateTodoRequest {
   priority?: TodoPriority;
   dueDate?: string;
 }
+
+export interface TodosResponse {
+  data: Todo[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
 
 export interface ApiError {
   message: string;

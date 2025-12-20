@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
+import { LoaderModal } from "@/components/ui/loader-modal";
 
 export default function AuthLayout({
   children,
@@ -11,21 +12,18 @@ export default function AuthLayout({
 }) {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
 
   useEffect(() => {
-    setIsHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (isHydrated && isAuthenticated) {
-      router.push("/todos");
+    // Only redirect after hydration is complete
+    if (hasHydrated && isAuthenticated) {
+      router.push("/");
     }
-  }, [isAuthenticated, isHydrated, router]);
+  }, [hasHydrated, isAuthenticated, router]);
 
-  // Don't render anything until hydrated to prevent flash
-  if (!isHydrated) {
-    return null;
+  // Show loading while hydrating
+  if (!hasHydrated) {
+    return <LoaderModal text="Loading..." />;
   }
 
   // Don't show login page if already authenticated
@@ -34,7 +32,7 @@ export default function AuthLayout({
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <div className="w-full max-w-md">{children}</div>
     </div>
   );

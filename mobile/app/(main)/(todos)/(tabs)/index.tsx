@@ -1,40 +1,86 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { FlatList, Pressable } from 'react-native';
+import { FlatList, Pressable, RefreshControl, ActivityIndicator } from 'react-native';
 import { YStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { TodoCard } from '@/components/TodoCard';
-import { useTodos } from '@/hooks/useTodos';
+import { useInfiniteTodos } from '@/hooks/useTodos';
 import { ScreenLayout } from '@/components/common/ScreenLayout';
 
 export default function AllTodosScreen() {
     const router = useRouter();
-    const { data, isLoading } = useTodos();
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        refetch,
+    } = useInfiniteTodos();
+
+    // Flatten all pages into a single array
+    const todos = data?.pages.flatMap(page => page.data) ?? [];
 
     const handleCreate = () => {
         router.push('/(main)/(todos)/create' as any);
     };
 
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        await refetch();
+        setIsRefreshing(false);
+    };
 
+    const handleLoadMore = () => {
+        if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+        }
+    };
+
+    const renderFooter = () => {
+        if (!isFetchingNextPage) return null;
+        return (
+            <YStack paddingVertical="$4" alignItems="center">
+                <ActivityIndicator size="small" color="#3b82f6" />
+            </YStack>
+        );
+    };
 
     return (
         <ScreenLayout>
             <FlatList
-                data={data?.data || []}
+                data={todos}
                 renderItem={({ item }) => <TodoCard todo={item} />}
                 keyExtractor={(item) => item._id}
                 contentContainerStyle={{ padding: 16 }}
-
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.5}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={isRefreshing}
+                        onRefresh={handleRefresh}
+                        tintColor="#3b82f6"
+                    />
+                }
+                ListFooterComponent={renderFooter}
                 ListEmptyComponent={
-                    <YStack alignItems="center" justifyContent="center" paddingVertical="$10">
-                        <Ionicons name="checkmark-circle-outline" size={64} color="#ccc" />
-                        <Text color="$color" opacity={0.5} marginTop="$4">
-                            No todos yet
-                        </Text>
-                        <Text color="$color" opacity={0.5}>
-                            Tap + to create one
-                        </Text>
-                    </YStack>
+                    isLoading ? (
+                        <YStack alignItems="center" justifyContent="center" paddingVertical="$10">
+                            <ActivityIndicator size="large" color="#3b82f6" />
+                        </YStack>
+                    ) : (
+                        <YStack alignItems="center" justifyContent="center" paddingVertical="$10">
+                            <Ionicons name="checkmark-circle-outline" size={64} color="#ccc" />
+                            <Text color="$color" opacity={0.5} marginTop="$4">
+                                No todos yet
+                            </Text>
+                            <Text color="$color" opacity={0.5}>
+                                Tap + to create one
+                            </Text>
+                        </YStack>
+                    )
                 }
             />
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter, Href } from 'expo-router';
-import { ScrollView, Alert, Pressable } from 'react-native';
+import { ScrollView, Alert, Pressable, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { YStack, XStack, Text, H2, Switch, Separator } from 'tamagui';
 import { Button } from '@/components/common/Button';
@@ -143,18 +143,36 @@ export default function SettingsScreen() {
                         borderColor={isDark ? '#262626' : '#e5e7eb'}
                     >
                         <XStack alignItems="center" gap="$3">
-                            <YStack
-                                width={50}
-                                height={50}
-                                borderRadius={25}
-                                backgroundColor="#3b82f6"
-                                alignItems="center"
-                                justifyContent="center"
-                            >
-                                <Text fontSize="$7" fontWeight="700" color="white">
-                                    {user?.name?.charAt(0).toUpperCase()}
-                                </Text>
-                            </YStack>
+                            {user?.profileImage ? (
+                                <YStack
+                                    width={50}
+                                    height={50}
+                                    borderRadius={25}
+                                    overflow="hidden"
+                                >
+                                    <Image
+                                        source={{ uri: user.profileImage }}
+                                        style={{
+                                            width: 50,
+                                            height: 50,
+                                            borderRadius: 25,
+                                        }}
+                                    />
+                                </YStack>
+                            ) : (
+                                <YStack
+                                    width={50}
+                                    height={50}
+                                    borderRadius={25}
+                                    backgroundColor="#3b82f6"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                >
+                                    <Text fontSize="$7" fontWeight="700" color="white">
+                                        {user?.name?.charAt(0).toUpperCase()}
+                                    </Text>
+                                </YStack>
+                            )}
                             <YStack flex={1}>
                                 <Text fontSize="$5" fontWeight="700" color="$color">
                                     {user?.name}

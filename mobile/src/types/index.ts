@@ -12,6 +12,7 @@ export interface User {
     _id: string;
     email: string;
     name: string;
+    profileImage?: string;
     isEmailVerified: boolean;
     emailVerifiedAt?: string;
     createdAt: string;
@@ -160,3 +161,60 @@ export type RootStackParamList = {
     '(main)/notes': undefined;
     '(main)/settings': undefined;
 };
+
+// ============================================================================
+// Stats Types
+// ============================================================================
+
+export interface ServiceStats {
+    todos: {
+        total: number;
+        active: number;
+        completed: number;
+        highPriority: number;
+        todayDue: number;
+        overdue: number;
+    };
+    notes: {
+        total: number;
+        categories: number;
+        recent: number;
+    };
+    chat: {
+        totalConversations: number;
+        unreadMessages: number;
+    };
+    ai: {
+        totalQueries: number;
+        tokensUsed: number;
+    };
+    shop: {
+        totalProducts: number;
+        totalOrders: number;
+        revenue: number;
+    };
+    social: {
+        totalPosts: number;
+        followers: number;
+        likes: number;
+    };
+    delivery: {
+        activeDeliveries: number;
+        completedDeliveries: number;
+        pendingDeliveries: number;
+    };
+    expense: {
+        totalExpenses: number;
+        thisMonth: number;
+        categories: number;
+    };
+    weather: {
+        currentLocation: string;
+        savedLocations: number;
+    };
+    urlShortener: {
+        totalUrls: number;
+        totalClicks: number;
+        activeLinks: number;
+    };
+}

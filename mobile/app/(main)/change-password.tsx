@@ -8,13 +8,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input } from '@/components/common/Input';
 import { Button } from '@/components/common/Button';
+import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/api/auth.api';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 
 const changePasswordSchema = z.object({
     currentPassword: z.string().min(1, 'Current password is required'),
-    newPassword: z.string().min(8, 'New password must be at least 8 characters'),
+    newPassword: z
+        .string()
+        .min(8, 'Password must be at least 8 characters')
+        .regex(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+            'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+        ),
     confirmPassword: z.string().min(1, 'Please confirm your password'),
 }).refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
@@ -25,6 +32,8 @@ type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
 export default function ChangePasswordScreen() {
     const router = useRouter();
+    const user = useAuthStore((state) => state.user);
+    const updateUserAndTokens = useAuthStore((state) => state.updateUserAndTokens);
     const { isDark } = useTheme();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -45,10 +54,14 @@ export default function ChangePasswordScreen() {
     const onSubmit = async (data: ChangePasswordFormData) => {
         try {
             setIsLoading(true);
-            await authApi.changePassword({
+            const response = await authApi.changePassword({
                 currentPassword: data.currentPassword,
                 newPassword: data.newPassword,
             });
+            
+            // Update tokens in store (password change returns new tokens)
+            updateUserAndTokens(user!, response.tokens.accessToken, response.tokens.refreshToken);
+            
             Alert.alert('Success', 'Password changed successfully!', [
                 {
                     text: 'OK',
@@ -130,6 +143,7 @@ export default function ChangePasswordScreen() {
                                     onChangeText={onChange}
                                     error={errors.currentPassword?.message}
                                     secureTextEntry
+                                    showPasswordToggle
                                 />
                             )}
                         />
@@ -145,6 +159,7 @@ export default function ChangePasswordScreen() {
                                     onChangeText={onChange}
                                     error={errors.newPassword?.message}
                                     secureTextEntry
+                                    showPasswordToggle
                                 />
                             )}
                         />
@@ -160,6 +175,7 @@ export default function ChangePasswordScreen() {
                                     onChangeText={onChange}
                                     error={errors.confirmPassword?.message}
                                     secureTextEntry
+                                    showPasswordToggle
                                 />
                             )}
                         />

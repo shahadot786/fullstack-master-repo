@@ -5,12 +5,11 @@
     "lib": ["ES2020"],
     "outDir": "dist",
     "rootDir": ".",
-    "baseUrl": ".",
     "paths": {
-      "@common/*": ["src/common/*"],
-      "@services/*": ["src/services/*"],
-      "@middleware/*": ["src/middleware/*"],
-      "@config/*": ["src/config/*"],
+      "@common/*": ["./src/common/*"],
+      "@services/*": ["./src/services/*"],
+      "@middleware/*": ["./src/middleware/*"],
+      "@config/*": ["./src/config/*"],
       "@shared/*": ["../shared/src/*"]
     },
     "strict": true,

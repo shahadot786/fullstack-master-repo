@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
-import { Loader2 } from "lucide-react";
+import { LoaderModal } from "@/components/ui/loader-modal";
 
 export default function DashboardLayout({
   children,
@@ -14,31 +14,19 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    setIsHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (isHydrated && !isAuthenticated) {
+    // Only redirect after hydration is complete to avoid false redirects
+    if (hasHydrated && !isAuthenticated) {
       router.push("/login");
     }
-  }, [isAuthenticated, isHydrated, router]);
+  }, [hasHydrated, isAuthenticated, router]);
 
-  // Show loading spinner until hydrated
-  if (!isHydrated) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
-
-  // Don't show dashboard if not authenticated
-  if (!isAuthenticated) {
-    return null;
+  // Show loading while hydrating OR not authenticated
+  if (!hasHydrated || !isAuthenticated) {
+    return <LoaderModal text="Loading..." />;
   }
 
   return (

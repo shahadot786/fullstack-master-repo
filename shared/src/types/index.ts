@@ -28,6 +28,8 @@ export interface User {
     _id: string;
     email: string;
     name: string;
+    profileImage?: string;
+    isEmailVerified: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -99,6 +101,17 @@ export interface TodoQueryParams {
     sortBy?: "createdAt" | "dueDate" | "priority";
     sortOrder?: "asc" | "desc";
 }
+
+export interface TodosResponse {
+    data: Todo[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
+}
+
 
 // ============================================
 // Error Types

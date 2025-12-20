@@ -7,19 +7,25 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
+  hasHydrated: boolean;
+  clearCache: () => void;
   setUser: (user: User) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
+  updateUserAndTokens: (user: User, accessToken: string, refreshToken: string) => void;
+  setClearCache: (clearFn: () => void) => void;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
+      hasHydrated: false,
+      clearCache: () => {},
 
       setUser: (user) =>
         set({
@@ -41,16 +47,40 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
         }),
 
-      logout: () =>
+      updateUserAndTokens: (user, accessToken, refreshToken) =>
+        set({
+          user,
+          accessToken,
+          refreshToken,
+          isAuthenticated: true,
+        }),
+
+      setClearCache: (clearFn) =>
+        set({
+          clearCache: clearFn,
+        }),
+
+      logout: () => {
+        // Clear React Query cache before clearing auth state
+        const { clearCache } = get();
+        clearCache();
+        
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
-        }),
+        });
+      },
     }),
     {
       name: "auth-storage",
+      onRehydrateStorage: () => (state) => {
+        // Mark as hydrated when persist finishes loading from localStorage
+        if (state) {
+          state.hasHydrated = true;
+        }
+      },
     }
   )
 );

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AxiosError } from "axios";
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -47,9 +48,11 @@ export default function VerifyEmailPage() {
       setAuth(response.user, response.accessToken, response.refreshToken);
       sessionStorage.removeItem("pendingEmail");
       router.push("/todos");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as AxiosError<{ message: string }>;
       setError(
-        err.response?.data?.message || "Verification failed. Please try again."
+        error.response?.data?.message ||
+          "Verification failed. Please try again."
       );
     } finally {
       setIsLoading(false);
@@ -63,9 +66,11 @@ export default function VerifyEmailPage() {
       await authApi.resendOTP({ email });
       setError(""); // Clear any previous errors
       alert("Verification code sent! Please check your email.");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as AxiosError<{ message: string }>;
       setError(
-        err.response?.data?.message || "Failed to resend code. Please try again."
+        error.response?.data?.message ||
+          "Failed to resend code. Please try again."
       );
     } finally {
       setIsResending(false);
@@ -91,7 +96,9 @@ export default function VerifyEmailPage() {
               type="text"
               placeholder="000000"
               value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              onChange={(e) =>
+                setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+              }
               maxLength={6}
               className="text-center text-2xl tracking-widest"
             />

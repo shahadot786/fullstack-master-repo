@@ -54,7 +54,19 @@ export const resetPasswordValidation = z.object({
 export const updateProfileValidation = z.object({
     body: z.object({
         name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name cannot exceed 50 characters").optional(),
-        email: z.string().email("Invalid email address").optional(),
+    }),
+});
+
+export const requestEmailChangeValidation = z.object({
+    body: z.object({
+        newEmail: z.string().email("Invalid email address"),
+    }),
+});
+
+export const verifyEmailChangeValidation = z.object({
+    body: z.object({
+        newEmail: z.string().email("Invalid email address"),
+        otp: z.string().length(6, "OTP must be 6 digits"),
     }),
 });
 

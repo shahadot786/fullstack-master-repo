@@ -1,292 +1,467 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import User, { IUser } from "./auth.model";
 import { config } from "@config/index";
-import { ConflictError, UnauthorizedError, NotFoundError } from "@common/errors";
+import {
+  ConflictError,
+  UnauthorizedError,
+  NotFoundError,
+} from "@common/errors";
 import { ERROR_MESSAGES } from "@fullstack-master/shared";
 import {
-    generateOTP,
-    storeOTP,
-    verifyOTP,
-    getEmailVerificationKey,
-    getPasswordResetKey,
-    storeRefreshToken,
-    verifyRefreshToken,
-    deleteRefreshToken,
+  generateOTP,
+  storeOTP,
+  verifyOTP,
+  getEmailVerificationKey,
+  getPasswordResetKey,
+  getEmailChangeKey,
+  storeRefreshToken,
+  verifyRefreshToken,
+  deleteRefreshToken,
 } from "@common/utils/otp.util";
 import {
-    storePendingUser,
-    getPendingUser,
-    deletePendingUser,
-    pendingUserExists,
+  storePendingUser,
+  getPendingUser,
+  deletePendingUser,
+  pendingUserExists,
 } from "@common/utils/pending-user.util";
+import { deleteOldProfileImage } from "@common/utils/cloudinary.util";
 import { sendOTPEmail } from "@common/services/email.service";
 
 export const register = async (
-    email: string,
-    password: string,
-    name: string
+  email: string,
+  password: string,
+  name: string
 ): Promise<{ message: string }> => {
-    // Check if user already exists in MongoDB (verified users)
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-        throw new ConflictError(ERROR_MESSAGES.AUTH.EMAIL_EXISTS);
-    }
+  // Check if user already exists in MongoDB (verified users)
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new ConflictError(ERROR_MESSAGES.AUTH.EMAIL_EXISTS);
+  }
 
-    // Check if user has pending registration
-    const hasPendingRegistration = await pendingUserExists(email);
-    if (hasPendingRegistration) {
-        throw new ConflictError("Registration already pending. Please check your email for verification code or request a new one.");
-    }
+  // Check if user has pending registration
+  const hasPendingRegistration = await pendingUserExists(email);
+  if (hasPendingRegistration) {
+    throw new ConflictError(
+      "Registration already pending. Please check your email for verification code or request a new one."
+    );
+  }
 
-    // Store pending user data in Redis (password will be hashed inside)
-    await storePendingUser(email, password, name);
+  // Store pending user data in Redis (password will be hashed inside)
+  await storePendingUser(email, password, name);
 
-    // Generate OTP for email verification
-    const otp = generateOTP();
-    const otpKey = getEmailVerificationKey(email);
-    await storeOTP(otpKey, otp);
+  // Generate OTP for email verification
+  const otp = generateOTP();
+  const otpKey = getEmailVerificationKey(email);
+  await storeOTP(otpKey, otp);
 
-    // Send OTP email
-    await sendOTPEmail(email, otp, "verification");
+  // Send OTP email
+  await sendOTPEmail(email, otp, "verification");
 
-    return {
-        message: "Registration initiated. Please check your email for verification code.",
-    };
+  return {
+    message:
+      "Registration initiated. Please check your email for verification code.",
+  };
 };
-
 
 export const verifyEmail = async (
-    email: string,
-    otp: string
+  email: string,
+  otp: string
 ): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
-    const otpKey = getEmailVerificationKey(email);
-    const isValid = await verifyOTP(otpKey, otp);
+  const otpKey = getEmailVerificationKey(email);
+  const isValid = await verifyOTP(otpKey, otp);
 
-    if (!isValid) {
-        throw new UnauthorizedError("Invalid or expired OTP");
-    }
+  if (!isValid) {
+    throw new UnauthorizedError("Invalid or expired OTP");
+  }
 
-    // Retrieve pending user data from Redis
-    const pendingUser = await getPendingUser(email);
-    if (!pendingUser) {
-        throw new NotFoundError("Pending registration not found. Please register again.");
-    }
+  // Check if this is an email change verification (user already exists with pendingEmail)
+  const existingUser = await User.findOne({ pendingEmail: email });
+  
+  if (existingUser) {
+    // This is an email change verification
+    existingUser.email = email;
+    existingUser.pendingEmail = undefined;
+    existingUser.isEmailVerified = true;
+    existingUser.emailVerifiedAt = new Date();
+    await existingUser.save();
 
-    // Create user in MongoDB with verified status
-    const user = await User.create({
-        email: pendingUser.email,
-        password: pendingUser.password, // Already hashed
-        name: pendingUser.name,
-        isEmailVerified: true,
-        emailVerifiedAt: new Date(),
-    });
+    // Generate new tokens with updated email
+    const accessToken = generateAccessToken(existingUser._id.toString(), existingUser.email);
+    const refreshToken = generateRefreshToken(existingUser._id.toString(), existingUser.email);
 
-    // Delete pending user data from Redis
-    await deletePendingUser(email);
-
-    // Generate tokens
-    const accessToken = generateAccessToken(user._id.toString(), user.email);
-    const refreshToken = generateRefreshToken(user._id.toString(), user.email);
-
-    // Store refresh token in Redis
-    await storeRefreshToken(user._id.toString(), refreshToken);
+    // Store new refresh token
+    await storeRefreshToken(existingUser._id.toString(), refreshToken);
 
     // Remove password from response
-    user.password = undefined as any;
+    existingUser.password = undefined as any;
 
-    return { user, accessToken, refreshToken };
+    return { user: existingUser, accessToken, refreshToken };
+  }
+
+  // This is a new user registration verification
+  // Retrieve pending user data from Redis
+  const pendingUser = await getPendingUser(email);
+  if (!pendingUser) {
+    throw new NotFoundError(
+      "Pending registration not found. Please register again."
+    );
+  }
+
+  // Create user in MongoDB with verified status
+  // Password from Redis is plain text and will be hashed by the pre-save hook
+  const user = await User.create({
+    email: pendingUser.email,
+    password: pendingUser.password, // Plain password - will be hashed by pre-save hook
+    name: pendingUser.name,
+    isEmailVerified: true,
+    emailVerifiedAt: new Date(),
+  });
+
+  // Delete pending user data from Redis
+  await deletePendingUser(email);
+
+  // Generate tokens
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+  // Store refresh token in Redis
+  await storeRefreshToken(user._id.toString(), refreshToken);
+
+  // Remove password from response
+  user.password = undefined as any;
+
+  return { user, accessToken, refreshToken };
 };
 
-
 export const resendVerificationOTP = async (email: string): Promise<void> => {
-    // Check if user has pending registration in Redis
-    const pendingUser = await getPendingUser(email);
-    if (!pendingUser) {
-        // Check if user already exists and is verified
-        const user = await User.findOne({ email });
-        if (user && user.isEmailVerified) {
-            throw new ConflictError("Email already verified");
-        }
-        throw new NotFoundError("Pending registration not found. Please register again.");
+  // Check if user has pending registration in Redis
+  const pendingUser = await getPendingUser(email);
+  if (!pendingUser) {
+    // Check if user already exists and is verified
+    const user = await User.findOne({ email });
+    if (user && user.isEmailVerified) {
+      throw new ConflictError("Email already verified");
     }
+    throw new NotFoundError(
+      "Pending registration not found. Please register again."
+    );
+  }
 
-    // Generate and send new OTP
-    const otp = generateOTP();
-    const otpKey = getEmailVerificationKey(email);
-    await storeOTP(otpKey, otp);
-    await sendOTPEmail(email, otp, "verification");
+  // Generate and send new OTP
+  const otp = generateOTP();
+  const otpKey = getEmailVerificationKey(email);
+  await storeOTP(otpKey, otp);
+  await sendOTPEmail(email, otp, "verification");
 };
 
 export const login = async (
-    email: string,
-    password: string
+  email: string,
+  password: string
 ): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
-    // Find user with password field
-    const user = await User.findOne({ email }).select("+password");
+  // Find user with password field
+  const user = await User.findOne({ email }).select("+password");
 
-    if (!user) {
-        throw new UnauthorizedError(ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS);
-    }
+  if (!user) {
+    throw new UnauthorizedError(ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS);
+  }
 
-    // Check password
-    const isPasswordValid = await user.comparePassword(password);
+  // Check password
+  const isPasswordValid = await user.comparePassword(password);
 
-    if (!isPasswordValid) {
-        throw new UnauthorizedError(ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS);
-    }
+  if (!isPasswordValid) {
+    throw new UnauthorizedError(ERROR_MESSAGES.AUTH.INVALID_CREDENTIALS);
+  }
 
-    // Generate tokens
-    const accessToken = generateAccessToken(user._id.toString(), user.email);
-    const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+  // Generate tokens
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
 
-    // Store refresh token in Redis
-    await storeRefreshToken(user._id.toString(), refreshToken);
+  // Store refresh token in Redis
+  await storeRefreshToken(user._id.toString(), refreshToken);
 
-    // Remove password from response
-    user.password = undefined as any;
+  // Remove password from response
+  user.password = undefined as any;
 
-    return { user, accessToken, refreshToken };
+  return { user, accessToken, refreshToken };
 };
 
 export const refreshAccessToken = async (
-    refreshToken: string
+  refreshToken: string
 ): Promise<{ accessToken: string; refreshToken: string }> => {
-    try {
-        // Verify refresh token
-        const decoded = jwt.verify(refreshToken, config.jwt.refreshSecret) as {
-            id: string;
-            email: string;
-        };
+  try {
+    // Verify refresh token
+    const decoded = jwt.verify(refreshToken, config.jwt.refreshSecret) as {
+      id: string;
+      email: string;
+    };
 
-        // Verify token exists in Redis
-        const isValid = await verifyRefreshToken(decoded.id, refreshToken);
-        if (!isValid) {
-            throw new UnauthorizedError("Invalid refresh token");
-        }
-
-        // Generate new tokens
-        const newAccessToken = generateAccessToken(decoded.id, decoded.email);
-        const newRefreshToken = generateRefreshToken(decoded.id, decoded.email);
-
-        // Update refresh token in Redis
-        await storeRefreshToken(decoded.id, newRefreshToken);
-
-        return { accessToken: newAccessToken, refreshToken: newRefreshToken };
-    } catch (error) {
-        throw new UnauthorizedError("Invalid or expired refresh token");
+    // Verify token exists in Redis
+    const isValid = await verifyRefreshToken(decoded.id, refreshToken);
+    if (!isValid) {
+      throw new UnauthorizedError("Invalid refresh token");
     }
+
+    // Generate new tokens
+    const newAccessToken = generateAccessToken(decoded.id, decoded.email);
+    const newRefreshToken = generateRefreshToken(decoded.id, decoded.email);
+
+    // Update refresh token in Redis
+    await storeRefreshToken(decoded.id, newRefreshToken);
+
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  } catch (error) {
+    throw new UnauthorizedError("Invalid or expired refresh token");
+  }
 };
 
 export const requestPasswordReset = async (email: string): Promise<void> => {
-    const user = await User.findOne({ email });
-    if (!user) {
-        // Don't reveal if user exists
-        return;
-    }
+  const user = await User.findOne({ email });
+  if (!user) {
+    // Don't reveal if user exists
+    return;
+  }
 
-    // Generate and send OTP
-    const otp = generateOTP();
-    const otpKey = getPasswordResetKey(email);
-    await storeOTP(otpKey, otp);
-    await sendOTPEmail(email, otp, "password-reset");
+  // Generate and send OTP
+  const otp = generateOTP();
+  const otpKey = getPasswordResetKey(email);
+  await storeOTP(otpKey, otp);
+  await sendOTPEmail(email, otp, "password-reset");
 };
 
 export const resetPassword = async (
-    email: string,
-    otp: string,
-    newPassword: string
+  email: string,
+  otp: string,
+  newPassword: string
 ): Promise<void> => {
-    const otpKey = getPasswordResetKey(email);
-    const isValid = await verifyOTP(otpKey, otp);
+  const otpKey = getPasswordResetKey(email);
+  const isValid = await verifyOTP(otpKey, otp);
 
-    if (!isValid) {
-        throw new UnauthorizedError("Invalid or expired OTP");
-    }
+  if (!isValid) {
+    throw new UnauthorizedError("Invalid or expired OTP");
+  }
 
-    // Update password
-    const user = await User.findOne({ email });
-    if (!user) {
-        throw new NotFoundError("User not found");
-    }
+  // Update password
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
 
-    user.password = newPassword;
-    await user.save();
+  user.password = newPassword;
+  await user.save();
 
-    // Invalidate all refresh tokens for this user
-    await deleteRefreshToken(user._id.toString());
+  // Invalidate all refresh tokens for this user
+  await deleteRefreshToken(user._id.toString());
 };
 
 export const logout = async (userId: string): Promise<void> => {
-    await deleteRefreshToken(userId);
+  await deleteRefreshToken(userId);
 };
 
 export const getUserById = async (userId: string): Promise<IUser | null> => {
-    return User.findById(userId);
+  return User.findById(userId);
 };
 
 export const updateProfile = async (
-    userId: string,
-    data: { name?: string; email?: string }
-): Promise<IUser> => {
-    const user = await User.findById(userId);
-    if (!user) {
-        throw new NotFoundError("User not found");
-    }
+  userId: string,
+  data: { name?: string }
+): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
 
-    // Check if email is being changed and if it already exists
-    if (data.email && data.email !== user.email) {
-        const existingUser = await User.findOne({ email: data.email });
-        if (existingUser) {
-            throw new ConflictError("Email already in use");
-        }
-        user.email = data.email;
-        // Reset email verification if email is changed
-        user.isEmailVerified = false;
-        user.emailVerifiedAt = undefined;
-    }
-
-    if (data.name) {
-        user.name = data.name;
-    }
-
+  // Only update name - email changes go through separate OTP flow
+  if (data.name) {
+    user.name = data.name;
     await user.save();
-    return user;
+  }
+
+  // Generate new tokens since user data changed
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+  // Store new refresh token
+  await storeRefreshToken(user._id.toString(), refreshToken);
+
+  // Remove password from response
+  user.password = undefined as any;
+
+  return { user, accessToken, refreshToken };
+};
+
+/**
+ * Request email change - sends OTP to new email
+ */
+export const requestEmailChange = async (
+  userId: string,
+  newEmail: string
+): Promise<void> => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  // Check if new email is same as current
+  if (newEmail === user.email) {
+    throw new ConflictError("New email is the same as current email");
+  }
+
+  // Check if new email is already in use
+  const existingUser = await User.findOne({ email: newEmail });
+  if (existingUser) {
+    throw new ConflictError("Email already in use");
+  }
+
+  // Generate and store OTP
+  const otp = generateOTP();
+  const otpKey = getEmailChangeKey(userId, newEmail);
+  await storeOTP(otpKey, otp);
+
+  // Send OTP to new email
+  await sendOTPEmail(newEmail, otp, "email-change");
+};
+
+/**
+ * Verify email change with OTP
+ */
+export const verifyEmailChange = async (
+  userId: string,
+  newEmail: string,
+  otp: string
+): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  // Verify OTP
+  const otpKey = getEmailChangeKey(userId, newEmail);
+  const isValid = await verifyOTP(otpKey, otp);
+
+  if (!isValid) {
+    throw new UnauthorizedError("Invalid or expired OTP");
+  }
+
+  // Update email
+  user.email = newEmail;
+  user.isEmailVerified = true;
+  user.emailVerifiedAt = new Date();
+  await user.save();
+
+  // Generate new tokens with updated email
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+  // Store new refresh token
+  await storeRefreshToken(user._id.toString(), refreshToken);
+
+  // Remove password from response
+  user.password = undefined as any;
+
+  return { user, accessToken, refreshToken };
 };
 
 export const changePassword = async (
-    userId: string,
-    currentPassword: string,
-    newPassword: string
-): Promise<void> => {
-    const user = await User.findById(userId).select("+password");
-    if (!user) {
-        throw new NotFoundError("User not found");
-    }
+  userId: string,
+  currentPassword: string,
+  newPassword: string
+): Promise<{ accessToken: string; refreshToken: string }> => {
+  const user = await User.findById(userId).select("+password");
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
 
-    // Verify current password
-    const isPasswordValid = await user.comparePassword(currentPassword);
-    if (!isPasswordValid) {
-        throw new UnauthorizedError("Current password is incorrect");
-    }
+  // Verify current password
+  const isPasswordValid = await user.comparePassword(currentPassword);
+  if (!isPasswordValid) {
+    throw new UnauthorizedError("Current password is incorrect");
+  }
 
-    // Update password
-    user.password = newPassword;
-    await user.save();
+  // Update password
+  user.password = newPassword;
+  await user.save();
 
-    // Invalidate all refresh tokens for this user
-    await deleteRefreshToken(user._id.toString());
+  // Generate new tokens (security best practice)
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+  // Store new refresh token (this also invalidates old ones)
+  await storeRefreshToken(user._id.toString(), refreshToken);
+
+  return { accessToken, refreshToken };
 };
 
 // Helper function to generate access token
 const generateAccessToken = (id: string, email: string): string => {
-    return jwt.sign({ id, email }, config.jwt.secret, {
-        expiresIn: config.jwt.expiresIn,
-    } as SignOptions);
+  return jwt.sign({ id, email }, config.jwt.secret, {
+    expiresIn: config.jwt.expiresIn,
+  } as SignOptions);
 };
 
 // Helper function to generate refresh token
 const generateRefreshToken = (id: string, email: string): string => {
-    return jwt.sign({ id, email }, config.jwt.refreshSecret, {
-        expiresIn: config.jwt.refreshExpiresIn,
-    } as SignOptions);
+  return jwt.sign({ id, email }, config.jwt.refreshSecret, {
+    expiresIn: config.jwt.refreshExpiresIn,
+  } as SignOptions);
+};
+
+/**
+ * Update user's profile image
+ */
+export const updateProfileImage = async (
+  userId: string,
+  profileImageUrl: string
+): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  // Delete old profile image from Cloudinary if it exists
+  if (user.profileImage && user.profileImage !== profileImageUrl) {
+    await deleteOldProfileImage(user.profileImage);
+  }
+
+  user.profileImage = profileImageUrl;
+  await user.save();
+
+  // Generate new tokens since user data changed
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+  // Store new refresh token
+  await storeRefreshToken(user._id.toString(), refreshToken);
+
+  // Remove password from response
+  user.password = undefined as any;
+
+  return { user, accessToken, refreshToken };
+};
+
+/**
+ * Who Am I - Get current user with fresh tokens
+ * Called after login for web/mobile sync
+ */
+export const whoAmI = async (
+  userId: string
+): Promise<{ user: IUser; tokens: { accessToken: string; refreshToken: string } }> => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  // Generate fresh tokens
+  const accessToken = generateAccessToken(user._id.toString(), user.email);
+  const refreshToken = generateRefreshToken(user._id.toString(), user.email);
+
+  // Store new refresh token
+  await storeRefreshToken(user._id.toString(), refreshToken);
+
+  // Remove password from response
+  user.password = undefined as any;
+
+  return {
+    user,
+    tokens: { accessToken, refreshToken },
+  };
 };

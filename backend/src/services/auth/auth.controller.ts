@@ -22,6 +22,9 @@ export const verifyEmail = asyncHandler(async (req: AuthRequest, res: Response) 
     const { email, otp } = req.body;
     const { user, accessToken, refreshToken } = await authService.verifyEmail(email, otp);
 
+    // Set cookies for web
+    setAuthCookies(res, accessToken, refreshToken);
+
     sendSuccess(
         res,
         {
@@ -48,6 +51,9 @@ export const login = asyncHandler(async (req: AuthRequest, res: Response) => {
         email,
         password
     );
+
+    // Set cookies for web
+    setAuthCookies(res, accessToken, refreshToken);
 
     sendSuccess(res, {
         user,
@@ -82,9 +88,18 @@ export const resetPassword = asyncHandler(async (req: AuthRequest, res: Response
     sendSuccess(res, null, "Password reset successfully");
 });
 
+/**
+ * @deprecated Use GET /api/user/profile instead
+ * This endpoint will be removed in a future version
+ */
 export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const user = await authService.getUserById(userId);
+
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/user/profile>; rel="alternate"');
 
     sendSuccess(res, user);
 });
@@ -96,18 +111,134 @@ export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
     sendSuccess(res, null, "Logged out successfully");
 });
 
+/**
+ * @deprecated Use PUT /api/user/profile instead
+ * This endpoint will be removed in a future version
+ */
 export const updateProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
-    const { name, email } = req.body;
-    const user = await authService.updateProfile(userId, { name, email });
+    const { name } = req.body;
+    const { user, accessToken, refreshToken } = await authService.updateProfile(userId, { name });
 
-    sendSuccess(res, { user }, "Profile updated successfully");
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/user/profile>; rel="alternate"');
+
+    sendSuccess(res, { 
+        user,
+        tokens: { accessToken, refreshToken }
+    }, "Profile updated successfully");
+});
+
+/**
+ * @deprecated Use POST /api/user/request-email-change instead
+ * This endpoint will be removed in a future version
+ */
+export const requestEmailChange = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { newEmail } = req.body;
+    await authService.requestEmailChange(userId, newEmail);
+
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/user/request-email-change>; rel="alternate"');
+
+    sendSuccess(res, null, "Verification code sent to your new email");
+});
+
+/**
+ * @deprecated Use POST /api/auth/verify-email instead (unified endpoint)
+ * This endpoint will be removed in a future version
+ */
+export const verifyEmailChange = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { newEmail, otp } = req.body;
+    const { user, accessToken, refreshToken } = await authService.verifyEmailChange(userId, newEmail, otp);
+
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/auth/verify-email>; rel="alternate"');
+
+    sendSuccess(res, {
+        user,
+        tokens: { accessToken, refreshToken }
+    }, "Email changed successfully");
 });
 
 export const changePassword = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const { currentPassword, newPassword } = req.body;
-    await authService.changePassword(userId, currentPassword, newPassword);
+    const { accessToken, refreshToken } = await authService.changePassword(userId, currentPassword, newPassword);
 
-    sendSuccess(res, null, "Password changed successfully");
+    sendSuccess(res, { 
+        tokens: { accessToken, refreshToken }
+    }, "Password changed successfully");
 });
+
+/**
+ * @deprecated Use PUT /api/user/profile instead
+ * This endpoint will be removed in a future version
+ */
+export const updateProfileImage = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+    const { profileImageUrl } = req.body;
+
+    const { user, accessToken, refreshToken } = await authService.updateProfileImage(userId, profileImageUrl);
+
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/user/profile>; rel="alternate"');
+
+    sendSuccess(res, {
+        user,
+        tokens: { accessToken, refreshToken }
+    }, "Profile image updated successfully");
+});
+
+/**
+ * @deprecated Use GET /api/user/profile instead
+ * This endpoint will be removed in a future version
+ */
+export const whoAmI = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+
+    const { user, tokens } = await authService.whoAmI(userId);
+
+    // Add deprecation headers
+    res.setHeader('Deprecation', 'true');
+    res.setHeader('Sunset', '2025-02-01');
+    res.setHeader('Link', '</api/user/profile>; rel="alternate"');
+
+    // Set cookies for web
+    setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+
+    sendSuccess(res, {
+        user,
+        tokens,
+    }, "User data retrieved successfully");
+});
+
+// Helper function to set auth cookies
+export const setAuthCookies = (res: Response, accessToken: string, refreshToken: string) => {
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // Access token - short-lived (15 minutes)
+    res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'strict' : 'lax',
+        maxAge: 15 * 60 * 1000, // 15 minutes
+    });
+
+    // Refresh token - long-lived (7 days)
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'strict' : 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+};

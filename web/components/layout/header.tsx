@@ -1,9 +1,11 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/auth-store";
 import { authApi } from "@/lib/api/auth";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +21,15 @@ import { Button } from "@/components/ui/button";
 export function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const queryClient = useQueryClient();
+  const { user, logout, setClearCache } = useAuthStore();
+
+  // Set up cache clearing function on mount
+  useEffect(() => {
+    setClearCache(() => {
+      queryClient.clear();
+    });
+  }, [queryClient, setClearCache]);
 
   const handleLogout = async () => {
     try {
@@ -80,7 +90,7 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
         {/* Right Section */}
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Search - Hidden on mobile */}
-          <Button variant="ghost" size="icon" className="rounded-full hidden sm:flex">
+          <Button variant="ghost" size="icon" className="rounded-full hidden sm:flex cursor-pointer">
             <Search className="w-5 h-5" />
           </Button>
 
@@ -88,7 +98,7 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
           <ThemeToggle />
 
           {/* Notifications - Hidden on mobile */}
-          <Button variant="ghost" size="icon" className="rounded-full relative hidden sm:flex">
+          <Button variant="ghost" size="icon" className="rounded-full relative hidden sm:flex cursor-pointer">
             <Bell className="w-5 h-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
           </Button>
@@ -98,12 +108,20 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex items-center space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-3"
+                className="flex cursor-pointer items-center space-x-3 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-3"
               >
                 <Avatar className="w-8 h-8">
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-sm">
-                    {getUserInitials()}
-                  </AvatarFallback>
+                  {user?.profileImage ? (
+                    <AvatarImage
+                      src={user.profileImage}
+                      alt={user.name}
+                      className="object-cover"
+                    />
+                  ) : (
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-sm">
+                      {getUserInitials()}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
                 <div className="text-left hidden md:block">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -118,12 +136,12 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push("/profile")}>
+              <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer">
                 <User className="w-4 h-4 mr-2" />
                 Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </DropdownMenuItem>

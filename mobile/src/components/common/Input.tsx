@@ -21,6 +21,7 @@ interface InputProps {
   secureTextEntry?: boolean;
   showPasswordToggle?: boolean;
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  maxLength?: number;
 }
 
 const StyledInput = styled(TamaguiInput, {
@@ -59,6 +60,7 @@ export const Input: React.FC<InputProps> = ({
   secureTextEntry = false,
   showPasswordToggle = false,
   autoCapitalize = "none",
+  maxLength,
 }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const { isDark } = useTheme();
@@ -81,6 +83,7 @@ export const Input: React.FC<InputProps> = ({
           hasError={!!error}
           flex={1}
           paddingRight={showPasswordToggle && secureTextEntry ? "$10" : "$4"}
+          maxLength={maxLength}
         />
         {showPasswordToggle && secureTextEntry && (
           <Pressable

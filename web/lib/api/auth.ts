@@ -75,12 +75,36 @@ export const authApi = {
     await apiClient.post("/auth/reset-password", { email, otp, newPassword });
   },
 
-  updateProfile: async (data: { name: string; email: string }): Promise<{ user: User }> => {
+  updateProfile: async (data: { 
+    name?: string;
+  }): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
     const response = await apiClient.put("/auth/profile", data);
-    return response.data.data; // Extract from {success, data: {user}}
+    // Extract user and tokens from {success, data: {user, tokens}}
+    const { user, tokens } = response.data.data;
+    return { user, tokens };
   },
 
-  changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<void> => {
-    await apiClient.put("/auth/change-password", data);
+  updateProfileImage: async (profileImageUrl: string): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
+    const response = await apiClient.put("/auth/profile-image", { profileImageUrl });
+    const { user, tokens } = response.data.data;
+    return { user, tokens };
+  },
+
+  changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<{ tokens: { accessToken: string; refreshToken: string } }> => {
+    const response = await apiClient.put("/auth/change-password", data);
+    // Backend now returns tokens after password change (security best practice)
+    const { tokens } = response.data.data;
+    return { tokens };
+  },
+
+  requestEmailChange: async (data: { newEmail: string }): Promise<{ message: string }> => {
+    const response = await apiClient.post("/auth/request-email-change", data);
+    return response.data.data;
+  },
+
+  verifyEmailChange: async (data: { newEmail: string; otp: string }): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
+    const response = await apiClient.post("/auth/verify-email-change", data);
+    const { user, tokens } = response.data.data;
+    return { user, tokens };
   },
 };

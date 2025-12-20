@@ -15,10 +15,12 @@ import { Button } from "@/components/common/Button";
 import { loginSchema, LoginFormData } from "@/utils/validation";
 import { authApi } from "@/api/auth.api";
 import { useAuth } from "@/hooks/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function LoginScreen() {
   const router = useRouter();
   const { setAuth } = useAuth();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
 
   const {
@@ -38,7 +40,11 @@ export default function LoginScreen() {
     try {
       const response = await authApi.login(data);
       setAuth(response.user, response.accessToken, response.refreshToken);
-      router.replace("/(main)/(todos)" as Href);
+      
+      // Invalidate all queries to fetch fresh data after login
+      await queryClient.invalidateQueries();
+      
+      router.replace("/(main)/dashboard" as Href);
     } catch (error: any) {
       const message = error.message || "Login failed";
 
