@@ -92,16 +92,14 @@ export const sendOTPEmail = async (
           text-align: center;
         }
         .logo {
-          width: 80px;
-          height: 80px;
-          margin: 0 auto 15px;
+          width: 100px;
+          height: 100px;
+          margin: 0 auto 20px;
           display: block;
-        }
-        .header h1 { 
-          font-size: 28px;
-          font-weight: 700;
-          margin: 0 0 8px;
-          letter-spacing: -0.5px;
+          background: rgba(0, 0, 0, 0.3);
+          padding: 15px;
+          border-radius: 16px;
+          border: 2px solid rgba(255, 255, 255, 0.2);
         }
         .header p { 
           color: rgba(255, 255, 255, 0.9);
@@ -190,7 +188,6 @@ export const sendOTPEmail = async (
       <div class="email-wrapper">
         <div class="header">
           <img src="https://nexus-web-portal-demo.vercel.app/nexus-logo.png" alt="Nexus Logo" class="logo" />
-          <h1>Nexus</h1>
           <p>Full-Stack MERN Application</p>
         </div>
         
