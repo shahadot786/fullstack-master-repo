@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit"; // rate limiter
 import swaggerUi from "swagger-ui-express";
 import { config } from "@config/index";
 import { swaggerSpec } from "@config/swagger";
@@ -18,10 +19,12 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
-app.use(cors({ 
+app.use(
+  cors({
     origin: config.cors.origin,
     credentials: true, // Allow cookies
-}));
+  })
+);
 
 // Cookie parser
 app.use(cookieParser());
@@ -33,12 +36,27 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// rate limiter config
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: (req: any) => (req.user?.id ? 100 : 20), // higher quota if authenticated
+  message: { error: "Too many requests, please try again later!" },
+  standardHeaders: true, // include RateLimit-* headers
+  legacyHeaders: true, // include X-RateLimit-* headers
+  keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown", 56), // group by IP/subnet
+});
+app.use(limiter); // apply globally
+
 // API Documentation
-app.use("/api-docs", ...swaggerUi.serve as any, swaggerUi.setup(swaggerSpec) as any);
+app.use(
+  "/api-docs",
+  ...(swaggerUi.serve as any),
+  swaggerUi.setup(swaggerSpec) as any
+);
 
 // Health check
 app.get("/health", (req, res) => {
-    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
 // API Routes
@@ -51,10 +69,10 @@ app.use("/api/analytics", analyticsRoutes);
 
 // 404 handler
 app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: "Route not found",
-    });
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+  });
 });
 
 // Error handling middleware (must be last)
