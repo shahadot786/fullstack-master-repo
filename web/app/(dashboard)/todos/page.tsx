@@ -76,7 +76,9 @@ export default function TodosPage() {
       <div className="flex items-center justify-center min-h-40">
         <div className="text-center">
           <p className="text-red-600 dark:text-red-400">
-            Failed to load todos. Please try again.
+            {error instanceof Error
+              ? error.message
+              : "Failed to load todos. Please try again."}
           </p>
         </div>
       </div>
@@ -86,7 +88,7 @@ export default function TodosPage() {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="mb-6 flex-shrink-0">
+      <div className="mb-6 shrink-0">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
@@ -178,7 +180,7 @@ export default function TodosPage() {
 
       {/* Pagination */}
       {pagination && pagination.total > 0 && (
-        <div className="mt-6 flex-shrink-0">
+        <div className="mt-6 shrink-0">
           <Pagination
             currentPage={page}
             totalPages={pagination.totalPages}

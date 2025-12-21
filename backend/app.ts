@@ -39,8 +39,8 @@ app.use(express.urlencoded({ extended: true }));
 // rate limiter config
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: (req: any) => (req.user?.id ? 100 : 20), // higher quota if authenticated
-  message: { error: "Too many requests, please try again later!" },
+  max: (req: any) => (req.user?.id ? 1000 : 200), // higher quota if authenticated
+  message: { error: { message: "Too many requests, please try again later!" } },
   standardHeaders: true, // include RateLimit-* headers
   legacyHeaders: true, // include X-RateLimit-* headers
   keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown", 56), // group by IP/subnet
