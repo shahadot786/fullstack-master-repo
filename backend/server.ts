@@ -30,9 +30,13 @@ const startServer = async () => {
 
     // Start server
     httpServer.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📚 API Documentation available at http://localhost:${PORT}/api-docs`);
-      console.log(`🔌 WebSocket server ready`);
+      if (process.env.NODE_ENV === "development") {
+        console.log(`🚀 Server running on http://localhost:${PORT}`);
+        console.log(
+          `📚 API Documentation available at http://localhost:${PORT}/api-docs`
+        );
+        console.log(`🔌 WebSocket server ready`);
+      }
     });
   } catch (error) {
     console.error("Failed to start server:", error);

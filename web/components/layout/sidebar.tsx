@@ -16,6 +16,7 @@ import {
   Cloud,
   LayoutGrid,
 } from "lucide-react";
+import Image from "next/image";
 
 const services = [
   { name: "Dashboard", href: "/", icon: LayoutGrid, active: true },
@@ -31,7 +32,13 @@ const services = [
   { name: "Weather", href: "/weather", icon: Cloud, active: false },
 ];
 
-export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+export function Sidebar({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
   const pathname = usePathname();
 
   return (
@@ -54,7 +61,9 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-3 mb-2">
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden flex items-center justify-center bg-white border-2 border-gray-300 dark:border-gray-600">
-              <img
+              <Image
+                width={48}
+                height={48}
                 src="/nexus-logo.png"
                 alt="Nexus Logo"
                 className="w-full h-full object-contain"

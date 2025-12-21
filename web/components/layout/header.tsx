@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Bell, Search, LogOut, User, Menu } from "lucide-react";
+import { Bell, Search, LogOut, User, Menu, ChartColumn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Header({ onMenuClick }: { onMenuClick: () => void }) {
@@ -34,7 +34,8 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const handleLogout = async () => {
     try {
       await authApi.logout();
-    } catch (error) {
+    } catch (_error) {
+      console.log(_error, "Logout Error");
       // Logout error - silently fail
     } finally {
       logout();
@@ -89,8 +90,21 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
 
         {/* Right Section */}
         <div className="flex items-center gap-2 sm:gap-4">
+          {/* Analytics - Hidden on mobile */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full cursor-pointer"
+            onClick={() => router.push("/stats")}
+          >
+            <ChartColumn className="w-5 h-5" />
+          </Button>
           {/* Search - Hidden on mobile */}
-          <Button variant="ghost" size="icon" className="rounded-full hidden sm:flex cursor-pointer">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full cursor-pointer"
+          >
             <Search className="w-5 h-5" />
           </Button>
 
@@ -98,7 +112,11 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
           <ThemeToggle />
 
           {/* Notifications - Hidden on mobile */}
-          <Button variant="ghost" size="icon" className="rounded-full relative hidden sm:flex cursor-pointer">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full relative cursor-pointer"
+          >
             <Bell className="w-5 h-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
           </Button>
@@ -118,7 +136,7 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
                       className="object-cover"
                     />
                   ) : (
-                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-sm">
+                    <AvatarFallback className="bg-linear-to-br from-blue-500 to-indigo-600 text-white text-sm">
                       {getUserInitials()}
                     </AvatarFallback>
                   )}
@@ -136,12 +154,18 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => router.push("/profile")}
+                className="cursor-pointer"
+              >
                 <User className="w-4 h-4 mr-2" />
                 Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="text-red-600 cursor-pointer"
+              >
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </DropdownMenuItem>

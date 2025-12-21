@@ -4,12 +4,20 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAnalytics } from "@/lib/api";
 import type { AnalyticsUser, AnalyticsService } from "@repo/shared";
-import { Users, Activity, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Users,
+  Activity,
+  TrendingUp,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function PublicAnalyticsPage() {
   const [currentPage, setCurrentPage] = useState(1);
+  const user = useAuthStore((state) => state.user);
   const limit = 6;
 
   const { data, isLoading, error } = useQuery({
@@ -19,7 +27,7 @@ export default function PublicAnalyticsPage() {
 
   if (isLoading && !data) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
         <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
       </div>
     );
@@ -27,10 +35,20 @@ export default function PublicAnalyticsPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-2">Error Loading Analytics</h2>
-          <p className="text-gray-600 dark:text-gray-400">Please try again later</p>
+          <h2 className="text-2xl font-bold text-red-600 mb-2">
+            Error Loading Analytics
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Please try again later
+          </p>
+          <Link
+            href="/login"
+            className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+          >
+            Sign in
+          </Link>
         </div>
       </div>
     );
@@ -52,7 +70,7 @@ export default function PublicAnalyticsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       {/* Navigation Header */}
       <nav className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,31 +80,44 @@ export default function PublicAnalyticsPage() {
               <Image
                 src="/nexus-logo.png"
                 alt="Nexus Logo"
-                width={40}
-                height={40}
+                width={60}
+                height={60}
                 className="object-contain"
               />
               <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Nexus</h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Analytics Dashboard</p>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                  Nexus
+                </h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Analytics
+                </p>
               </div>
             </Link>
 
             {/* Auth Buttons */}
-            <div className="flex items-center gap-3">
+            {!user ? (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/login"
+                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-4 sm:px-6 py-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all"
+                >
+                  Get Started
+                </Link>
+              </div>
+            ) : (
               <Link
-                href="/login"
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+                href="/"
+                className="px-4 sm:px-6 py-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all"
               >
-                Sign In
+                Dashboard
               </Link>
-              <Link
-                href="/register"
-                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all"
-              >
-                Get Started
-              </Link>
-            </div>
+            )}
           </div>
         </div>
       </nav>
@@ -96,7 +127,7 @@ export default function PublicAnalyticsPage() {
         <div className="max-w-7xl mx-auto">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-2xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
               📊 Global Analytics
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300">
@@ -123,30 +154,51 @@ export default function PublicAnalyticsPage() {
                   </h3>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600 dark:text-gray-400">Total</span>
-                      <span className="text-2xl font-bold text-blue-600">{service.total}</span>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Total
+                      </span>
+                      <span className="text-2xl font-bold text-blue-600">
+                        {service.total}
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600 dark:text-gray-400">Completed</span>
-                      <span className="text-xl font-semibold text-green-600">{service.completed}</span>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Completed
+                      </span>
+                      <span className="text-xl font-semibold text-green-600">
+                        {service.completed}
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600 dark:text-gray-400">Pending</span>
-                      <span className="text-xl font-semibold text-amber-600">{service.pending}</span>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Pending
+                      </span>
+                      <span className="text-xl font-semibold text-amber-600">
+                        {service.pending}
+                      </span>
                     </div>
                   </div>
                   {service.total > 0 && (
                     <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600 dark:text-gray-400">Completion Rate</span>
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Completion Rate
+                        </span>
                         <span className="font-semibold text-blue-600">
-                          {Math.round((service.completed / service.total) * 100)}%
+                          {Math.round(
+                            (service.completed / service.total) * 100
+                          )}
+                          %
                         </span>
                       </div>
                       <div className="mt-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div
-                          className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all"
-                          style={{ width: `${(service.completed / service.total) * 100}%` }}
+                          className="bg-linear-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all"
+                          style={{
+                            width: `${
+                              (service.completed / service.total) * 100
+                            }%`,
+                          }}
                         ></div>
                       </div>
                     </div>
@@ -167,7 +219,9 @@ export default function PublicAnalyticsPage() {
               </div>
               {pagination && (
                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                  Showing {((currentPage - 1) * limit) + 1}-{Math.min(currentPage * limit, pagination.total)} of {pagination.total} users
+                  Showing {(currentPage - 1) * limit + 1}-
+                  {Math.min(currentPage * limit, pagination.total)} of{" "}
+                  {pagination.total} users
                 </div>
               )}
             </div>
@@ -190,7 +244,7 @@ export default function PublicAnalyticsPage() {
                         className="rounded-full object-cover"
                       />
                     ) : (
-                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold">
+                      <div className="w-14 h-14 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold">
                         {user.name.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -219,19 +273,25 @@ export default function PublicAnalyticsPage() {
                         </div>
                         <div className="grid grid-cols-3 gap-2 text-sm">
                           <div className="text-center">
-                            <div className="text-gray-600 dark:text-gray-400">Total</div>
+                            <div className="text-gray-600 dark:text-gray-400">
+                              Total
+                            </div>
                             <div className="font-semibold text-gray-900 dark:text-white">
                               {service.total}
                             </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-gray-600 dark:text-gray-400">Done</div>
+                            <div className="text-gray-600 dark:text-gray-400">
+                              Done
+                            </div>
                             <div className="font-semibold text-green-600">
                               {service.completed}
                             </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-gray-600 dark:text-gray-400">Pending</div>
+                            <div className="text-gray-600 dark:text-gray-400">
+                              Pending
+                            </div>
                             <div className="font-semibold text-amber-600">
                               {service.pending}
                             </div>
@@ -257,13 +317,16 @@ export default function PublicAnalyticsPage() {
                 </button>
 
                 <div className="flex items-center gap-2">
-                  {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
+                  {Array.from(
+                    { length: pagination.totalPages },
+                    (_, i) => i + 1
+                  ).map((page) => (
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
                       className={`w-10 h-10 rounded-lg font-medium transition-colors ${
                         currentPage === page
-                          ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                          ? "bg-linear-to-r from-blue-600 to-purple-600 text-white"
                           : "bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                       }`}
                     >
