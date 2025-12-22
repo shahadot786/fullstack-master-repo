@@ -11,11 +11,11 @@ const apiClient = axios.create({
 // Flag to prevent multiple simultaneous refresh attempts
 let isRefreshing = false;
 let failedQueue: {
-  resolve: (value?: any) => void;
-  reject: (reason?: any) => void;
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
 }[] = [];
 
-const processQueue = (error: any = null) => {
+const processQueue = (error: unknown = null) => {
   failedQueue.forEach((promise) => {
     if (error) {
       promise.reject(error);
@@ -52,7 +52,9 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       // Prevent refresh on auth endpoints (except refresh-token)
       const isAuthEndpoint = originalRequest.url?.includes("/auth/");
-      const isRefreshEndpoint = originalRequest.url?.includes("/auth/refresh-token");
+      const isRefreshEndpoint = originalRequest.url?.includes(
+        "/auth/refresh-token"
+      );
 
       if (isAuthEndpoint && !isRefreshEndpoint) {
         return Promise.reject(error);
@@ -76,7 +78,7 @@ apiClient.interceptors.response.use(
 
       try {
         const refreshToken = useAuthStore.getState().refreshToken;
-        
+
         if (!refreshToken) {
           // No refresh token, logout user
           processQueue(error);
@@ -93,7 +95,8 @@ apiClient.interceptors.response.use(
 
         // Backend returns: {success: true, data: {tokens: {accessToken, refreshToken}}}
         const { tokens } = response.data.data;
-        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = tokens;
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+          tokens;
 
         // Update tokens in store
         useAuthStore.getState().setTokens(newAccessToken, newRefreshToken);
