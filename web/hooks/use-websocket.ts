@@ -9,18 +9,18 @@ import { Todo } from "@/types";
 export const useWebSocket = () => {
   const [isConnected, setIsConnected] = useState(false);
   const queryClient = useQueryClient();
-  const { accessToken, user } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     // Only connect if user is authenticated
-    if (!accessToken || !user) {
+    if (!isAuthenticated || !user) {
       disconnectWebSocket();
       setIsConnected(false);
       return;
     }
 
-    // Initialize WebSocket connection
-    const socket = initializeWebSocket(accessToken);
+    // Initialize WebSocket connection (cookies will be sent automatically)
+    const socket = initializeWebSocket();
 
     // Update connection status
     const handleConnect = () => {
@@ -38,7 +38,7 @@ export const useWebSocket = () => {
         if (!oldData) return [todo];
         return [todo, ...oldData];
       });
-      
+
       // Invalidate to trigger re-render
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     };
@@ -49,7 +49,7 @@ export const useWebSocket = () => {
         if (!oldData) return [todo];
         return oldData.map((t) => (t._id === todo._id ? todo : t));
       });
-      
+
       // Invalidate to trigger re-render
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     };
@@ -60,7 +60,7 @@ export const useWebSocket = () => {
         if (!oldData) return [];
         return oldData.filter((t) => t._id !== todoId);
       });
-      
+
       // Invalidate to trigger re-render
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     };
@@ -68,7 +68,7 @@ export const useWebSocket = () => {
     const handleTodosDeletedAll = () => {
       // Clear all todos from the cache
       queryClient.setQueryData(["todos"], []);
-      
+
       // Invalidate to trigger re-render
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     };
@@ -93,7 +93,7 @@ export const useWebSocket = () => {
       socket.off("todo:deleted", handleTodoDeleted);
       socket.off("todos:deleted_all", handleTodosDeletedAll);
     };
-  }, [accessToken, user, queryClient]);
+  }, [isAuthenticated, user, queryClient]);
 
   return {
     isConnected,

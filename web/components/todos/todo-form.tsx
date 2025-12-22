@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Todo, TodoPriority } from "@/types";
+import { Todo } from "@/types";
 import { useCreateTodo, useUpdateTodo } from "@/hooks/use-todos";
 import { Button } from "@/components/ui/button";
 import {
@@ -102,15 +102,25 @@ export function TodoForm({ open, onClose, todo }: TodoFormProps) {
       form.reset();
       onClose();
     } catch (error) {
-      
+      const errorMessage =
+        (error instanceof Error &&
+          (error as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message) ||
+        "Title already exists";
+      form.setError("title", {
+        type: "server",
+        message: errorMessage,
+      });
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Todo" : "Create New Todo"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Edit Todo" : "Create New Todo"}
+          </DialogTitle>
           <DialogDescription>
             {isEditing
               ? "Update your todo details below"

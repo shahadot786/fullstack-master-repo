@@ -4,6 +4,7 @@ import { asyncHandler } from '@common/utils/async-handler.util';
 import { sendSuccess } from '@common/utils/response.util';
 import { AuthRequest } from '@middleware/auth.middleware';
 import { HTTP_STATUS } from '@fullstack-master/shared';
+import { setAuthCookies, clearAuthCookies } from '@common/utils/cookie.util';
 
 /**
  * User Controller
@@ -53,9 +54,8 @@ export const deleteProfile = asyncHandler(async (req: AuthRequest, res: Response
 
     await userService.deleteProfile(userId);
 
-    // Clear auth cookies
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
+    // Clear auth cookies with proper options
+    clearAuthCookies(res);
 
     sendSuccess(res, null, 'Profile deleted successfully');
 });
@@ -81,24 +81,3 @@ export const requestEmailChange = asyncHandler(async (req: AuthRequest, res: Res
 
     sendSuccess(res, null, 'Verification code sent to your new email');
 });
-
-// Helper function to set auth cookies
-const setAuthCookies = (res: Response, accessToken: string, refreshToken: string) => {
-    const isProduction = process.env.NODE_ENV === 'production';
-
-    // Access token - short-lived (15 minutes)
-    res.cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? 'strict' : 'lax',
-        maxAge: 15 * 60 * 1000, // 15 minutes
-    });
-
-    // Refresh token - long-lived (7 days)
-    res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? 'strict' : 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-};

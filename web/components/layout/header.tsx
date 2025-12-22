@@ -35,7 +35,6 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
     try {
       await authApi.logout();
     } catch (_error) {
-      console.log(_error, "Logout Error");
       // Logout error - silently fail
     } finally {
       logout();

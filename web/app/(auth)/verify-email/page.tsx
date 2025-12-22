@@ -18,7 +18,7 @@ import { AxiosError } from "axios";
 
 export default function VerifyEmailPage() {
   const router = useRouter();
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const setUser = useAuthStore((state) => state.setUser);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
@@ -45,14 +45,14 @@ export default function VerifyEmailPage() {
       setIsLoading(true);
       setError("");
       const response = await authApi.verifyEmail({ email, otp });
-      setAuth(response.user, response.accessToken, response.refreshToken);
+      setUser(response.user);
       sessionStorage.removeItem("pendingEmail");
       router.push("/todos");
     } catch (err: unknown) {
       const error = err as AxiosError<{ message: string }>;
       setError(
         error.response?.data?.message ||
-          "Verification failed. Please try again."
+        "Verification failed. Please try again."
       );
     } finally {
       setIsLoading(false);
@@ -70,7 +70,7 @@ export default function VerifyEmailPage() {
       const error = err as AxiosError<{ message: string }>;
       setError(
         error.response?.data?.message ||
-          "Failed to resend code. Please try again."
+        "Failed to resend code. Please try again."
       );
     } finally {
       setIsResending(false);

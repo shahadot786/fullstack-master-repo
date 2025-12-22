@@ -1,12 +1,9 @@
 import apiClient from "./client";
 import {
-  AuthResponse,
   RegisterRequest,
   LoginRequest,
   VerifyEmailRequest,
   ResendOTPRequest,
-  RefreshTokenRequest,
-  RefreshTokenResponse,
   User,
 } from "@/types";
 
@@ -16,42 +13,24 @@ export const authApi = {
     return response.data.data; // Extract from {success, data: {message}}
   },
 
-  verifyEmail: async (data: VerifyEmailRequest): Promise<AuthResponse> => {
+  verifyEmail: async (data: VerifyEmailRequest): Promise<{ user: User }> => {
     const response = await apiClient.post("/auth/verify-email", data);
     // Backend returns: {success, data: {user, tokens: {accessToken, refreshToken}}}
-    const { user, tokens } = response.data.data;
-    return {
-      user,
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-    };
+    // Tokens are set as cookies, we only need the user
+    const { user } = response.data.data;
+    return { user };
   },
 
   resendOTP: async (data: ResendOTPRequest): Promise<void> => {
     await apiClient.post("/auth/resend-verification", data);
   },
 
-  login: async (data: LoginRequest): Promise<AuthResponse> => {
+  login: async (data: LoginRequest): Promise<{ user: User }> => {
     const response = await apiClient.post("/auth/login", data);
     // Backend returns: {success, data: {user, tokens: {accessToken, refreshToken}}}
-    const { user, tokens } = response.data.data;
-    return {
-      user,
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-    };
-  },
-
-  refreshToken: async (
-    data: RefreshTokenRequest
-  ): Promise<RefreshTokenResponse> => {
-    const response = await apiClient.post("/auth/refresh-token", data);
-    // Backend returns: {success, data: {tokens: {accessToken, refreshToken}}}
-    const { tokens } = response.data.data;
-    return {
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-    };
+    // Tokens are set as cookies, we only need the user
+    const { user } = response.data.data;
+    return { user };
   },
 
   logout: async (): Promise<void> => {
@@ -75,26 +54,24 @@ export const authApi = {
     await apiClient.post("/auth/reset-password", { email, otp, newPassword });
   },
 
-  updateProfile: async (data: { 
+  updateProfile: async (data: {
     name?: string;
-  }): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
+  }): Promise<{ user: User }> => {
     const response = await apiClient.put("/auth/profile", data);
-    // Extract user and tokens from {success, data: {user, tokens}}
-    const { user, tokens } = response.data.data;
-    return { user, tokens };
+    // Extract user, tokens are set as cookies
+    const { user } = response.data.data;
+    return { user };
   },
 
-  updateProfileImage: async (profileImageUrl: string): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
+  updateProfileImage: async (profileImageUrl: string): Promise<{ user: User }> => {
     const response = await apiClient.put("/auth/profile-image", { profileImageUrl });
-    const { user, tokens } = response.data.data;
-    return { user, tokens };
+    const { user } = response.data.data;
+    return { user };
   },
 
-  changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<{ tokens: { accessToken: string; refreshToken: string } }> => {
-    const response = await apiClient.put("/auth/change-password", data);
-    // Backend now returns tokens after password change (security best practice)
-    const { tokens } = response.data.data;
-    return { tokens };
+  changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<void> => {
+    await apiClient.put("/auth/change-password", data);
+    // Tokens are updated as cookies by backend
   },
 
   requestEmailChange: async (data: { newEmail: string }): Promise<{ message: string }> => {
@@ -102,9 +79,9 @@ export const authApi = {
     return response.data.data;
   },
 
-  verifyEmailChange: async (data: { newEmail: string; otp: string }): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
+  verifyEmailChange: async (data: { newEmail: string; otp: string }): Promise<{ user: User }> => {
     const response = await apiClient.post("/auth/verify-email-change", data);
-    const { user, tokens } = response.data.data;
-    return { user, tokens };
+    const { user } = response.data.data;
+    return { user };
   },
 };

@@ -16,13 +16,23 @@ export const authenticate = (
     next: NextFunction
 ) => {
     try {
-        const authHeader = req.headers.authorization;
+        let token: string | undefined;
 
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            throw new UnauthorizedError("No token provided");
+        // Try to get token from cookie first (for web)
+        if (req.cookies?.accessToken) {
+            token = req.cookies.accessToken;
+        }
+        // Fall back to Authorization header (for mobile)
+        else {
+            const authHeader = req.headers.authorization;
+            if (authHeader && authHeader.startsWith("Bearer ")) {
+                token = authHeader.substring(7);
+            }
         }
 
-        const token = authHeader.substring(7);
+        if (!token) {
+            throw new UnauthorizedError("No token provided");
+        }
 
         const decoded = jwt.verify(token, config.jwt.secret) as {
             id: string;
