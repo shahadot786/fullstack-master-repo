@@ -16,7 +16,26 @@ export const initializeWebSocket = (server: HTTPServer): Server => {
 
     // Authentication middleware for WebSocket
     io.use((socket, next) => {
-        const token = socket.handshake.auth.token;
+        // Support both cookie-based (web) and token-based (mobile) authentication
+        // For web: token comes from cookies
+        // For mobile: token comes from socket.handshake.auth.token
+        const cookieHeader = socket.handshake.headers.cookie;
+        let token: string | undefined;
+
+        // Try to get token from cookie first (for web)
+        if (cookieHeader) {
+            const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
+                const [key, value] = cookie.trim().split('=');
+                acc[key] = value;
+                return acc;
+            }, {} as Record<string, string>);
+            token = cookies.accessToken;
+        }
+
+        // Fall back to auth token (for mobile)
+        if (!token) {
+            token = socket.handshake.auth.token;
+        }
 
         if (!token) {
             return next(new Error("Authentication error: No token provided"));
