@@ -4,6 +4,7 @@ import { asyncHandler } from "@common/utils/async-handler.util";
 import { sendSuccess } from "@common/utils/response.util";
 import { AuthRequest } from "@middleware/auth.middleware";
 import { setAuthCookies, clearAuthCookies } from "@common/utils/cookie.util";
+import { UnauthorizedError } from "@common/errors";
 
 export const register = asyncHandler(
     async (req: AuthRequest, res: Response) => {
@@ -67,11 +68,17 @@ export const login = asyncHandler(
 
 export const refreshToken = asyncHandler(
     async (req: AuthRequest, res: Response) => {
-        const { refreshToken } = req.body;
+        // Support both cookie-based (web) and body-based (mobile) refresh tokens
+        const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+
+        if (!refreshToken) {
+            throw new UnauthorizedError("Refresh token not provided");
+        }
+
         const { accessToken, refreshToken: newRefreshToken } =
             await authService.refreshAccessToken(refreshToken);
 
-        // Set new cookies
+        // Set new cookies (for web clients)
         setAuthCookies(res, accessToken, newRefreshToken);
 
         sendSuccess(res, {
