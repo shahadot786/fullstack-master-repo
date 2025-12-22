@@ -84,4 +84,9 @@ export const authApi = {
     const { user } = response.data.data;
     return { user };
   },
+
+  refreshToken: async (): Promise<void> => {
+    // Backend reads refreshToken from cookie and sets new tokens as cookies
+    await apiClient.post("/auth/refresh-token", {});
+  },
 };
