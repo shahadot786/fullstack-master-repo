@@ -68,8 +68,7 @@ const UploadSchema = new Schema<IUpload>(
     }
 );
 
-// Indexes for faster queries
+// Index for faster queries
 UploadSchema.index({ uploadedBy: 1, createdAt: -1 });
-UploadSchema.index({ publicId: 1 });
 
 export default mongoose.model<IUpload>('Upload', UploadSchema);
