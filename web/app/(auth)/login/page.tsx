@@ -43,7 +43,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const setUser = useAuthStore((state) => state.setUser);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +73,7 @@ export default function LoginPage() {
       setIsLoading(true);
       setError("");
       const response = await authApi.login(data);
-      setAuth(response.user, response.accessToken, response.refreshToken);
+      setUser(response.user);
       router.push("/");
     } catch (err: unknown) {
       const error = err as AxiosError<{ message: string }>;

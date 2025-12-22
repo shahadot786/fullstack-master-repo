@@ -67,7 +67,7 @@ type VerifyEmailFormValues = z.infer<typeof verifyEmailSchema>;
 type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
 
 export default function ProfilePage() {
-  const { user, updateUserAndTokens } = useAuthStore();
+  const { user, setUser } = useAuthStore();
   const router = useRouter();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
@@ -117,9 +117,9 @@ export default function ProfilePage() {
       setError("");
       setSuccess("");
       const response = await userApi.updateProfile(data);
-      // Check if response has tokens (name updated) or message (email change initiated)
-      if ('user' in response && 'tokens' in response) {
-        updateUserAndTokens(response.user, response.tokens.accessToken, response.tokens.refreshToken);
+      // Check if response has user (name updated) or message (email change initiated)
+      if ('user' in response) {
+        setUser(response.user);
         setSuccess("Profile updated successfully!");
       } else {
         setSuccess(response.message);
@@ -148,13 +148,12 @@ export default function ProfilePage() {
     try {
       setError("");
       setSuccess("");
-      // Use the unified verify-email endpoint
       const response = await authApi.verifyEmail({
         email: newEmailForVerification,
         otp: data.otp,
       });
-      // Update user and tokens in store to refresh UI immediately
-      updateUserAndTokens(response.user, response.accessToken, response.refreshToken);
+      // Update user in store to refresh UI immediately
+      setUser(response.user);
       setSuccess("Email changed successfully!");
       setIsVerifyEmailDialogOpen(false);
       verifyEmailForm.reset();
@@ -179,12 +178,11 @@ export default function ProfilePage() {
     try {
       setError("");
       setSuccess("");
-      const response = await authApi.changePassword({
+      await authApi.changePassword({
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       });
-      // Update tokens in store (password change returns new tokens)
-      updateUserAndTokens(user!, response.tokens.accessToken, response.tokens.refreshToken);
+      // Password changed successfully (cookies updated by backend)
       setSuccess("Password changed successfully!");
       setIsPasswordDialogOpen(false);
       passwordForm.reset();
@@ -221,9 +219,9 @@ export default function ProfilePage() {
       // Update profile with new image URL using the new user API
       const response = await userApi.updateProfile({ profileImage: uploadResult.url });
 
-      // Check if response has tokens (should have for profileImage update)
-      if ('user' in response && 'tokens' in response) {
-        updateUserAndTokens(response.user, response.tokens.accessToken, response.tokens.refreshToken);
+      // Check if response has user (should have for profileImage update)
+      if ('user' in response) {
+        setUser(response.user);
       }
       setSuccess("Profile image updated successfully!");
     } catch (err: any) {
@@ -542,10 +540,10 @@ export default function ProfilePage() {
                   <FormItem>
                     <FormLabel>Verification Code</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter 6-digit code" 
+                      <Input
+                        placeholder="Enter 6-digit code"
                         maxLength={6}
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
