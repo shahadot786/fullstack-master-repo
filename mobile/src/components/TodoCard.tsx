@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { XStack, YStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '@/components/common/Card';
-import { Todo } from '@/types';
+import { Todo, TodoType } from '@/types';
 import { useToggleTodo, useDeleteTodo } from '@/hooks/useTodos';
 
 interface TodoCardProps {
@@ -15,6 +15,20 @@ const priorityColors = {
     low: '#22c55e',
     medium: '#f59e0b',
     high: '#ef4444',
+};
+
+const typeColors: Record<TodoType, string> = {
+    'DSA': '#a855f7',
+    'System Design & Architecture': '#3b82f6',
+    'Projects': '#6366f1',
+    'Learn': '#06b6d4',
+    'Blogging': '#ec4899',
+    'Frontend': '#14b8a6',
+    'Backend': '#f97316',
+    'AI/ML': '#8b5cf6',
+    'DevOps': '#10b981',
+    'Database': '#f59e0b',
+    'Testing': '#f43f5e',
 };
 
 export const TodoCard: React.FC<TodoCardProps> = ({ todo }) => {
@@ -106,7 +120,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({ todo }) => {
                     </Pressable>
                 </XStack>
 
-                <XStack gap="$2" alignItems="center">
+                <XStack gap="$2" alignItems="center" flexWrap="wrap">
                     <XStack
                         backgroundColor={priorityColors[todo.priority]}
                         paddingHorizontal="$2"
@@ -115,6 +129,16 @@ export const TodoCard: React.FC<TodoCardProps> = ({ todo }) => {
                     >
                         <Text fontSize="$2" color="white" fontWeight="600">
                             {todo.priority.toUpperCase()}
+                        </Text>
+                    </XStack>
+                    <XStack
+                        backgroundColor={typeColors[todo.type]}
+                        paddingHorizontal="$2"
+                        paddingVertical="$1"
+                        borderRadius="$2"
+                    >
+                        <Text fontSize="$2" color="white" fontWeight="600">
+                            {todo.type}
                         </Text>
                     </XStack>
                     {todo.dueDate && (

@@ -3,12 +3,13 @@
 import { useState, useCallback } from "react";
 import { useWebSocket } from "@/hooks/use-websocket";
 import { useGetTodos } from "@/hooks/use-todos";
-import { Todo, TodoPriority } from "@/types";
+import { Todo, TodoPriority, TodoType } from "@/types";
 import { TodoCard } from "@/components/todos/todo-card";
 import { TodoForm } from "@/components/todos/todo-form";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import { LoaderModal } from "@/components/ui/loader-modal";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -16,13 +17,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Wifi, WifiOff } from "lucide-react";
+import { Plus, Wifi, WifiOff, X } from "lucide-react";
 
 export default function TodosPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [completedFilter, setCompletedFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [dueDateFromFilter, setDueDateFromFilter] = useState<string>("");
+  const [dueDateToFilter, setDueDateToFilter] = useState<string>("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -33,6 +37,10 @@ export default function TodosPage() {
       completedFilter === "all" ? undefined : completedFilter === "completed",
     priority:
       priorityFilter === "all" ? undefined : (priorityFilter as TodoPriority),
+    type:
+      typeFilter === "all" ? undefined : (typeFilter as TodoType),
+    dueDateFrom: dueDateFromFilter || undefined,
+    dueDateTo: dueDateToFilter || undefined,
   });
 
   const todos = data?.data || [];
@@ -49,6 +57,20 @@ export default function TodosPage() {
 
   const handlePriorityFilterChange = useCallback((value: string) => {
     setPriorityFilter(value);
+    setPage(1);
+  }, []);
+
+  const handleTypeFilterChange = useCallback((value: string) => {
+    setTypeFilter(value);
+    setPage(1);
+  }, []);
+
+  const handleClearFilters = useCallback(() => {
+    setCompletedFilter("all");
+    setPriorityFilter("all");
+    setTypeFilter("all");
+    setDueDateFromFilter("");
+    setDueDateToFilter("");
     setPage(1);
   }, []);
 
@@ -123,35 +145,97 @@ export default function TodosPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Select
-            value={completedFilter}
-            onValueChange={handleCompletedFilterChange}
-          >
-            <SelectTrigger className="w-full sm:w-45">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Tasks</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Select
+              value={completedFilter}
+              onValueChange={handleCompletedFilterChange}
+            >
+              <SelectTrigger className="w-full sm:w-45">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Tasks</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <Select
-            value={priorityFilter}
-            onValueChange={handlePriorityFilterChange}
-          >
-            <SelectTrigger className="w-full sm:w-45">
-              <SelectValue placeholder="Filter by priority" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Priorities</SelectItem>
-              <SelectItem value="low">Low</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="high">High</SelectItem>
-            </SelectContent>
-          </Select>
+            <Select
+              value={priorityFilter}
+              onValueChange={handlePriorityFilterChange}
+            >
+              <SelectTrigger className="w-full sm:w-45">
+                <SelectValue placeholder="Filter by priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Priorities</SelectItem>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={typeFilter}
+              onValueChange={handleTypeFilterChange}
+            >
+              <SelectTrigger className="w-full sm:w-45">
+                <SelectValue placeholder="Filter by type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="DSA">DSA</SelectItem>
+                <SelectItem value="System Design & Architecture">System Design</SelectItem>
+                <SelectItem value="Projects">Projects</SelectItem>
+                <SelectItem value="Learn">Learn</SelectItem>
+                <SelectItem value="Blogging">Blogging</SelectItem>
+                <SelectItem value="Frontend">Frontend</SelectItem>
+                <SelectItem value="Backend">Backend</SelectItem>
+                <SelectItem value="AI/ML">AI/ML</SelectItem>
+                <SelectItem value="DevOps">DevOps</SelectItem>
+                <SelectItem value="Database">Database</SelectItem>
+                <SelectItem value="Testing">Testing</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button
+              variant="outline"
+              onClick={handleClearFilters}
+              className="w-full sm:w-auto"
+            >
+              <X className="w-4 h-4 mr-2" />
+              Clear
+            </Button>
+          </div>
+
+          {/* Date Range Filters */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1">
+              <Input
+                type="date"
+                placeholder="From date"
+                value={dueDateFromFilter}
+                onChange={(e) => {
+                  setDueDateFromFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full"
+              />
+            </div>
+            <div className="flex-1">
+              <Input
+                type="date"
+                placeholder="To date"
+                value={dueDateToFilter}
+                onChange={(e) => {
+                  setDueDateToFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full"
+              />
+            </div>
+          </div>
         </div>
       </div>
 

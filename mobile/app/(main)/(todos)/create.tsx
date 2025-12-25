@@ -30,11 +30,13 @@ export default function CreateTodoScreen() {
             title: '',
             description: '',
             priority: 'medium',
+            type: 'Learn',
             dueDate: undefined,
         },
     });
 
     const selectedPriority = watch('priority');
+    const selectedType = watch('type');
     const selectedDate = watch('dueDate');
 
     const onSubmit = async (data: CreateTodoFormData) => {
@@ -43,6 +45,7 @@ export default function CreateTodoScreen() {
             const payload: any = {
                 title: data.title,
                 priority: data.priority,
+                type: data.type,
             };
             
             // Only add optional fields if they have values
@@ -70,6 +73,20 @@ export default function CreateTodoScreen() {
         { value: 'low', label: 'Low', color: '#10b981', icon: 'arrow-down-circle' },
         { value: 'medium', label: 'Medium', color: '#f59e0b', icon: 'remove-circle' },
         { value: 'high', label: 'High', color: '#ef4444', icon: 'arrow-up-circle' },
+    ];
+
+    const typeOptions = [
+        { value: 'DSA', label: 'DSA', color: '#a855f7' },
+        { value: 'System Design & Architecture', label: 'System Design', color: '#3b82f6' },
+        { value: 'Projects', label: 'Projects', color: '#6366f1' },
+        { value: 'Learn', label: 'Learn', color: '#06b6d4' },
+        { value: 'Blogging', label: 'Blogging', color: '#ec4899' },
+        { value: 'Frontend', label: 'Frontend', color: '#14b8a6' },
+        { value: 'Backend', label: 'Backend', color: '#f97316' },
+        { value: 'AI/ML', label: 'AI/ML', color: '#8b5cf6' },
+        { value: 'DevOps', label: 'DevOps', color: '#10b981' },
+        { value: 'Database', label: 'Database', color: '#f59e0b' },
+        { value: 'Testing', label: 'Testing', color: '#f43f5e' },
     ];
 
     return (
@@ -149,6 +166,45 @@ export default function CreateTodoScreen() {
                                             {errors.description.message}
                                         </Text>
                                     )}
+                                </YStack>
+                            )}
+                        />
+
+                        {/* Type Selection */}
+                        <Controller
+                            control={control}
+                            name="type"
+                            render={({ field: { onChange, value } }) => (
+                                <YStack gap="$2">
+                                    <Text fontSize="$4" fontWeight="500" color="$color">
+                                        Type
+                                    </Text>
+                                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                        <XStack gap="$2">
+                                            {typeOptions.map((option) => (
+                                                <Pressable
+                                                    key={option.value}
+                                                    onPress={() => onChange(option.value)}
+                                                    style={{
+                                                        paddingHorizontal: 16,
+                                                        paddingVertical: 10,
+                                                        borderRadius: 8,
+                                                        borderWidth: 2,
+                                                        borderColor: value === option.value ? option.color : (isDark ? '#262626' : '#e5e5e5'),
+                                                        backgroundColor: value === option.value ? `${option.color}15` : 'transparent',
+                                                    }}
+                                                >
+                                                    <Text
+                                                        fontSize="$3"
+                                                        fontWeight={value === option.value ? '600' : '400'}
+                                                        color={value === option.value ? option.color : '$color'}
+                                                    >
+                                                        {option.label}
+                                                    </Text>
+                                                </Pressable>
+                                            ))}
+                                        </XStack>
+                                    </ScrollView>
                                 </YStack>
                             )}
                         />

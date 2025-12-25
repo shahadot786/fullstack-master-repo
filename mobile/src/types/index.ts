@@ -69,6 +69,18 @@ export interface ResetPasswordRequest {
 // ============================================================================
 
 export type TodoPriority = 'low' | 'medium' | 'high';
+export type TodoType = 
+    | 'DSA' 
+    | 'System Design & Architecture' 
+    | 'Projects' 
+    | 'Learn' 
+    | 'Blogging' 
+    | 'Frontend' 
+    | 'Backend' 
+    | 'AI/ML' 
+    | 'DevOps' 
+    | 'Database' 
+    | 'Testing';
 
 export interface Todo {
     _id: string;
@@ -77,6 +89,7 @@ export interface Todo {
     description?: string;
     completed: boolean;
     priority: TodoPriority;
+    type: TodoType;
     dueDate?: string;
     createdAt: string;
     updatedAt: string;
@@ -86,6 +99,7 @@ export interface CreateTodoRequest {
     title: string;
     description?: string;
     priority?: TodoPriority;
+    type: TodoType;
     dueDate?: string;
 }
 
@@ -94,6 +108,7 @@ export interface UpdateTodoRequest {
     description?: string;
     completed?: boolean;
     priority?: TodoPriority;
+    type?: TodoType;
     dueDate?: string;
 }
 
@@ -102,6 +117,10 @@ export interface GetTodosParams {
     limit?: number;
     completed?: boolean;
     priority?: TodoPriority;
+    type?: TodoType;
+    dueDate?: string;
+    dueDateFrom?: string;
+    dueDateTo?: string;
 }
 
 export interface TodosResponse {
