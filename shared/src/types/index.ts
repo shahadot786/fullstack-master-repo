@@ -94,9 +94,9 @@ export interface Todo {
 export interface CreateTodoDto {
     title: string;
     description?: string;
-    priority?: TodoPriority;
+    priority: TodoPriority;
     type: TodoType;
-    dueDate?: Date;
+    dueDate: Date;
 }
 
 export interface UpdateTodoDto {

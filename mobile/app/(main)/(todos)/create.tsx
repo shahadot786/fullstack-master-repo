@@ -41,21 +41,13 @@ export default function CreateTodoScreen() {
 
     const onSubmit = async (data: CreateTodoFormData) => {
         try {
-            // Create payload with only defined values
-            const payload: any = {
+            const payload = {
                 title: data.title,
                 priority: data.priority,
                 type: data.type,
+                dueDate: data.dueDate, // Now required
+                description: data.description?.trim() || undefined,
             };
-            
-            // Only add optional fields if they have values
-            if (data.description && data.description.trim()) {
-                payload.description = data.description.trim();
-            }
-            
-            if (data.dueDate) {
-                payload.dueDate = data.dueDate;
-            }
 
             await createMutation.mutateAsync(payload);
             Alert.alert('Success', 'Todo created successfully!', [
@@ -261,7 +253,7 @@ export default function CreateTodoScreen() {
                             render={({ field: { onChange, value } }) => (
                                 <YStack gap="$2">
                                     <Text fontSize="$4" fontWeight="500" color="$color">
-                                        Due Date (Optional)
+                                        Due Date
                                     </Text>
                                     <Pressable
                                         onPress={() => setShowDatePicker(true)}

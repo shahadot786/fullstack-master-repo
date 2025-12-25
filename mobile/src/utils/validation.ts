@@ -105,8 +105,7 @@ export const createTodoSchema = z.object({
         ]),
     dueDate: z
         .string()
-        .datetime()
-        .optional(),
+        .datetime(),
 });
 
 export const updateTodoSchema = z.object({

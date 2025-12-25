@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { FlatList, Pressable, RefreshControl, ActivityIndicator } from 'react-native';
-import { YStack, Text } from 'tamagui';
+import { YStack, XStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { TodoCard } from '@/components/TodoCard';
+import { TodoFilters } from '@/components/TodoFilters';
 import { useInfiniteTodos } from '@/hooks/useTodos';
 import { ScreenLayout } from '@/components/common/ScreenLayout';
+import { TodoType, TodoPriority } from '@/types';
 
 export default function AllTodosScreen() {
     const router = useRouter();
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [showFilters, setShowFilters] = useState(false);
+    const [filters, setFilters] = useState<{
+        completed?: boolean;
+        priority?: TodoPriority;
+        type?: TodoType;
+        dueDateFrom?: string;
+        dueDateTo?: string;
+    }>({});
 
     const {
         data,
@@ -18,7 +28,7 @@ export default function AllTodosScreen() {
         isFetchingNextPage,
         isLoading,
         refetch,
-    } = useInfiniteTodos();
+    } = useInfiniteTodos(filters);
 
     // Flatten all pages into a single array
     const todos = data?.pages.flatMap(page => page.data) ?? [];
@@ -39,6 +49,10 @@ export default function AllTodosScreen() {
         }
     };
 
+    const handleApplyFilters = (newFilters: typeof filters) => {
+        setFilters(newFilters);
+    };
+
     const renderFooter = () => {
         if (!isFetchingNextPage) return null;
         return (
@@ -48,8 +62,53 @@ export default function AllTodosScreen() {
         );
     };
 
+    // Count active filters
+    const activeFilterCount = Object.values(filters).filter(v => v !== undefined).length;
+
     return (
         <ScreenLayout>
+            {/* Filter Button */}
+            <XStack
+                justifyContent="space-between"
+                alignItems="center"
+                paddingHorizontal="$4"
+                paddingVertical="$3"
+                borderBottomWidth={1}
+                borderBottomColor="$borderColor"
+            >
+                <Text fontSize="$6" fontWeight="700" color="$color">
+                    All Todos
+                </Text>
+                <Pressable
+                    onPress={() => setShowFilters(true)}
+                    style={{
+                        padding: 8,
+                        borderRadius: 8,
+                        backgroundColor: activeFilterCount > 0 ? '#3b82f615' : 'transparent',
+                        position: 'relative',
+                    }}
+                >
+                    <Ionicons name="filter" size={24} color={activeFilterCount > 0 ? '#3b82f6' : '#6b7280'} />
+                    {activeFilterCount > 0 && (
+                        <YStack
+                            position="absolute"
+                            top={4}
+                            right={4}
+                            backgroundColor="#3b82f6"
+                            borderRadius={10}
+                            width={20}
+                            height={20}
+                            alignItems="center"
+                            justifyContent="center"
+                        >
+                            <Text fontSize={10} color="white" fontWeight="700">
+                                {activeFilterCount}
+                            </Text>
+                        </YStack>
+                    )}
+                </Pressable>
+            </XStack>
+
             <FlatList
                 data={todos}
                 renderItem={({ item }) => <TodoCard todo={item} />}
@@ -74,10 +133,10 @@ export default function AllTodosScreen() {
                         <YStack alignItems="center" justifyContent="center" paddingVertical="$10">
                             <Ionicons name="checkmark-circle-outline" size={64} color="#ccc" />
                             <Text color="$color" opacity={0.5} marginTop="$4">
-                                No todos yet
+                                No todos found
                             </Text>
                             <Text color="$color" opacity={0.5}>
-                                Tap + to create one
+                                {activeFilterCount > 0 ? 'Try adjusting filters' : 'Tap + to create one'}
                             </Text>
                         </YStack>
                     )
@@ -106,6 +165,14 @@ export default function AllTodosScreen() {
             >
                 <Ionicons name="add" size={32} color="white" />
             </Pressable>
+
+            {/* Filters Modal */}
+            <TodoFilters
+                visible={showFilters}
+                onClose={() => setShowFilters(false)}
+                filters={filters}
+                onApplyFilters={handleApplyFilters}
+            />
         </ScreenLayout>
     );
 }

@@ -211,7 +211,7 @@ export default function TodosPage() {
 
           {/* Date Range Filters */}
           <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1">
+            <div className="sm:w-48">
               <Input
                 type="date"
                 placeholder="From date"
@@ -223,7 +223,7 @@ export default function TodosPage() {
                 className="w-full"
               />
             </div>
-            <div className="flex-1">
+            <div className="sm:w-48">
               <Input
                 type="date"
                 placeholder="To date"

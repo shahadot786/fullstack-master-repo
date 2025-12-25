@@ -50,7 +50,7 @@ const todoSchema = z.object({
     "Database",
     "Testing",
   ]),
-  dueDate: z.string().optional(),
+  dueDate: z.string().min(1, "Due date is required"),
 });
 
 type TodoFormValues = z.infer<typeof todoSchema>;
@@ -103,7 +103,7 @@ export function TodoForm({ open, onClose, todo }: TodoFormProps) {
     try {
       const payload = {
         ...data,
-        dueDate: data.dueDate || undefined,
+        dueDate: data.dueDate, // Now required
       };
 
       if (isEditing) {

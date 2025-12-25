@@ -56,9 +56,9 @@ export const todoTypeEnum = z.enum([
 export const createTodoSchema = z.object({
     title: z.string().min(1, "Title is required").max(100, "Title too long"),
     description: z.string().max(500, "Description too long").optional(),
-    priority: priorityEnum.default("medium"),
+    priority: priorityEnum,
     type: todoTypeEnum,
-    dueDate: z.coerce.date().optional(),
+    dueDate: z.coerce.date(),
 });
 
 export const updateTodoSchema = z.object({
