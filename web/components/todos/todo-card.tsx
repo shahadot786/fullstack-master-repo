@@ -1,6 +1,6 @@
 "use client";
 
-import { Todo, TodoPriority } from "@/types";
+import { Todo, TodoPriority, TodoType } from "@/types";
 import { useUpdateTodo, useDeleteTodo } from "@/hooks/use-todos";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -18,6 +18,20 @@ const priorityColors = {
   low: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
   medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
   high: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+};
+
+const typeColors: Record<TodoType, string> = {
+  "DSA": "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
+  "System Design & Architecture": "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+  "Projects": "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-400",
+  "Learn": "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/20 dark:text-cyan-400",
+  "Blogging": "bg-pink-100 text-pink-800 dark:bg-pink-900/20 dark:text-pink-400",
+  "Frontend": "bg-teal-100 text-teal-800 dark:bg-teal-900/20 dark:text-teal-400",
+  "Backend": "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400",
+  "AI/ML": "bg-violet-100 text-violet-800 dark:bg-violet-900/20 dark:text-violet-400",
+  "DevOps": "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400",
+  "Database": "bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400",
+  "Testing": "bg-rose-100 text-rose-800 dark:bg-rose-900/20 dark:text-rose-400",
 };
 
 export function TodoCard({ todo, onEdit }: TodoCardProps) {
@@ -87,16 +101,26 @@ export function TodoCard({ todo, onEdit }: TodoCardProps) {
           </p>
         )}
 
-        {/* Footer with priority and due date */}
+        {/* Footer with priority, type, and due date */}
         <div className="flex flex-col gap-2 mt-auto">
-          <span
-            className={cn(
-              "text-xs px-2 py-1 rounded-full font-medium w-fit",
-              priorityColors[todo.priority]
-            )}
-          >
-            {todo.priority}
-          </span>
+          <div className="flex flex-wrap gap-2">
+            <span
+              className={cn(
+                "text-xs px-2 py-1 rounded-full font-medium w-fit",
+                priorityColors[todo.priority]
+              )}
+            >
+              {todo.priority}
+            </span>
+            <span
+              className={cn(
+                "text-xs px-2 py-1 rounded-full font-medium w-fit",
+                typeColors[todo.type]
+              )}
+            >
+              {todo.type}
+            </span>
+          </div>
           {todo.dueDate && (
             <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
               <Calendar className="w-3 h-3 mr-1" />

@@ -36,15 +36,44 @@ export const getTodos = async (
   userId: string,
   query: TodoQueryInput
 ): Promise<{ todos: ITodo[]; total: number }> => {
-  const { page = 1, limit = 10, completed, priority, sortBy = "createdAt", sortOrder = "desc" } = query;
+  const { 
+    page = 1, 
+    limit = 10, 
+    completed, 
+    priority, 
+    type,
+    dueDateFrom,
+    dueDateTo,
+    sortBy = "createdAt", 
+    sortOrder = "desc" 
+  } = query;
 
   // Build filter
   const filter: any = { userId };
+  
   if (completed !== undefined) {
     filter.completed = completed;
   }
+  
   if (priority) {
     filter.priority = priority;
+  }
+  
+  if (type) {
+    filter.type = type;
+  }
+
+  // Date range filtering
+  if (dueDateFrom || dueDateTo) {
+    filter.dueDate = {};
+    if (dueDateFrom) {
+      const fromDate = new Date(dueDateFrom);
+      filter.dueDate.$gte = new Date(fromDate.setHours(0, 0, 0, 0));
+    }
+    if (dueDateTo) {
+      const toDate = new Date(dueDateTo);
+      filter.dueDate.$lte = new Date(toDate.setHours(23, 59, 59, 999));
+    }
   }
 
   // Build sort

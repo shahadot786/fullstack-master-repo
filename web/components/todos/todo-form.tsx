@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Todo } from "@/types";
+import { Todo, TodoType } from "@/types";
 import { useCreateTodo, useUpdateTodo } from "@/hooks/use-todos";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,7 +37,20 @@ const todoSchema = z.object({
   title: z.string().min(1, "Title is required").max(100, "Title too long"),
   description: z.string().max(500, "Description too long").optional(),
   priority: z.enum(["low", "medium", "high"]),
-  dueDate: z.string().optional(),
+  type: z.enum([
+    "DSA",
+    "System Design & Architecture",
+    "Projects",
+    "Learn",
+    "Blogging",
+    "Frontend",
+    "Backend",
+    "AI/ML",
+    "DevOps",
+    "Database",
+    "Testing",
+  ]),
+  dueDate: z.string().min(1, "Due date is required"),
 });
 
 type TodoFormValues = z.infer<typeof todoSchema>;
@@ -59,6 +72,7 @@ export function TodoForm({ open, onClose, todo }: TodoFormProps) {
       title: "",
       description: "",
       priority: "medium",
+      type: "Learn",
       dueDate: "",
     },
   });
@@ -69,6 +83,7 @@ export function TodoForm({ open, onClose, todo }: TodoFormProps) {
         title: todo.title,
         description: todo.description || "",
         priority: todo.priority,
+        type: todo.type,
         dueDate: todo.dueDate
           ? new Date(todo.dueDate).toISOString().split("T")[0]
           : "",
@@ -78,6 +93,7 @@ export function TodoForm({ open, onClose, todo }: TodoFormProps) {
         title: "",
         description: "",
         priority: "medium",
+        type: "Learn",
         dueDate: "",
       });
     }
@@ -87,7 +103,7 @@ export function TodoForm({ open, onClose, todo }: TodoFormProps) {
     try {
       const payload = {
         ...data,
-        dueDate: data.dueDate || undefined,
+        dueDate: data.dueDate, // Now required
       };
 
       if (isEditing) {
@@ -155,6 +171,40 @@ export function TodoForm({ open, onClose, todo }: TodoFormProps) {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="DSA">DSA</SelectItem>
+                      <SelectItem value="System Design & Architecture">System Design & Architecture</SelectItem>
+                      <SelectItem value="Projects">Projects</SelectItem>
+                      <SelectItem value="Learn">Learn</SelectItem>
+                      <SelectItem value="Blogging">Blogging</SelectItem>
+                      <SelectItem value="Frontend">Frontend</SelectItem>
+                      <SelectItem value="Backend">Backend</SelectItem>
+                      <SelectItem value="AI/ML">AI/ML</SelectItem>
+                      <SelectItem value="DevOps">DevOps</SelectItem>
+                      <SelectItem value="Database">Database</SelectItem>
+                      <SelectItem value="Testing">Testing</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

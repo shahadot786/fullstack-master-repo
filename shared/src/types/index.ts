@@ -65,6 +65,18 @@ export interface AuthResponse {
 
 export type TodoPriority = "low" | "medium" | "high";
 export type TodoStatus = "pending" | "completed";
+export type TodoType = 
+    | "DSA" 
+    | "System Design & Architecture" 
+    | "Projects" 
+    | "Learn" 
+    | "Blogging" 
+    | "Frontend" 
+    | "Backend" 
+    | "AI/ML" 
+    | "DevOps" 
+    | "Database" 
+    | "Testing";
 
 export interface Todo {
     _id: string;
@@ -73,6 +85,7 @@ export interface Todo {
     description?: string;
     completed: boolean;
     priority: TodoPriority;
+    type: TodoType;
     dueDate?: Date;
     createdAt: Date;
     updatedAt: Date;
@@ -81,8 +94,9 @@ export interface Todo {
 export interface CreateTodoDto {
     title: string;
     description?: string;
-    priority?: TodoPriority;
-    dueDate?: Date;
+    priority: TodoPriority;
+    type: TodoType;
+    dueDate: Date;
 }
 
 export interface UpdateTodoDto {
@@ -90,6 +104,7 @@ export interface UpdateTodoDto {
     description?: string;
     completed?: boolean;
     priority?: TodoPriority;
+    type?: TodoType;
     dueDate?: Date;
 }
 
@@ -98,6 +113,10 @@ export interface TodoQueryParams {
     limit?: number;
     completed?: boolean;
     priority?: TodoPriority;
+    type?: TodoType;
+    dueDate?: string;
+    dueDateFrom?: string;
+    dueDateTo?: string;
     sortBy?: "createdAt" | "dueDate" | "priority";
     sortOrder?: "asc" | "desc";
 }

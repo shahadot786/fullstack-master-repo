@@ -1,11 +1,15 @@
 import apiClient from "./client";
-import { Todo, CreateTodoRequest, UpdateTodoRequest, TodosResponse } from "@/types";
+import { Todo, CreateTodoRequest, UpdateTodoRequest, TodosResponse, TodoType } from "@/types";
 
 export interface GetTodosParams {
   page?: number;
   limit?: number;
   completed?: boolean;
   priority?: "low" | "medium" | "high";
+  type?: TodoType;
+  dueDate?: string;
+  dueDateFrom?: string;
+  dueDateTo?: string;
 }
 
 export const todosApi = {

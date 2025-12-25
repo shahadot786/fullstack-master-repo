@@ -89,10 +89,23 @@ export const createTodoSchema = z.object({
         .optional(),
     priority: z
         .enum(['low', 'medium', 'high']),
+    type: z
+        .enum([
+            'DSA',
+            'System Design & Architecture',
+            'Projects',
+            'Learn',
+            'Blogging',
+            'Frontend',
+            'Backend',
+            'AI/ML',
+            'DevOps',
+            'Database',
+            'Testing',
+        ]),
     dueDate: z
         .string()
-        .datetime()
-        .optional(),
+        .datetime(),
 });
 
 export const updateTodoSchema = z.object({
@@ -112,6 +125,21 @@ export const updateTodoSchema = z.object({
         .optional(),
     priority: z
         .enum(['low', 'medium', 'high'])
+        .optional(),
+    type: z
+        .enum([
+            'DSA',
+            'System Design & Architecture',
+            'Projects',
+            'Learn',
+            'Blogging',
+            'Frontend',
+            'Backend',
+            'AI/ML',
+            'DevOps',
+            'Database',
+            'Testing',
+        ])
         .optional(),
     dueDate: z
         .string()

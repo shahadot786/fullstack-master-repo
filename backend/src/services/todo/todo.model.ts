@@ -1,6 +1,18 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export type TodoPriority = "low" | "medium" | "high";
+export type TodoType = 
+  | "DSA" 
+  | "System Design & Architecture" 
+  | "Projects" 
+  | "Learn" 
+  | "Blogging" 
+  | "Frontend" 
+  | "Backend" 
+  | "AI/ML" 
+  | "DevOps" 
+  | "Database" 
+  | "Testing";
 
 export interface ITodo extends Document {
   userId: mongoose.Types.ObjectId;
@@ -8,6 +20,7 @@ export interface ITodo extends Document {
   description?: string;
   completed: boolean;
   priority: TodoPriority;
+  type: TodoType;
   dueDate?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -41,6 +54,24 @@ const TodoSchema = new Schema<ITodo>(
       enum: ["low", "medium", "high"],
       default: "medium",
     },
+    type: {
+      type: String,
+      enum: [
+        "DSA",
+        "System Design & Architecture",
+        "Projects",
+        "Learn",
+        "Blogging",
+        "Frontend",
+        "Backend",
+        "AI/ML",
+        "DevOps",
+        "Database",
+        "Testing",
+      ],
+      required: [true, "Type is required"],
+      default: "Learn",
+    },
     dueDate: {
       type: Date,
     },
@@ -53,6 +84,7 @@ const TodoSchema = new Schema<ITodo>(
 // Compound index for user-specific queries
 TodoSchema.index({ userId: 1, createdAt: -1 });
 TodoSchema.index({ userId: 1, completed: 1 });
+TodoSchema.index({ userId: 1, type: 1 });
 
 // Unique index to prevent duplicate titles per user (case-insensitive)
 TodoSchema.index(

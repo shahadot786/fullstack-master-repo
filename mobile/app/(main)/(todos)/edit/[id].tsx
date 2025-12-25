@@ -246,7 +246,7 @@ export default function EditTodoScreen() {
                             render={({ field: { onChange, value } }) => (
                                 <YStack gap="$2">
                                     <Text fontSize="$4" fontWeight="500" color="$color">
-                                        Due Date (Optional)
+                                        Due Date
                                     </Text>
                                     <Pressable
                                         onPress={() => setShowDatePicker(true)}
