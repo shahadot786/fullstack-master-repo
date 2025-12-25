@@ -12,19 +12,19 @@ const slides = [
         id: '1',
         title: 'Welcome to Nexus',
         description: 'Your all-in-one productivity companion for managing tasks and notes',
-        image: require('../assets/images/onboarding-welcome.png'),
+        image: require('../assets/images/onboarding_welcome.png'),
     },
     {
         id: '2',
         title: 'Manage Your Tasks',
         description: 'Create, organize, and track your todos with priorities and due dates',
-        image: require('../assets/images/onboarding-tasks.png'),
+        image: require('../assets/images/onboarding_tasks.png'),
     },
     {
         id: '3',
         title: 'Stay Organized',
         description: 'Keep your notes and tasks synced across all your devices',
-        image: require('../assets/images/onboarding-sync.png'),
+        image: require('../assets/images/onboarding_sync.png'),
     },
 ];
 
