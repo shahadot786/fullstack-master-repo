@@ -6,6 +6,9 @@ import { useAuthStore } from "@/store/auth-store";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { LoaderModal } from "@/components/ui/loader-modal";
+import { needsTokenRefresh } from "@/lib/utils/token.util";
+import { authApi } from "@/lib/api/auth";
+
 
 export default function DashboardLayout({
   children,
@@ -17,12 +20,35 @@ export default function DashboardLayout({
   const hasHydrated = useAuthStore((state) => state.hasHydrated);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Redirect to login if not authenticated
   useEffect(() => {
     // Only redirect after hydration is complete to avoid false redirects
     if (hasHydrated && !isAuthenticated) {
       router.push("/login");
     }
   }, [hasHydrated, isAuthenticated, router]);
+
+  // Proactively refresh token if it's about to expire (silently in background)
+  useEffect(() => {
+    const checkAndRefreshToken = async () => {
+      if (!hasHydrated || !isAuthenticated) {
+        return;
+      }
+
+      // Check if token needs refresh (expires within 8 minutes)
+      if (needsTokenRefresh()) {
+        try {
+          // Refresh silently in the background
+          await authApi.refreshToken();
+        } catch (error) {
+          // If refresh fails, let the user continue
+          // The 401 interceptor will handle it on next API call
+        }
+      }
+    };
+
+    checkAndRefreshToken();
+  }, [hasHydrated, isAuthenticated]);
 
   // Show loading while hydrating OR not authenticated
   if (!hasHydrated || !isAuthenticated) {
