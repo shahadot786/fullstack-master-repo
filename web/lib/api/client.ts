@@ -1,4 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import { needsTokenRefresh } from "@/lib/utils/token.util";
+
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
@@ -25,6 +27,48 @@ const processQueue = (error: any = null) => {
   });
   failedQueue = [];
 };
+
+/**
+ * Request Interceptor
+ * Proactively refresh token if it's about to expire
+ */
+apiClient.interceptors.request.use(
+  async (config) => {
+    // Skip token check for auth endpoints
+    if (config.url?.includes("/auth/")) {
+      return config;
+    }
+
+    // Check if token needs refresh (expires within 8 minutes)
+    if (needsTokenRefresh()) {
+      // If already refreshing, wait for it to complete
+      if (isRefreshing) {
+        await new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        });
+        return config;
+      }
+
+      // Start refresh process
+      isRefreshing = true;
+      try {
+        await apiClient.post("/auth/refresh-token", {});
+        processQueue();
+      } catch (error) {
+        processQueue(error);
+        // If refresh fails, let the request proceed and handle via response interceptor
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 
 /**
  * Response Interceptor
