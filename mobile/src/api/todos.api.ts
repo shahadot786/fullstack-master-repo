@@ -71,4 +71,16 @@ export const todosApi = {
         const response = await apiClient.put(API_ENDPOINTS.TODOS.BY_ID(id), { completed });
         return response.data.data;
     },
+
+    /**
+     * Export todos as CSV
+     * GET /todos/export
+     */
+    exportTodos: async (params?: GetTodosParams): Promise<string> => {
+        const response = await apiClient.get(`${API_ENDPOINTS.TODOS.BASE}/export`, { 
+            params,
+            responseType: 'text',
+        });
+        return response.data;
+    },
 };
