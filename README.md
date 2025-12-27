@@ -697,6 +697,27 @@ Build and deploy with:
 
 > For detailed deployment instructions, see [DEPLOYMENT.md](./docs/DEPLOYMENT.md)
 
+### Automated Deployment with GitHub Actions
+
+The repository includes a GitHub Actions workflow for automated backend deployment to Render.
+
+**How it works:**
+- Automatically deploys backend when changes to `backend/` or `shared/` folders are merged to `master` branch
+- Skips deployment for changes to web, mobile, or documentation files
+- Supports manual deployment trigger from GitHub Actions tab
+
+**Setup:**
+1. Create a Render web service for your backend
+2. Get Deploy Hook URL from Render Dashboard → Your Service → Settings → Deploy Hook
+3. Add GitHub secret:
+   - Go to your repository → Settings → Secrets and variables → Actions
+   - Create new secret: `RENDER_DEPLOY_HOOK_URL`
+   - Paste your Deploy Hook URL as the value
+4. Push changes to `master` branch - deployment will trigger automatically!
+
+**Manual Deployment:**
+- Go to GitHub Actions tab → "Deploy Backend to Render" → "Run workflow"
+
 ---
 
 ## 🧪 Testing
