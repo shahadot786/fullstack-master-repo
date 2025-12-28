@@ -13,7 +13,7 @@ export const API_BASE_URL = Platform.select({
   android:
     process.env.API_BASE_URL_ANDROID ||
     process.env.API_BASE_URL ||
-    "http://192.168.1.28:8000/api",
+    "http://192.168.68.121:8000/api",
   ios:
     process.env.API_BASE_URL_IOS ||
     process.env.API_BASE_URL ||

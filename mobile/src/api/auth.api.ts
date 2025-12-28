@@ -31,7 +31,7 @@ export const authApi = {
   /**
    * Verify email with OTP
    * POST /auth/verify-email
-   * 
+   *
    * Handles both registration verification and email change verification
    */
   verifyEmail: async (
@@ -144,7 +144,10 @@ export const authApi = {
    */
   updateProfile: async (data: {
     name?: string;
-  }): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
+  }): Promise<{
+    user: User;
+    tokens: { accessToken: string; refreshToken: string };
+  }> => {
     const response = await apiClient.put(API_ENDPOINTS.AUTH.PROFILE, data);
     const { user, tokens } = response.data.data;
     return { user, tokens };
@@ -156,8 +159,13 @@ export const authApi = {
    */
   updateProfileImage: async (
     profileImageUrl: string
-  ): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
-    const response = await apiClient.put("/auth/profile-image", { profileImageUrl });
+  ): Promise<{
+    user: User;
+    tokens: { accessToken: string; refreshToken: string };
+  }> => {
+    const response = await apiClient.put("/auth/profile-image", {
+      profileImageUrl,
+    });
     const { user, tokens } = response.data.data;
     return { user, tokens };
   },
@@ -169,7 +177,10 @@ export const authApi = {
   requestEmailChange: async (data: {
     newEmail: string;
   }): Promise<{ message: string }> => {
-    const response = await apiClient.post(API_ENDPOINTS.AUTH.REQUEST_EMAIL_CHANGE, data);
+    const response = await apiClient.post(
+      API_ENDPOINTS.AUTH.REQUEST_EMAIL_CHANGE,
+      data
+    );
     return response.data.data;
   },
 
@@ -180,8 +191,14 @@ export const authApi = {
   verifyEmailChange: async (data: {
     newEmail: string;
     otp: string;
-  }): Promise<{ user: User; tokens: { accessToken: string; refreshToken: string } }> => {
-    const response = await apiClient.post(API_ENDPOINTS.AUTH.VERIFY_EMAIL_CHANGE, data);
+  }): Promise<{
+    user: User;
+    tokens: { accessToken: string; refreshToken: string };
+  }> => {
+    const response = await apiClient.post(
+      API_ENDPOINTS.AUTH.VERIFY_EMAIL_CHANGE,
+      data
+    );
     const { user, tokens } = response.data.data;
     return { user, tokens };
   },
@@ -189,14 +206,17 @@ export const authApi = {
   /**
    * Change password
    * PUT /auth/change-password
-   * 
+   *
    * Returns new tokens after password change (security best practice)
    */
   changePassword: async (data: {
     currentPassword: string;
     newPassword: string;
   }): Promise<{ tokens: { accessToken: string; refreshToken: string } }> => {
-    const response = await apiClient.put(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, data);
+    const response = await apiClient.put(
+      API_ENDPOINTS.AUTH.CHANGE_PASSWORD,
+      data
+    );
     const { tokens } = response.data.data;
     return { tokens };
   },
