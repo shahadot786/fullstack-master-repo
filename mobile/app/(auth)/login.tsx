@@ -40,10 +40,10 @@ export default function LoginScreen() {
     try {
       const response = await authApi.login(data);
       setAuth(response.user, response.accessToken, response.refreshToken);
-      
+
       // Invalidate all queries to fetch fresh data after login
       await queryClient.invalidateQueries();
-      
+
       router.replace("/(main)/dashboard" as Href);
     } catch (error: any) {
       const message = error.message || "Login failed";

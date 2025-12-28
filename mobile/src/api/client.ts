@@ -167,6 +167,7 @@ const formatError = (error: AxiosError): ApiError => {
       errors: data?.errors,
     };
   } else if (error.request) {
+    console.log(JSON.stringify(error, null, 4));
     // Request made but no response
     return {
       message: "Network error. Please check your connection.",
