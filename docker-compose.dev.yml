@@ -1,0 +1,62 @@
+# Docker Compose Development Configuration
+# Use with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: backend-builder  # Use builder stage for development
+    environment:
+      NODE_ENV: development
+    volumes:
+      # Mount source code for hot-reloading
+      - ./backend/src:/app/backend/src:ro
+      - ./shared/src:/app/shared/src:ro
+    command: yarn dev
+    ports:
+      - "8000:8000"
+      - "9229:9229"  # Node.js debugger port
+
+  web:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+      target: builder  # Use builder stage for development
+    environment:
+      NODE_ENV: development
+    volumes:
+      # Mount source code for hot-reloading
+      - ./web/app:/app/web/app:ro
+      - ./web/components:/app/web/components:ro
+      - ./web/lib:/app/web/lib:ro
+      - ./web/public:/app/web/public:ro
+      - ./shared/src:/app/shared/src:ro
+    command: yarn dev
+    ports:
+      - "3000:3000"
+
+  # Enable mobile service for development
+  mobile:
+    build:
+      context: .
+      dockerfile: mobile/Dockerfile
+    container_name: nexus-mobile-dev
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+    environment:
+      EXPO_DEVTOOLS_LISTEN_ADDRESS: 0.0.0.0
+      REACT_NATIVE_PACKAGER_HOSTNAME: 0.0.0.0
+    volumes:
+      # Mount source code for hot-reloading
+      - ./mobile/app:/app/app:ro
+      - ./mobile/src:/app/src:ro
+      - ./mobile/assets:/app/assets:ro
+    networks:
+      - nexus-network

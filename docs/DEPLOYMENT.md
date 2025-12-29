@@ -137,29 +137,138 @@ CORS_ORIGIN=https://your-frontend-domain.com
    heroku open
    ```
 
-## Option 4: Docker
+## Option 4: Docker (Recommended)
 
-### Dockerfile
+The project includes complete Docker support with multi-stage builds and Docker Compose configurations.
 
-Already included in the project. Build and run:
+### Quick Start with Docker Compose
 
 ```bash
-# Build image
-docker build -t fullstack-backend .
+# 1. Copy environment file
+cp .env.docker.example .env.docker
+
+# 2. Edit environment variables
+nano .env.docker
+
+# 3. Start all services (production mode)
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+# 4. Verify services are running
+docker-compose ps
+```
+
+### Individual Service Deployment
+
+#### Build Backend Image
+
+```bash
+# From repository root
+docker build -f backend/Dockerfile -t nexus-backend:latest .
 
 # Run container
-docker run -p 8000:8000 \
+docker run -d \
+  -p 8000:8000 \
   -e MONGO_URI="your-mongodb-uri" \
   -e JWT_SECRET="your-secret" \
   -e NODE_ENV="production" \
-  fullstack-backend
+  --name nexus-backend \
+  nexus-backend:latest
 ```
 
-### Docker Compose
+#### Build Web Image
 
 ```bash
-docker-compose up -d
+# From repository root
+docker build -f web/Dockerfile -t nexus-web:latest .
+
+# Run container
+docker run -d \
+  -p 3000:3000 \
+  -e NEXT_PUBLIC_API_URL="http://your-backend-url" \
+  --name nexus-web \
+  nexus-web:latest
 ```
+
+### Docker Compose Features
+
+The included `docker-compose.yml` provides:
+- ✅ **MongoDB** - Database with persistent volume
+- ✅ **Redis** - Cache for OTP and sessions
+- ✅ **Backend API** - Node.js/Express service
+- ✅ **Web Application** - Next.js frontend
+- ✅ **Networking** - All services connected
+- ✅ **Health Checks** - Service monitoring
+- ✅ **Volume Persistence** - Data survives container restarts
+
+### Production Deployment Platforms
+
+#### AWS ECS (Elastic Container Service)
+
+```bash
+# Tag and push images to ECR
+docker tag nexus-backend:latest your-account.dkr.ecr.region.amazonaws.com/nexus-backend:latest
+docker push your-account.dkr.ecr.region.amazonaws.com/nexus-backend:latest
+
+# Create ECS task definition and service
+aws ecs create-service --cluster your-cluster --service-name nexus-backend ...
+```
+
+#### Google Cloud Run
+
+```bash
+# Build and push to Google Container Registry
+gcloud builds submit --tag gcr.io/your-project/nexus-backend ./backend
+gcloud builds submit --tag gcr.io/your-project/nexus-web ./web
+
+# Deploy to Cloud Run
+gcloud run deploy nexus-backend --image gcr.io/your-project/nexus-backend --platform managed
+gcloud run deploy nexus-web --image gcr.io/your-project/nexus-web --platform managed
+```
+
+#### DigitalOcean App Platform
+
+1. Connect your GitHub repository
+2. Select `docker-compose.yml` or individual Dockerfiles
+3. Configure environment variables in the dashboard
+4. Deploy
+
+#### Any VPS with Docker
+
+```bash
+# Install Docker and Docker Compose on VPS
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh get-docker.sh
+
+# Clone repository
+git clone your-repo-url
+cd fullstack-master-repo
+
+# Configure environment
+cp .env.docker.example .env.docker
+nano .env.docker
+
+# Start services
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
+
+### Docker Best Practices
+
+1. **Use Multi-Stage Builds** - Minimizes image size (already implemented)
+2. **Set Resource Limits** - Configure in `docker-compose.prod.yml`
+3. **Enable Health Checks** - Monitor service availability
+4. **Use Secrets** - Never commit `.env.docker` to Git
+5. **Regular Updates** - Keep base images updated
+6. **Monitor Logs** - Use `docker-compose logs -f`
+7. **Backup Volumes** - Regularly backup MongoDB and Redis data
+
+> **For comprehensive Docker documentation**, see [DOCKER.md](./DOCKER.md)
+>
+> This includes:
+> - Detailed setup instructions
+> - Development vs Production configurations
+> - Networking and volume management
+> - Troubleshooting guide
+> - Advanced topics (scaling, monitoring, CI/CD)
 
 ## Option 5: VPS (DigitalOcean, AWS EC2, etc.)
 

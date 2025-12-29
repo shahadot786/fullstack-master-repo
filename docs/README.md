@@ -60,7 +60,14 @@ Welcome to the Nexus Fullstack Monorepo documentation! This directory contains c
 
 ### Deployment
 
-- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deployment Guide
+- **[DOCKER.md](./DOCKER.md)** - Docker Setup and Deployment
+  - Complete Docker guide for development and production
+  - Docker Compose configurations
+  - Multi-container setup with MongoDB and Redis
+  - Troubleshooting and best practices
+  - Container orchestration and scaling
+
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Platform Deployment Guide
   - Backend deployment (Render, Railway, Heroku, Docker, VPS)
   - Web deployment (Vercel, Netlify)
   - Mobile deployment (EAS Build, App Store, Play Store)
@@ -95,9 +102,10 @@ Welcome to the Nexus Fullstack Monorepo documentation! This directory contains c
 → Check API endpoints and examples
 
 #### Deploy the Application
-→ Follow [DEPLOYMENT.md](./DEPLOYMENT.md)  
+→ Follow [DOCKER.md](./DOCKER.md) for containerized deployment  
+→ Or use [DEPLOYMENT.md](./DEPLOYMENT.md) for platform-specific guides  
 → Set up environment variables  
-→ Choose deployment platform (Render, Vercel, EAS)
+→ Choose deployment platform (Docker, Render, Vercel, EAS)
 
 ---
 
@@ -133,10 +141,11 @@ Welcome to the Nexus Fullstack Monorepo documentation! This directory contains c
 
 ### DevOps Engineers
 
-1. [DEPLOYMENT.md](./DEPLOYMENT.md) - Deployment strategies
-2. [ARCHITECTURE.md](./ARCHITECTURE.md) - Scalability considerations
-3. [ADVANCED_AUTH.md](./ADVANCED_AUTH.md) - Security setup (Redis, Email)
-4. [DEVELOPMENT_GUIDE.md](./DEVELOPMENT_GUIDE.md) - Environment setup
+1. [DOCKER.md](./DOCKER.md) - Container orchestration and deployment
+2. [DEPLOYMENT.md](./DEPLOYMENT.md) - Platform deployment strategies
+3. [ARCHITECTURE.md](./ARCHITECTURE.md) - Scalability considerations
+4. [ADVANCED_AUTH.md](./ADVANCED_AUTH.md) - Security setup (Redis, Email)
+5. [DEVELOPMENT_GUIDE.md](./DEVELOPMENT_GUIDE.md) - Environment setup
 
 ---
 
@@ -148,6 +157,7 @@ Welcome to the Nexus Fullstack Monorepo documentation! This directory contains c
 - ✅ Authentication system
 - ✅ API documentation (Swagger at `/api-docs`)
 - ✅ Testing strategy
+- ✅ Docker containerization
 - ✅ Deployment guide
 
 ### Web Application

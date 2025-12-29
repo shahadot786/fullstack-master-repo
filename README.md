@@ -93,6 +93,7 @@ A production-ready, type-safe fullstack monorepo template featuring **Backend (N
 - [Project Status](#-project-status)
 - [Project Structure](#-project-structure)
 - [Quick Start](#-quick-start)
+- [Docker Setup](#-docker-setup)
 - [Environment Variables](#-environment-variables)
 - [Available Scripts](#-available-scripts)
 - [Authentication](#-authentication)
@@ -298,6 +299,15 @@ fullstack-master-repo/
 
 ### Prerequisites
 
+#### Option 1: Docker (Recommended)
+
+- **Docker Desktop** 20.10+ ([Download](https://www.docker.com/products/docker-desktop))
+  - Includes Docker Engine and Docker Compose
+  - All dependencies (MongoDB, Redis) run in containers
+  - See [Docker Setup](#-docker-setup) section below
+
+#### Option 2: Local Development
+
 - **Node.js** 18+ ([Download](https://nodejs.org/))
 - **Yarn** 1.22+ (recommended) or npm
 - **MongoDB** - Local installation or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) (free tier)
@@ -396,7 +406,69 @@ yarn start
 # Or press 'a' for Android emulator, 'i' for iOS simulator
 ```
 
-#### Run All Applications Concurrently
+---
+
+## 🐳 Docker Setup
+
+### Quick Start with Docker
+
+The easiest way to run the entire stack is using Docker Compose:
+
+```bash
+# 1. Copy environment file
+cp .env.docker.example .env.docker
+
+# 2. Edit environment variables (JWT secrets, email, etc.)
+nano .env.docker
+
+# 3. Start all services (development mode)
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# 4. Access the applications
+# Web: http://localhost:3000
+# Backend API: http://localhost:8000
+# API Docs: http://localhost:8000/api-docs
+```
+
+### What's Included
+
+Docker Compose automatically sets up:
+- ✅ **Backend API** - Node.js/Express on port 8000
+- ✅ **Web Application** - Next.js on port 3000
+- ✅ **MongoDB** - Database with persistent storage
+- ✅ **Redis** - Cache for OTP and sessions
+- ✅ **Networking** - All services connected
+- ✅ **Hot Reloading** - Code changes reflect immediately (dev mode)
+
+### Docker Commands
+
+```bash
+# View logs
+docker-compose logs -f backend
+docker-compose logs -f web
+
+# Stop all services
+docker-compose down
+
+# Rebuild and restart
+docker-compose up -d --build
+
+# Production mode
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
+
+### Advantages of Docker Setup
+
+- **No Local Dependencies** - No need to install MongoDB, Redis, or Node.js
+- **Consistent Environment** - Same setup across all machines
+- **Easy Cleanup** - Remove everything with `docker-compose down -v`
+- **Production-Ready** - Same configuration works in production
+
+> **For detailed Docker documentation**, see [DOCKER.md](./docs/DOCKER.md)
+
+---
+
+#### Run All Applications Concurrently (Without Docker)
 
 ```bash
 # From root directory
@@ -404,7 +476,7 @@ yarn dev
 
 # This runs: shared (watch mode), backend, and web concurrently
 # Mobile must be started separately
-```
+
 
 ---
 
@@ -613,6 +685,7 @@ Interactive API documentation is available at:
 
 ## 📚 Documentation
 
+- **[DOCKER.md](./docs/DOCKER.md)** - Complete Docker setup and deployment guide
 - **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - System architecture and design patterns
 - **[PROJECT_STRUCTURE.md](./docs/PROJECT_STRUCTURE.md)** - Detailed project structure guide
 - **[ADVANCED_AUTH.md](./docs/ADVANCED_AUTH.md)** - Authentication features and flows
@@ -671,13 +744,33 @@ Interactive API documentation is available at:
 
 ## 🚢 Deployment
 
+### Docker Deployment (Recommended)
+
+The project includes complete Docker support for easy deployment:
+
+```bash
+# Production deployment with Docker Compose
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
+
+**Supported Platforms:**
+- **AWS ECS** - Elastic Container Service
+- **Google Cloud Run** - Serverless containers
+- **DigitalOcean App Platform** - PaaS with Docker support
+- **Azure Container Instances** - Managed containers
+- **Any VPS** - With Docker installed
+
+> **See [DOCKER.md](./docs/DOCKER.md)** for complete Docker deployment guide
+
+---
+
 ### Backend Deployment
 
 Deploy to:
+- **Docker** - Containerized deployment (recommended)
 - **Render** - Free tier available
 - **Railway** - Easy deployment with CLI
 - **Heroku** - Classic PaaS
-- **Docker** - Containerized deployment
 - **VPS** - DigitalOcean, AWS EC2, etc.
 
 ### Web Deployment
