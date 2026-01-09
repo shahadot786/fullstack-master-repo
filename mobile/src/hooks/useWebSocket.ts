@@ -39,7 +39,7 @@ export const useWebSocket = () => {
     };
 
     const handleConnectError = (error: any) => {
-      console.error("🔌 WebSocket Connection Error:", error.message);
+      console.log("🔌 WebSocket Connection Error:", error.message);
       setIsConnected(false);
     };
 

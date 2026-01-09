@@ -18,7 +18,8 @@ import chatRoutes from "@services/chat/chat.routes";
 import { shoutboxRoutes } from "@services/shoutbox";
 import { weatherRoutes } from "@services/weather";
 import urlRoutes from "@services/url/url.routes";
-
+import expenseRoutes from "@services/expense/expense.routes";
+import categoryRoutes from "@services/expense/category.routes";
 const app = express();
 
 // Security middleware
@@ -74,7 +75,8 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/shoutbox", shoutboxRoutes);
 app.use("/api/weather", weatherRoutes);
 app.use("/api/url", urlRoutes);
-
+app.use("/api/expense", expenseRoutes);
+app.use("/api/expense/categories", categoryRoutes);
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({

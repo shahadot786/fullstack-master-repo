@@ -25,7 +25,7 @@ const services = [
   { name: "Chat", href: "/chat", icon: MessageSquare, active: false },
   { name: "AI Q&A", href: "/aiqa", icon: Brain, active: false },
   { name: "Delivery", href: "/delivery", icon: Truck, active: false },
-  { name: "Expense", href: "/expense", icon: DollarSign, active: false },
+  { name: "Expense", href: "/expense", icon: DollarSign, active: true },
   { name: "Shop", href: "/shop", icon: ShoppingBag, active: false },
   { name: "Social", href: "/social", icon: Users, active: false },
   { name: "URL Shortener", href: "/urlshort", icon: LinkIcon, active: false },

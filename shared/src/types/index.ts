@@ -337,3 +337,69 @@ export interface UrlsResponse {
     data: Url[];
     pagination: PaginationMeta;
 }
+
+// ============================================
+// Expense Tracker Types
+// ============================================
+
+export type ExpenseCategory = 
+    | "Food"
+    | "Transport"
+    | "Shopping"
+    | "Bills"
+    | "Entertainment"
+    | "Health"
+    | "Education"
+    | "Other";
+
+export type PaymentMethod = "Cash" | "Card" | "bKash" | "Nagad" | "Upay" | "Rocket" | "Bank Transfer";
+
+export interface Expense {
+    _id: string;
+    userId: string;
+    amount: number;
+    category: string;
+    description?: string;
+    date: Date;
+    paymentMethod: PaymentMethod;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface CreateExpenseDto {
+    amount: number;
+    category: string;
+    description?: string;
+    date?: Date;
+    paymentMethod?: PaymentMethod;
+}
+
+export interface UpdateExpenseDto {
+    amount?: number;
+    category?: string;
+    description?: string;
+    date?: Date;
+    paymentMethod?: PaymentMethod;
+}
+
+export interface ExpenseQueryParams {
+    page?: number;
+    limit?: number;
+    category?: string;
+    startDate?: string;
+    endDate?: string;
+    sortBy?: "date" | "amount" | "createdAt";
+    sortOrder?: "asc" | "desc";
+}
+
+export interface ExpenseStats {
+    total: number;
+    count: number;
+    byCategory: { category: string; total: number; count: number }[];
+    byPaymentMethod: { method: string; total: number; count: number }[];
+}
+
+export interface ExpensesResponse {
+    data: Expense[];
+    pagination: PaginationMeta;
+}

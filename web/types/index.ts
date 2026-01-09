@@ -273,3 +273,86 @@ export interface UrlsResponse {
     totalPages: number;
   };
 }
+
+// ============================================
+// Expense Tracker Types
+// ============================================
+
+export type DefaultExpenseCategory = 
+  | "Food"
+  | "Transport"
+  | "Shopping"
+  | "Bills"
+  | "Entertainment"
+  | "Health"
+  | "Education"
+  | "Other";
+
+export type PaymentMethod = "Cash" | "Card" | "bKash" | "Nagad" | "Upay" | "Rocket" | "Bank Transfer";
+
+export interface Expense {
+  _id: string;
+  userId: string;
+  amount: number;
+  category: string;
+  description?: string;
+  date: string;
+  paymentMethod: PaymentMethod;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateExpenseDto {
+  amount: number;
+  category: string;
+  description?: string;
+  date?: string;
+  paymentMethod?: PaymentMethod;
+}
+
+export interface UpdateExpenseDto {
+  amount?: number;
+  category?: string;
+  description?: string;
+  date?: string;
+  paymentMethod?: PaymentMethod;
+}
+
+export interface ExpenseQueryParams {
+  page?: number;
+  limit?: number;
+  category?: string;
+  startDate?: string;
+  endDate?: string;
+  sortBy?: "date" | "amount" | "createdAt";
+  sortOrder?: "asc" | "desc";
+}
+
+export interface ExpenseStats {
+  total: number;
+  count: number;
+  byCategory: { category: string; total: number; count: number }[];
+  byPaymentMethod: { method: string; total: number; count: number }[];
+}
+
+export interface ExpensesResponse {
+  data: Expense[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface ExpenseCategory {
+  _id: string;
+  name: string;
+  userId: string | null;
+  icon?: string;
+  emoji?: string;
+  color?: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

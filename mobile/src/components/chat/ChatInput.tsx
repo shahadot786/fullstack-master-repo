@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { SendMessageDto } from '@/types';
 import { uploadApi } from '@/api/upload.api';
 import { useTheme } from '@/hooks/useTheme';
+import EmojiPicker, { emojiData } from '@hiraku-ai/react-native-emoji-picker';
 
 interface ChatInputProps {
   onSend: (message: SendMessageDto) => Promise<void>;
@@ -26,6 +27,7 @@ export function ChatInput({
     uri: string;
     uploadedUrl?: string;
   } | null>(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const handleSend = async () => {
     if ((!content.trim() && !selectedImage?.uploadedUrl) || disabled || isSending) {
@@ -160,6 +162,16 @@ export function ChatInput({
         </XStack>
       )}
 
+      <EmojiPicker
+        visible={showEmojiPicker}
+        emojis={emojiData}
+        onEmojiSelect={(emoji: string) => {
+          setContent(prev => prev + emoji);
+          setShowEmojiPicker(false);
+        }}
+        onClose={() => setShowEmojiPicker(false)}
+      />
+
       {/* Input row */}
       <XStack alignItems="flex-end" gap="$2">
         {/* Image picker button */}
@@ -172,6 +184,18 @@ export function ChatInput({
           })}
         >
           <Ionicons name="image-outline" size={26} color={isDark ? '#a3a3a3' : '#6b7280'} />
+        </Pressable>
+
+        {/* Emoji picker button */}
+        <Pressable
+          onPress={() => setShowEmojiPicker(true)}
+          disabled={disabled || isSending}
+          style={({ pressed }) => ({
+            padding: 10,
+            opacity: disabled || isSending ? 0.4 : (pressed ? 0.6 : 1),
+          })}
+        >
+          <Ionicons name="happy-outline" size={26} color={isDark ? '#a3a3a3' : '#6b7280'} />
         </Pressable>
 
         {/* Text input */}
@@ -225,6 +249,6 @@ export function ChatInput({
           )}
         </Pressable>
       </XStack>
-    </YStack>
+    </YStack >
   );
 }
