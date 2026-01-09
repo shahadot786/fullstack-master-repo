@@ -1,11 +1,11 @@
 import { io, Socket } from "socket.io-client";
-import { API_BASE_URL } from "@/config/constants";
+import { API_BASE_URL_PRODUCTION } from "@/config/constants";
 
 let socket: Socket | null = null;
 let currentToken: string | null = null;
 
-// Remove /api suffix from API_BASE_URL for WebSocket connection
-const WEBSOCKET_URL = API_BASE_URL.replace('/api', '');
+// Remove /api suffix from API_BASE_URL_PRODUCTION for WebSocket connection
+const WEBSOCKET_URL = API_BASE_URL_PRODUCTION.replace('/api', '');
 
 export const initializeWebSocket = (token: string): Socket => {
   // If socket already exists and token is the same, return it

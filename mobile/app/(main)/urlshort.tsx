@@ -7,7 +7,7 @@ import { ScreenLayout } from '@/components/common/ScreenLayout';
 import { useUrls, useShortenUrl, useDeleteUrl } from '@/hooks/useUrl';
 import { useTheme } from '@/hooks/useTheme';
 import { format } from 'date-fns';
-import { API_BASE_URL } from '@/config/constants';
+import { API_BASE_URL_PRODUCTION } from '@/config/constants';
 import { Url } from '@/types';
 
 export default function URLShortScreen() {
@@ -59,13 +59,13 @@ export default function URLShortScreen() {
     };
 
     const copyToClipboard = async (shortId: string) => {
-        const shortUrl = `${API_BASE_URL}/url/${shortId}`;
+        const shortUrl = `${API_BASE_URL_PRODUCTION}/url/${shortId}`;
         await Clipboard.setStringAsync(shortUrl);
         Alert.alert('Copied', 'Short URL copied to clipboard');
     };
 
     const handleShare = async (shortId: string) => {
-        const shortUrl = `${API_BASE_URL}/url/${shortId}`;
+        const shortUrl = `${API_BASE_URL_PRODUCTION}/url/${shortId}`;
         try {
             await Share.share({
                 message: `Check out this link: ${shortUrl}`,

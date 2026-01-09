@@ -69,7 +69,7 @@ export const login = asyncHandler(
 export const refreshToken = asyncHandler(
     async (req: AuthRequest, res: Response) => {
         // Support both cookie-based (web) and body-based (mobile) refresh tokens
-        const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+        const refreshToken = req.cookies?.__nexus__production__token__refresh__token || req.body.__nexus__production__token__refresh__token;
 
         if (!refreshToken) {
             throw new UnauthorizedError("Refresh token not provided");

@@ -90,7 +90,16 @@ backend/
 │       │   ├── todo.service.ts
 │       │   └── todo.validation.ts
 │       │
-│       └── [service]/          # 🚧 Placeholder services
+│       ├── expense/            # ✅ Expense & Category service (IMPLEMENTED)
+│       ├── chat/               # ✅ Private & Group Chat service (IMPLEMENTED)
+│       ├── shoutbox/           # ✅ Global Shoutbox service (IMPLEMENTED)
+│       ├── weather/            # ✅ Weather service (IMPLEMENTED)
+│       ├── url/                # ✅ URL Management service (IMPLEMENTED)
+│       ├── analytics/          # ✅ Analytics service (IMPLEMENTED)
+│       ├── upload/             # ✅ Image Upload service (IMPLEMENTED)
+│       ├── user/               # ✅ User Profile service (IMPLEMENTED)
+│       │
+│       └── [service]/          # 🚧 Remaining placeholders (aiqa, delivery, etc.)
 │           └── index.ts        # Empty placeholder
 │
 ├── __tests__/                  # Test files

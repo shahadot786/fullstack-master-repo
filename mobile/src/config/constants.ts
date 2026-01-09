@@ -3,23 +3,10 @@
  *
  * Centralized configuration for API endpoints, storage keys, and app settings.
  */
-
-import { Platform } from "react-native";
-
 // API Configuration
 // For Android physical devices, use your computer's local IP address
 // For iOS simulator/emulator, localhost works fine
-export const API_BASE_URL = Platform.select({
-  android:
-    process.env.API_BASE_URL_ANDROID ||
-    process.env.API_BASE_URL ||
-    "http://192.168.68.121:8000/api",
-  ios:
-    process.env.API_BASE_URL_IOS ||
-    process.env.API_BASE_URL ||
-    "http://127.0.0.1:8000/api",
-  default: process.env.API_BASE_URL || "http://localhost:8000/api",
-}) as string;
+export const API_BASE_URL_PRODUCTION = process.env.API_BASE_URL_PRODUCTION || "https://nexus-backend001.onrender.com/api"
 
 export const API_ENDPOINTS = {
   // Auth endpoints

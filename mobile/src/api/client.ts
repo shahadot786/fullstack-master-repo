@@ -4,7 +4,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 import {
-  API_BASE_URL,
+  API_BASE_URL_PRODUCTION,
   API_ENDPOINTS,
   STORAGE_KEYS,
   APP_CONFIG,
@@ -24,7 +24,7 @@ import { useAuthStore } from "@/store/authStore";
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL_PRODUCTION,
   timeout: APP_CONFIG.REQUEST_TIMEOUT,
   headers: {
     "Content-Type": "application/json",
@@ -120,8 +120,8 @@ apiClient.interceptors.response.use(
       try {
         // Attempt to refresh token
         const response = await axios.post(
-          `${API_BASE_URL}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
-          { refreshToken }
+          `${API_BASE_URL_PRODUCTION}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
+          { __nexus__production__token__refresh__token: refreshToken }
         );
 
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } =

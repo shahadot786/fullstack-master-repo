@@ -81,7 +81,7 @@ POST /api/auth/refresh-token
 Content-Type: application/json
 
 {
-  "refreshToken": "your-refresh-token"
+  "__nexus__production__token__refresh__token": "your-refresh-token"
 }
 ```
 
@@ -284,7 +284,7 @@ curl -X POST http://localhost:8000/api/auth/login \
 # 4. Refresh token
 curl -X POST http://localhost:8000/api/auth/refresh-token \
   -H "Content-Type: application/json" \
-  -d '{"refreshToken":"your-refresh-token"}'
+  -d '{"__nexus__production__token__refresh__token":"your-refresh-token"}'
 
 # 5. Request password reset
 curl -X POST http://localhost:8000/api/auth/request-password-reset \

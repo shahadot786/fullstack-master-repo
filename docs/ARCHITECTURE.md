@@ -180,7 +180,7 @@ sequenceDiagram
     AuthService->>Email: Send OTP email
     AuthService->>AuthService: Generate JWT tokens
     AuthService->>Redis: Store refresh token
-    AuthService-->>Controller: { user, accessToken, refreshToken }
+    AuthService-->>Controller: { user, __nexus__production__token__access__token, __nexus__production__token__refresh__token }
     Controller-->>Client: 201 Created
 ```
 
@@ -210,8 +210,16 @@ graph LR
     WS_AUTH --> WS_ROOMS
     
     AUTH_SVC -.->|Emit Events| WS_ROOMS
-    TODO_SVC -.->|Emit Events| WS_ROOMS
+    CHAT_SVC -.->|Emit Messages| WS_ROOMS
+    SHOUTBOX_SVC -.->|Emit Global| WS_ROOMS
+    TODO_SVC -.->|Emit Updates| WS_ROOMS
 ```
+
+### Real-time Event Flow
+1. **Private Chat**: Sender → Server → Receiver's Room (`user:id`)
+2. **Group Chat**: Sender → Server → Group Room (`conversation:id`)
+3. **Shoutbox**: Sender → Server → Global Room (`global:shoutbox`)
+4. **Notifications**: Service → Server → User Room (`user:id`)
 
 ### Middleware Pipeline
 
@@ -231,6 +239,18 @@ graph LR
     ZOD --> CTRL
     CTRL --> RES[Response]
 ```
+
+### Expense Tracking Data Flow
+The Expense service manages both financial records and custom categories:
+1. **Category Management**: Users create custom categories with unique icons and colors.
+2. **Expense Entry**: Expenses are linked to categories and user accounts.
+3. **Aggregation**: Backend provides totaled stats by category and time period.
+
+### Weather Service Architecture
+Uses a multi-provider strategy:
+- **Primary**: WeatherAPI.com
+- **Fallback**: OpenWeatherMap
+- **Optimization**: Internal rate limiting to prevent API key exhaustion.
 
 ---
 
@@ -573,7 +593,7 @@ sequenceDiagram
     Backend->>Backend: Generate access token (15min)
     Backend->>Backend: Generate refresh token (7d)
     Backend->>Redis: Store refresh token
-    Backend-->>Client: { accessToken, refreshToken }
+    Backend-->>Client: { __nexus__production__token__access__token, __nexus__production__token__refresh__token }
     Client->>AuthStore: Save tokens
     
     Note over Client,Backend: 15 minutes later...
@@ -587,7 +607,7 @@ sequenceDiagram
     Backend->>Backend: Generate new refresh token
     Backend->>Redis: Store new refresh token
     Backend->>Redis: Delete old refresh token
-    Backend-->>APIClient: { accessToken, refreshToken }
+    Backend-->>APIClient: { __nexus__production__token__access__token, __nexus__production__token__refresh__token }
     APIClient->>AuthStore: Update tokens
     APIClient->>Backend: Retry GET /api/todos
     Backend-->>APIClient: 200 OK

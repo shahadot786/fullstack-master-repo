@@ -4,14 +4,17 @@ Production-ready Node.js/Express backend with TypeScript, MongoDB, JWT authentic
 
 ## Features
 
-- ✅ **TypeScript** - Type-safe development
-- ✅ **Authentication** - JWT-based auth with bcrypt password hashing
-- ✅ **Validation** - Zod schema validation
-- ✅ **API Documentation** - Swagger/OpenAPI at `/api-docs`
-- ✅ **Error Handling** - Centralized error middleware
-- ✅ **Security** - Helmet, CORS, rate limiting
-- ✅ **Testing** - Jest + Supertest E2E tests
-- ✅ **Path Aliases** - Clean imports with `@` aliases
+- ✅ **Expense Tracker** - Comprehensive expense management with custom categories
+- ✅ **Real-time Chat** - Private/group messaging via Socket.IO
+- ✅ **Shoutbox** - Global real-time chat window
+- ✅ **Weather API** - Live weather data with multi-provider fallback
+- ✅ **URL Shortener** - URL management and redirection tracking
+- ✅ **Analytics** - Global and user-level activity statistics
+- ✅ **Image Upload** - Cloudinary integration for profile/group images
+- ✅ **Email System** - Support for Resend and Nodemailer (SMTP)
+- ✅ **Redis** - Upstash Redis integration for caching and OTP
+- ✅ **API Documentation** - Swagger/OpenAPI documentation
+- ✅ **Quality Control** - Jest testing and Zod validation
 
 ## Quick Start
 
@@ -86,14 +89,23 @@ backend/
 - `GET /api/auth/me` - Get current user (protected)
 - `POST /api/auth/logout` - Logout user (protected)
 
-### TODOs
+### Chat & Shoutbox
+- `GET /api/chat/conversations` - Get all conversations
+- `POST /api/chat/messages` - Send message
+- `GET /api/shoutbox` - Get shoutbox history
+- `POST /api/shoutbox` - Post to shoutbox
 
-- `POST /api/todos` - Create TODO (protected)
-- `GET /api/todos` - Get all TODOs with pagination/filtering (protected)
-- `GET /api/todos/:id` - Get TODO by ID (protected)
-- `PUT /api/todos/:id` - Update TODO (protected)
-- `DELETE /api/todos/:id` - Delete TODO (protected)
-- `DELETE /api/todos` - Delete all TODOs (protected)
+### Expense Tracker
+- `GET /api/expenses` - Get user expenses
+- `POST /api/expenses` - Create expense
+- `GET /api/expenses/categories` - Get custom categories
+- `POST /api/expenses/categories` - Create category
+
+### Weather & Utils
+- `GET /api/weather` - Get live weather
+- `POST /api/url/shorten` - Shorten URL
+- `GET /api/url/stats/:id` - Get URL click stats
+- `GET /api/analytics` - Global system stats
 
 ## Environment Variables
 
