@@ -8,6 +8,8 @@ import {
   useSendMessage,
   useMarkAsRead,
   useCreateConversation,
+  useUpdateConversation,
+  useLeaveConversation,
 } from "@/hooks/use-chat";
 import { useShoutboxMessages, useSendShoutboxMessage } from "@/hooks/use-shoutbox";
 import { ChatList } from "@/components/chat/chat-list";
@@ -38,6 +40,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Megaphone,
+  Settings,
+  X,
+  Camera,
 } from "lucide-react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { userApi } from "@/lib/api/user";
@@ -54,6 +59,12 @@ export default function ChatPage() {
   const [userSearchQuery, setUserSearchQuery] = useState("");
   const [currentUserId, setCurrentUserId] = useState<string | undefined>();
   const [userPage, setUserPage] = useState(0);
+  const [selectedNewChatUsers, setSelectedNewChatUsers] = useState<User[]>([]);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedGroupName, setEditedGroupName] = useState("");
+  const [isUploadingGroupImage, setIsUploadingGroupImage] = useState(false);
 
   const queryClient = useQueryClient();
   const { isConnected } = useWebSocket();
@@ -97,6 +108,14 @@ export default function ChatPage() {
     hasNextPage,
     isFetchingNextPage,
   } = useMessages(selectedConversation?._id || "");
+  const updateConversationMutation = useUpdateConversation(selectedConversation?._id || "");
+  const leaveConversationMutation = useLeaveConversation();
+
+  useEffect(() => {
+    if (selectedConversation?.name) {
+      setEditedGroupName(selectedConversation.name);
+    }
+  }, [selectedConversation]);
 
   // Shoutbox Queries
   const {
@@ -177,27 +196,89 @@ export default function ChatPage() {
     }
   };
 
-  const handleStartChat = async (user: User) => {
-    if (user._id === currentUserId) {
-      alert("You cannot start a conversation with yourself");
-      return;
+  const handleToggleSelectUser = (user: User) => {
+    if (selectedNewChatUsers.find((u) => u._id === user._id)) {
+      setSelectedNewChatUsers(selectedNewChatUsers.filter((u) => u._id !== user._id));
+    } else {
+      setSelectedNewChatUsers([...selectedNewChatUsers, user]);
     }
+  };
+
+  const handleCreateChat = async () => {
+    if (selectedNewChatUsers.length === 0) return;
 
     try {
+      const isGroup = selectedNewChatUsers.length > 1;
       const conversation = await createConversationMutation.mutateAsync({
-        participantIds: [user._id],
-        type: "direct",
+        participantIds: selectedNewChatUsers.map((u) => u._id),
+        type: isGroup ? "group" : "direct",
+        name: isGroup ? newGroupName : undefined,
       });
 
       setSelectedConversation(conversation);
       setChatMode("private");
       setIsNewChatOpen(false);
+      setSelectedNewChatUsers([]);
+      setNewGroupName("");
       setUserSearchQuery("");
       setUserPage(0);
     } catch (error: any) {
       console.error("Failed to create conversation:", error);
       const errorMessage = error?.response?.data?.message || error?.message || "Failed to start conversation";
       alert(`Error: ${errorMessage}`);
+    }
+  };
+
+  const handleUpdateGroupName = async () => {
+    if (!editedGroupName.trim() || !selectedConversation) return;
+    try {
+      await updateConversationMutation.mutateAsync({ name: editedGroupName.trim() });
+      setIsEditingName(false);
+    } catch (error) {
+      console.error("Failed to update group name:", error);
+    }
+  };
+
+  const handleGroupImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedConversation) return;
+
+    try {
+      setIsUploadingGroupImage(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "chat-images");
+
+      const response = await fetch(
+        (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api") + "/upload",
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        await updateConversationMutation.mutateAsync({ image: data.data.url });
+      }
+    } catch (error) {
+      console.error("Failed to upload group image:", error);
+    } finally {
+      setIsUploadingGroupImage(false);
+    }
+  };
+
+  const handleLeaveGroup = async () => {
+    if (!selectedConversation) return;
+    if (confirm("Are you sure you want to leave this group?")) {
+      try {
+        await leaveConversationMutation.mutateAsync(selectedConversation._id);
+        setSelectedConversation(null);
+        setIsSettingsOpen(false);
+      } catch (error) {
+        console.error("Failed to leave group:", error);
+      }
     }
   };
 
@@ -284,9 +365,12 @@ export default function ChatPage() {
                       {filteredUsers.map((user) => (
                         <button
                           key={user._id}
-                          onClick={() => handleStartChat(user)}
+                          onClick={() => handleToggleSelectUser(user)}
                           disabled={createConversationMutation.isPending}
-                          className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left disabled:opacity-50"
+                          className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left disabled:opacity-50 ${selectedNewChatUsers.find((u) => u._id === user._id)
+                            ? "bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800"
+                            : "hover:bg-gray-100 dark:hover:bg-gray-800"
+                            }`}
                         >
                           <Avatar className="h-10 w-10">
                             <AvatarImage src={user.profileImage} alt={user.name} />
@@ -302,8 +386,10 @@ export default function ChatPage() {
                               {user.email}
                             </p>
                           </div>
-                          {createConversationMutation.isPending && (
-                            <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                          {selectedNewChatUsers.find((u) => u._id === user._id) && (
+                            <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                              <Check className="w-3 h-3 text-white" />
+                            </div>
                           )}
                         </button>
                       ))}
@@ -333,6 +419,38 @@ export default function ChatPage() {
                     >
                       Next
                       <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </div>
+                )}
+
+                {selectedNewChatUsers.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    {selectedNewChatUsers.length > 1 && (
+                      <div className="mb-4">
+                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block">
+                          Group Name
+                        </label>
+                        <Input
+                          placeholder="Enter group name (optional)"
+                          value={newGroupName}
+                          onChange={(e) => setNewGroupName(e.target.value)}
+                          className="w-full"
+                        />
+                      </div>
+                    )}
+                    <Button
+                      onClick={handleCreateChat}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      disabled={createConversationMutation.isPending}
+                    >
+                      {createConversationMutation.isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      ) : (
+                        <Plus className="w-4 h-4 mr-2" />
+                      )}
+                      {selectedNewChatUsers.length > 1
+                        ? `Create Group with ${selectedNewChatUsers.length} people`
+                        : "Start Chat"}
                     </Button>
                   </div>
                 )}
@@ -494,6 +612,17 @@ export default function ChatPage() {
                   </p>
                 </div>
               </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-500"
+                  onClick={() => setIsSettingsOpen(true)}
+                >
+                  <Settings className="w-5 h-5" />
+                </Button>
+              </div>
             </div>
 
             {/* Private Messages */}
@@ -541,6 +670,117 @@ export default function ChatPage() {
           </div>
         )}
       </div>
+
+      {/* Group Settings Dialog */}
+      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Chat Settings</DialogTitle>
+          </DialogHeader>
+          {selectedConversation && (
+            <div className="space-y-6 py-4">
+              {/* Image Selection */}
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative group">
+                  <Avatar className="w-24 h-24 text-2xl">
+                    <AvatarImage src={selectedConversation.image} />
+                    <AvatarFallback className="bg-blue-600 text-white">
+                      {getInitials(selectedConversation.name || "Group")}
+                    </AvatarFallback>
+                  </Avatar>
+                  {selectedConversation.type === "group" && (
+                    <label className="absolute inset-0 flex items-center justify-center bg-black/40 text-white rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleGroupImageUpload}
+                        disabled={isUploadingGroupImage}
+                      />
+                      {isUploadingGroupImage ? (
+                        <Loader2 className="w-6 h-6 animate-spin" />
+                      ) : (
+                        <Camera className="w-6 h-6" />
+                      )}
+                    </label>
+                  )}
+                </div>
+                <div className="text-center">
+                  <h3 className="font-semibold text-lg">{selectedConversation.name || "Group Chat"}</h3>
+                  <p className="text-sm text-gray-500">{selectedConversation.participants.length} members</p>
+                </div>
+              </div>
+
+              {/* Edit Name Section */}
+              {selectedConversation.type === "group" && (
+                <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium">Group Name</label>
+                    {isEditingName ? (
+                      <div className="flex gap-2">
+                        <Input
+                          value={editedGroupName}
+                          onChange={(e) => setEditedGroupName(e.target.value)}
+                          placeholder="Enter group name"
+                          autoFocus
+                        />
+                        <Button onClick={handleUpdateGroupName} disabled={updateConversationMutation.isPending}>
+                          {updateConversationMutation.isPending ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            "Save"
+                          )}
+                        </Button>
+                        <Button variant="ghost" onClick={() => setIsEditingName(false)}>
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                        <span className="text-sm">{selectedConversation.name || "Unnamed Group"}</span>
+                        <Button variant="ghost" size="sm" onClick={() => setIsEditingName(true)}>
+                          Edit
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Participants List */}
+              <div className="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+                <label className="text-sm font-medium">Participants</label>
+                <div className="max-h-[200px] overflow-y-auto space-y-2">
+                  {selectedConversation.participants.map((participant) => (
+                    <div key={participant._id} className="flex items-center gap-3">
+                      <Avatar className="h-8 w-8 text-xs">
+                        <AvatarImage src={participant.profileImage} />
+                        <AvatarFallback>{getInitials(participant.name)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{participant.name}</p>
+                        <p className="text-xs text-gray-500 truncate">{participant.email}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="pt-6">
+                <Button
+                  variant="destructive"
+                  className="w-full flex items-center justify-center gap-2"
+                  onClick={handleLeaveGroup}
+                >
+                  <ArrowLeft className="w-4 h-4 rotate-180" />
+                  Leave Group
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

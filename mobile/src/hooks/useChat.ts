@@ -130,6 +130,22 @@ export const useMarkAsRead = () => {
 };
 
 /**
+ * Hook to update conversation details
+ */
+export const useUpdateConversation = (conversationId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { name?: string; image?: string }) => 
+      chatApi.updateConversation(conversationId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CHAT_KEYS.conversation(conversationId) });
+      queryClient.invalidateQueries({ queryKey: CHAT_KEYS.conversations });
+    },
+  });
+};
+
+/**
  * Hook to delete a message
  */
 export const useDeleteMessage = (conversationId: string) => {

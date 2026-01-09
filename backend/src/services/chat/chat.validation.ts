@@ -21,6 +21,16 @@ export const getConversationValidation = z.object({
     }),
 });
 
+export const updateConversationValidation = z.object({
+    params: z.object({
+        id: z.string().min(1, "Conversation ID is required"),
+    }),
+    body: z.object({
+        name: z.string().max(100, "Name cannot exceed 100 characters").optional(),
+        image: z.string().optional(),
+    }),
+});
+
 export const getConversationsValidation = z.object({
     query: z.object({
         page: z.coerce.number().int().positive().optional().default(1),

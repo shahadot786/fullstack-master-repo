@@ -110,7 +110,7 @@ export default function MainLayout() {
         }}
       />
       <Drawer.Screen
-        name="chat"
+        name="(chat)"
         options={{
           drawerLabel: "Chat",
           title: "Chat",

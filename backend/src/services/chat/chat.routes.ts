@@ -10,6 +10,7 @@ import {
     getMessagesValidation,
     markAsReadValidation,
     deleteMessageValidation,
+    updateConversationValidation,
 } from "./chat.validation";
 
 const router = Router();
@@ -157,6 +158,47 @@ router.get(
     "/conversations/:id",
     validate(getConversationValidation),
     controller.getConversationById
+);
+
+/**
+ * @swagger
+ * /api/chat/conversations/{id}:
+ *   patch:
+ *     summary: Update a conversation (name or image)
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: New name for the conversation
+ *               image:
+ *                 type: string
+ *                 description: New image URL for the conversation
+ *     responses:
+ *       200:
+ *         description: Conversation updated successfully
+ *       403:
+ *         description: Not a participant
+ *       404:
+ *         description: Conversation not found
+ */
+router.patch(
+    "/conversations/:id",
+    validate(updateConversationValidation),
+    controller.updateConversation
 );
 
 /**

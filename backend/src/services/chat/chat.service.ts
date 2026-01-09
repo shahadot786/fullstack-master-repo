@@ -117,6 +117,54 @@ export const getConversationById = async (
 };
 
 /**
+ * Update a conversation (name or image)
+ */
+export const updateConversation = async (
+    userId: string,
+    conversationId: string,
+    data: { name?: string; image?: string }
+): Promise<IConversation> => {
+    const conversation = await Conversation.findById(conversationId);
+
+    if (!conversation) {
+        throw new NotFoundError("Conversation not found");
+    }
+
+    // Check if user is a participant
+    const isParticipant = conversation.participants.some(
+        (p) => p.toString() === userId
+    );
+
+    if (!isParticipant) {
+        throw new ForbiddenError("You are not a participant of this conversation");
+    }
+
+    if (conversation.type !== "group") {
+        throw new BadRequestError("Only group conversations can be updated");
+    }
+
+    if (data.name) {
+        conversation.name = data.name;
+    }
+    
+    if (data.image) {
+        conversation.image = data.image;
+    }
+
+    await conversation.save();
+    await conversation.populate("participants", "name email profileImage");
+
+    // Notify other participants
+    conversation.participants.forEach((participantId) => {
+        emitToUser(participantId.toString(), "chat:conversation_updated", {
+            conversation,
+        });
+    });
+
+    return conversation;
+};
+
+/**
  * Leave or delete a conversation
  */
 export const leaveConversation = async (

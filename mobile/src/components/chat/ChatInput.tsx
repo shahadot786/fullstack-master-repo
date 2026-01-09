@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextInput, Pressable, Alert, Keyboard } from 'react-native';
+import { TextInput, Pressable, Alert, Keyboard, Platform } from 'react-native';
 import { XStack, YStack, Text, Spinner } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -107,7 +107,7 @@ export function ChatInput({
     <YStack
       borderTopWidth={0.5}
       borderTopColor={borderColor}
-      backgroundColor="$background"
+      backgroundColor={isDark ? '#000000' : '#ffffff'}
       paddingHorizontal="$3"
       paddingVertical="$3"
     >
@@ -117,24 +117,26 @@ export function ChatInput({
           marginBottom="$3"
           alignItems="center"
           gap="$3"
-          backgroundColor={inputBg}
+          backgroundColor={isDark ? '#1a1a1a' : '#f8fafc'}
           padding="$2"
           borderRadius="$4"
+          borderWidth={0.5}
+          borderColor={borderColor}
         >
           <YStack position="relative">
             <YStack
               width={60}
               height={60}
-              borderRadius="$2"
-              backgroundColor="$gray4"
+              borderRadius="$2.5"
+              backgroundColor={isDark ? '#262626' : '#f1f5f9'}
               alignItems="center"
               justifyContent="center"
               overflow="hidden"
             >
               {isUploading ? (
-                <Spinner size="small" color="$blue9" />
+                <Spinner size="small" color="#3b82f6" />
               ) : (
-                <Ionicons name="image" size={24} color="#666" />
+                <Ionicons name="image" size={24} color={isDark ? '#525252' : '#94a3b8'} />
               )}
             </YStack>
             <Pressable
@@ -150,14 +152,19 @@ export function ChatInput({
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderWidth: 2,
-                borderColor: isDark ? '#111' : '#fff',
+                borderColor: isDark ? '#000' : '#fff',
+                elevation: 2,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.2,
+                shadowRadius: 2,
               }}
             >
               <Ionicons name="close" size={16} color="white" />
             </Pressable>
           </YStack>
-          <Text flex={1} color="$gray11" fontSize="$3" fontWeight="500">
-            {isUploading ? 'Uploading image...' : 'Image ready to send'}
+          <Text flex={1} color={isDark ? '#a3a3a3' : '#64748b'} fontSize="$2" fontWeight="500">
+            {isUploading ? 'Uploading to cloud...' : 'Image attachment ready'}
           </Text>
         </XStack>
       )}
@@ -173,8 +180,8 @@ export function ChatInput({
       />
 
       {/* Input row */}
-      <XStack alignItems="flex-end" gap="$2">
-        {/* Image picker button */}
+      <XStack alignItems="flex-end" gap="$1">
+        {/* Attachment button */}
         <Pressable
           onPress={handlePickImage}
           disabled={disabled || isUploading}
@@ -183,7 +190,7 @@ export function ChatInput({
             opacity: disabled || isUploading ? 0.4 : (pressed ? 0.6 : 1),
           })}
         >
-          <Ionicons name="image-outline" size={26} color={isDark ? '#a3a3a3' : '#6b7280'} />
+          <Ionicons name="attach-outline" size={28} color={isDark ? '#737373' : '#94a3b8'} />
         </Pressable>
 
         {/* Emoji picker button */}
@@ -195,7 +202,7 @@ export function ChatInput({
             opacity: disabled || isSending ? 0.4 : (pressed ? 0.6 : 1),
           })}
         >
-          <Ionicons name="happy-outline" size={26} color={isDark ? '#a3a3a3' : '#6b7280'} />
+          <Ionicons name="happy-outline" size={26} color={isDark ? '#737373' : '#94a3b8'} />
         </Pressable>
 
         {/* Text input */}
@@ -204,25 +211,26 @@ export function ChatInput({
           backgroundColor={inputBg}
           borderRadius="$5"
           paddingHorizontal="$4"
-          paddingVertical="$2.5"
-          minHeight={45}
-          maxHeight={150}
+          paddingVertical="$2"
+          minHeight={42}
+          maxHeight={120}
           borderWidth={0.5}
           borderColor={borderColor}
+          justifyContent="center"
         >
           <TextInput
             value={content}
             onChangeText={setContent}
             placeholder={placeholder}
-            placeholderTextColor={isDark ? '#737373' : '#9ca3af'}
+            placeholderTextColor={isDark ? '#525252' : '#94a3b8'}
             multiline
             editable={!disabled && !isSending}
             style={{
               fontSize: 16,
               color: textColor,
               lineHeight: 20,
-              paddingTop: 0,
-              paddingBottom: 0,
+              paddingTop: Platform.OS === 'ios' ? 8 : 4,
+              paddingBottom: Platform.OS === 'ios' ? 8 : 4,
             }}
           />
         </YStack>
@@ -232,12 +240,14 @@ export function ChatInput({
           onPress={handleSend}
           disabled={!canSend}
           style={({ pressed }) => ({
-            backgroundColor: canSend ? '#3b82f6' : (isDark ? '#333' : '#e5e7eb'),
+            backgroundColor: canSend ? '#3b82f6' : (isDark ? '#1a1a1a' : '#f1f5f9'),
             borderRadius: 22,
             width: 44,
             height: 44,
             alignItems: 'center',
             justifyContent: 'center',
+            marginLeft: 8,
+            marginBottom: 2,
             opacity: canSend && pressed ? 0.8 : 1,
             transform: [{ scale: canSend && pressed ? 0.95 : 1 }],
           })}
@@ -245,7 +255,7 @@ export function ChatInput({
           {isSending ? (
             <Spinner size="small" color="white" />
           ) : (
-            <Ionicons name="send" size={22} color={canSend ? 'white' : (isDark ? '#666' : '#9ca3af')} />
+            <Ionicons name="send" size={20} color={canSend ? 'white' : (isDark ? '#404040' : '#cbd5e1')} />
           )}
         </Pressable>
       </XStack>

@@ -2,6 +2,7 @@ import React from 'react';
 import { XStack, YStack, Text, Avatar } from 'tamagui';
 import { ShoutboxMessage } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
+import { useTheme } from '@/hooks/useTheme';
 
 interface ShoutboxBubbleProps {
   message: ShoutboxMessage;
@@ -9,7 +10,13 @@ interface ShoutboxBubbleProps {
 }
 
 export function ShoutboxBubble({ message, isOwn }: ShoutboxBubbleProps) {
+  const { isDark } = useTheme();
   const sender = message.senderId;
+
+  const bubbleBg = isOwn ? '#3b82f6' : (isDark ? '#262626' : '#f3f4f6');
+  const textColor = isOwn ? 'white' : (isDark ? '#fafafa' : '#111827');
+  const secondaryTextColor = isOwn ? 'rgba(255,255,255,0.7)' : (isDark ? '#a3a3a3' : '#6b7280');
+  const senderNameColor = '#3b82f6';
 
   const getInitials = (name: string): string => {
     return name
@@ -29,21 +36,21 @@ export function ShoutboxBubble({ message, isOwn }: ShoutboxBubbleProps) {
       alignItems="flex-end"
       gap="$2"
       paddingHorizontal="$3"
-      paddingVertical="$1"
+      paddingVertical="$1.5"
       flexDirection={isOwn ? 'row-reverse' : 'row'}
     >
       {/* Avatar */}
       {!isOwn && (
-        <Avatar circular size="$3">
+        <Avatar circular size="$2.5">
           {sender.profileImage ? (
             <Avatar.Image src={sender.profileImage} />
           ) : (
             <Avatar.Fallback
-              backgroundColor="$blue9"
+              backgroundColor="#3b82f6"
               alignItems="center"
               justifyContent="center"
             >
-              <Text color="white" fontSize="$2" fontWeight="600">
+              <Text color="white" fontSize="$1" fontWeight="600">
                 {getInitials(sender.name)}
               </Text>
             </Avatar.Fallback>
@@ -53,34 +60,34 @@ export function ShoutboxBubble({ message, isOwn }: ShoutboxBubbleProps) {
 
       {/* Message bubble */}
       <YStack
-        style={{ maxWidth: '75%' }}
-        backgroundColor={isOwn ? '$blue9' : '$gray4'}
-        paddingHorizontal="$3"
+        style={{ maxWidth: '80%' }}
+        backgroundColor={bubbleBg}
+        paddingHorizontal="$3.5"
         paddingVertical="$2"
-        borderRadius="$4"
-        borderBottomRightRadius={isOwn ? '$1' : '$4'}
-        borderBottomLeftRadius={isOwn ? '$4' : '$1'}
+        borderRadius="$5"
+        borderBottomRightRadius={isOwn ? '$1' : '$5'}
+        borderBottomLeftRadius={isOwn ? '$5' : '$1'}
       >
-        {/* Sender name for guest users */}
+        {/* Sender name */}
         {!isOwn && (
-          <Text fontSize="$1" color="$blue9" fontWeight="600" marginBottom="$1">
+          <Text fontSize="$1" color={senderNameColor} fontWeight="700" marginBottom="$0.5">
             {sender.name}
           </Text>
         )}
 
         {/* Message content */}
-        <Text color={isOwn ? 'white' : '$gray12'}>{message.content}</Text>
+        <Text color={textColor} fontSize="$3.5" lineHeight={20}>{message.content}</Text>
 
         {/* Time */}
         <XStack
           alignItems="center"
-          gap="$1"
+          gap="$1.5"
           marginTop="$1"
           justifyContent={isOwn ? 'flex-end' : 'flex-start'}
         >
           <Text
             fontSize="$1"
-            color={isOwn ? 'rgba(255,255,255,0.7)' : '$gray10'}
+            color={secondaryTextColor}
           >
             {formatTime(message.createdAt)}
           </Text>

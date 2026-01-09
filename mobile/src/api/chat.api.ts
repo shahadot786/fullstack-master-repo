@@ -86,6 +86,17 @@ export const chatApi = {
   },
 
   /**
+   * Update a conversation (name or image)
+   */
+  updateConversation: async (
+    id: string,
+    data: { name?: string; image?: string }
+  ): Promise<Conversation> => {
+    const response = await apiClient.patch(`${CHAT_API}/conversations/${id}`, data);
+    return response.data.data;
+  },
+
+  /**
    * Get unread message count
    */
   getUnreadCount: async (): Promise<number> => {

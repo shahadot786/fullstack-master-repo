@@ -50,6 +50,16 @@ export const getConversationById = asyncHandler(async (req: AuthRequest, res: Re
 });
 
 /**
+ * Update a conversation (name or image)
+ */
+export const updateConversation = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const userId = req.user!.id;
+    const conversation = await chatService.updateConversation(userId, req.params.id, req.body);
+
+    sendSuccess(res, conversation, "Conversation updated successfully");
+});
+
+/**
  * Leave or delete a conversation
  */
 export const leaveConversation = asyncHandler(async (req: AuthRequest, res: Response) => {

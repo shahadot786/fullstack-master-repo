@@ -4,6 +4,7 @@ import { XStack, YStack, Text, Avatar } from 'tamagui';
 import { Message } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
 import { formatDistanceToNow } from 'date-fns';
+import { useTheme } from '@/hooks/useTheme';
 
 interface ChatBubbleProps {
   message: Message;
@@ -35,26 +36,33 @@ export function ChatBubble({
     return formatDistanceToNow(new Date(dateString), { addSuffix: false });
   };
 
+  const { isDark } = useTheme();
+
+  const bubbleBg = isOwn ? '#3b82f6' : (isDark ? '#262626' : '#f3f4f6');
+  const textColor = isOwn ? 'white' : (isDark ? '#fafafa' : '#111827');
+  const secondaryTextColor = isOwn ? 'rgba(255,255,255,0.7)' : (isDark ? '#a3a3a3' : '#6b7280');
+  const senderNameColor = '#3b82f6';
+
   return (
     <XStack
       alignItems="flex-end"
       gap="$2"
       paddingHorizontal="$3"
-      paddingVertical="$1"
+      paddingVertical="$1.5"
       flexDirection={isOwn ? 'row-reverse' : 'row'}
     >
       {/* Avatar */}
       {!isOwn && showAvatar && sender && (
-        <Avatar circular size="$3">
+        <Avatar circular size="$2.5">
           {sender.profileImage ? (
             <Avatar.Image src={sender.profileImage} />
           ) : (
             <Avatar.Fallback
-              backgroundColor="$green9"
+              backgroundColor="#3b82f6"
               alignItems="center"
               justifyContent="center"
             >
-              <Text color="white" fontSize="$2" fontWeight="600">
+              <Text color="white" fontSize="$1" fontWeight="600">
                 {getInitials(sender.name)}
               </Text>
             </Avatar.Fallback>
@@ -63,24 +71,24 @@ export function ChatBubble({
       )}
 
       {/* Spacer when no avatar */}
-      {!isOwn && !showAvatar && <YStack width={32} />}
+      {!isOwn && !showAvatar && <YStack width={28} />}
 
       {/* Message bubble */}
       <Pressable
         onLongPress={() => onLongPress?.(message)}
-        style={{ maxWidth: '75%' }}
+        style={{ maxWidth: '80%' }}
       >
         <YStack
-          backgroundColor={isOwn ? '$blue9' : '$gray4'}
-          paddingHorizontal="$3"
+          backgroundColor={bubbleBg}
+          paddingHorizontal="$3.5"
           paddingVertical="$2"
-          borderRadius="$4"
-          borderBottomRightRadius={isOwn ? '$1' : '$4'}
-          borderBottomLeftRadius={isOwn ? '$4' : '$1'}
+          borderRadius="$5"
+          borderBottomRightRadius={isOwn ? '$1' : '$5'}
+          borderBottomLeftRadius={isOwn ? '$5' : '$1'}
         >
           {/* Sender name for group chats */}
           {!isOwn && showAvatar && sender && (
-            <Text fontSize="$1" color="$blue9" fontWeight="600" marginBottom="$1">
+            <Text fontSize="$1" color={senderNameColor} fontWeight="700" marginBottom="$0.5">
               {sender.name}
             </Text>
           )}
@@ -88,9 +96,9 @@ export function ChatBubble({
           {/* Message content */}
           {message.isDeleted ? (
             <Text
-              color={isOwn ? 'white' : '$gray11'}
+              color={secondaryTextColor}
               fontStyle="italic"
-              opacity={0.7}
+              fontSize="$3"
             >
               This message was deleted
             </Text>
@@ -98,53 +106,52 @@ export function ChatBubble({
             <Pressable onPress={() => onImagePress?.(message.imageUrl!)}>
               <YStack>
                 <YStack
-                  borderRadius="$3"
+                  borderRadius="$3.5"
                   overflow="hidden"
                   marginBottom={message.content ? '$2' : 0}
                 >
-                  {/* Image placeholder - in real app would use Image component */}
                   <XStack
-                    backgroundColor="$gray6"
-                    width={200}
-                    height={150}
+                    backgroundColor={isDark ? '#1a1a1a' : '#e5e7eb'}
+                    width={220}
+                    height={160}
                     alignItems="center"
                     justifyContent="center"
-                    borderRadius="$3"
                   >
-                    <Ionicons name="image" size={40} color="#666" />
+                    <Ionicons name="image" size={32} color={isDark ? '#404040' : '#9ca3af'} />
                   </XStack>
                 </YStack>
                 {message.content && (
-                  <Text color={isOwn ? 'white' : '$gray12'}>
+                  <Text color={textColor} fontSize="$3.5" lineHeight={20}>
                     {message.content}
                   </Text>
                 )}
               </YStack>
             </Pressable>
           ) : message.messageType === 'file' ? (
-            <XStack alignItems="center" gap="$2">
+            <XStack alignItems="center" gap="$3" paddingVertical="$1">
               <YStack
-                backgroundColor={isOwn ? '$blue8' : '$gray5'}
+                backgroundColor={isOwn ? 'rgba(255,255,255,0.2)' : (isDark ? '#333' : '#e5e7eb')}
                 padding="$2"
-                borderRadius="$2"
+                borderRadius="$3"
               >
                 <Ionicons
-                  name="document-attach"
-                  size={20}
-                  color={isOwn ? 'white' : '#666'}
+                  name="document"
+                  size={24}
+                  color={isOwn ? 'white' : '#3b82f6'}
                 />
               </YStack>
               <YStack flex={1}>
                 <Text
-                  color={isOwn ? 'white' : '$gray12'}
-                  fontWeight="500"
+                  color={textColor}
+                  fontWeight="600"
+                  fontSize="$3"
                   numberOfLines={1}
                 >
                   {message.fileName || 'File'}
                 </Text>
                 {message.fileSize && (
                   <Text
-                    color={isOwn ? 'rgba(255,255,255,0.7)' : '$gray11'}
+                    color={secondaryTextColor}
                     fontSize="$1"
                   >
                     {(message.fileSize / 1024).toFixed(1)} KB
@@ -153,19 +160,19 @@ export function ChatBubble({
               </YStack>
             </XStack>
           ) : (
-            <Text color={isOwn ? 'white' : '$gray12'}>{message.content}</Text>
+            <Text color={textColor} fontSize="$3.5" lineHeight={20}>{message.content}</Text>
           )}
 
           {/* Time and read status */}
           <XStack
             alignItems="center"
-            gap="$1"
+            gap="$1.5"
             marginTop="$1"
             justifyContent={isOwn ? 'flex-end' : 'flex-start'}
           >
             <Text
               fontSize="$1"
-              color={isOwn ? 'rgba(255,255,255,0.7)' : '$gray10'}
+              color={secondaryTextColor}
             >
               {formatTime(message.createdAt)}
             </Text>
@@ -173,7 +180,7 @@ export function ChatBubble({
               <Ionicons
                 name={message.readBy.length > 1 ? 'checkmark-done' : 'checkmark'}
                 size={14}
-                color="rgba(255,255,255,0.7)"
+                color={secondaryTextColor}
               />
             )}
           </XStack>

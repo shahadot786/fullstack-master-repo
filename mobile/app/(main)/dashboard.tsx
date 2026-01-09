@@ -169,7 +169,7 @@ export default function DashboardScreen() {
                             title="Chat"
                             icon="chatbubbles"
                             iconColor="#8b5cf6"
-                            route="/(main)/chat"
+                            route="/(main)/(chat)/(tabs)"
                             stats={[
                                 { label: 'Conversations', value: stats?.chat?.totalConversations ?? 0 },
                                 { label: 'Unread', value: stats?.chat?.unreadMessages ?? 0 },

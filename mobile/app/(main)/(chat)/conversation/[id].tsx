@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
 import { XStack, YStack, Text, Avatar, Spinner } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -7,6 +7,7 @@ import { ScreenLayout } from '@/components/common/ScreenLayout';
 import { ChatBubble } from '@/components/chat/ChatBubble';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { useConversation, useMessages, useSendMessage, useMarkAsRead } from '@/hooks/useChat';
+import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
 import { Message, SendMessageDto, ChatUser } from '@/types';
 
@@ -29,10 +30,11 @@ export default function ConversationScreen() {
   const sendMessageMutation = useSendMessage(id);
   const markAsReadMutation = useMarkAsRead();
 
-  // Flatten messages from infinite query
+  // Flatten and sort messages from infinite query (newest first for inverted list)
   const messages: Message[] = useMemo(() => {
     if (!messagesData?.pages) return [];
-    return messagesData.pages.flatMap((page) => page.data);
+    const all = messagesData.pages.flatMap((page) => page.data);
+    return [...all].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [messagesData]);
 
   // Mark as read when entering the conversation
@@ -135,6 +137,14 @@ export default function ConversationScreen() {
     </YStack>
   );
 
+  const { isDark } = useTheme();
+  const textColor = isDark ? '#fafafa' : '#111827';
+  const secondaryTextColor = isDark ? '#a3a3a3' : '#6b7280';
+  const borderColor = isDark ? '#262626' : '#f3f4f6';
+
+  const conversationName = getConversationName();
+  const other = getOtherParticipant();
+
   if (isLoadingConversation || isLoadingMessages) {
     return (
       <ScreenLayout>
@@ -148,86 +158,114 @@ export default function ConversationScreen() {
     );
   }
 
-  const conversationName = getConversationName();
-  const other = getOtherParticipant();
-
   return (
     <ScreenLayout>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-        {/* Header */}
-        <XStack
-          padding="$3"
-          gap="$3"
-          alignItems="center"
-          borderBottomWidth={1}
-          borderBottomColor="$borderColor"
-          backgroundColor="$background"
+      <YStack flex={1} backgroundColor={isDark ? '#000000' : '#ffffff'}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         >
-          {/* Back button */}
+          {/* Header */}
           <XStack
-            onPress={() => router.back()}
-            padding="$2"
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            paddingVertical="$2"
+            paddingHorizontal="$3"
+            gap="$2"
+            alignItems="center"
+            borderBottomWidth={0.5}
+            borderBottomColor={borderColor}
+            backgroundColor={isDark ? '#000000' : '#ffffff'}
           >
-            <Ionicons name="arrow-back" size={24} color="#3b82f6" />
+            {/* Back button */}
+            <Pressable
+              onPress={() => router.back()}
+              style={({ pressed }) => ({
+                padding: 8,
+                opacity: pressed ? 0.6 : 1,
+              })}
+            >
+              <Ionicons name="chevron-back" size={28} color="#3b82f6" />
+            </Pressable>
+
+            {/* Avatar */}
+            <Avatar circular size="$3.5">
+              {other?.profileImage ? (
+                <Avatar.Image src={other.profileImage} />
+              ) : (
+                <Avatar.Fallback
+                  backgroundColor="#3b82f6"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Text color="white" fontSize="$2" fontWeight="700">
+                    {getInitials(conversationName)}
+                  </Text>
+                </Avatar.Fallback>
+              )}
+            </Avatar>
+
+            {/* Name and status */}
+            <YStack flex={1} marginLeft="$1">
+              <Text fontSize="$4" fontWeight="700" color={textColor} numberOfLines={1}>
+                {conversationName}
+              </Text>
+              {conversation?.type === 'group' ? (
+                <Text fontSize="$1" color={secondaryTextColor}>
+                  {conversation.participants.length} members
+                </Text>
+              ) : (
+                <XStack alignItems="center" gap="$1">
+                  <YStack width={6} height={6} borderRadius={3} backgroundColor="#10b981" />
+                  <Text fontSize="$1" color={secondaryTextColor} fontWeight="500">
+                    Online
+                  </Text>
+                </XStack>
+              )}
+            </YStack>
+
+            {/* Actions */}
+            <XStack gap="$1">
+              <Pressable
+                onPress={() => router.push({
+                  pathname: '/(main)/(chat)/conversation/settings',
+                  params: { id: id }
+                })}
+                style={({ pressed }) => ({
+                  padding: 8,
+                  opacity: pressed ? 0.6 : 1,
+                })}
+              >
+                <Ionicons name="settings-outline" size={22} color="#3b82f6" />
+              </Pressable>
+            </XStack>
           </XStack>
 
-          {/* Avatar */}
-          <Avatar circular size="$4">
-            {other?.profileImage ? (
-              <Avatar.Image src={other.profileImage} />
-            ) : (
-              <Avatar.Fallback
-                backgroundColor="$blue9"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Text color="white" fontSize="$3" fontWeight="600">
-                  {getInitials(conversationName)}
-                </Text>
-              </Avatar.Fallback>
-            )}
-          </Avatar>
+          {/* Messages list */}
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            keyExtractor={(item) => item._id}
+            renderItem={renderMessage}
+            ListHeaderComponent={renderHeader}
+            ListEmptyComponent={renderEmpty}
+            inverted
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.3}
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingVertical: 12,
+            }}
+            showsVerticalScrollIndicator={false}
+          />
 
-          {/* Name and status */}
-          <YStack flex={1}>
-            <Text fontSize="$4" fontWeight="600" color="$color" numberOfLines={1}>
-              {conversationName}
-            </Text>
-            {conversation?.type === 'group' && (
-              <Text fontSize="$2" color="$gray10">
-                {conversation.participants.length} members
-              </Text>
-            )}
-          </YStack>
-        </XStack>
-
-        {/* Messages list */}
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          keyExtractor={(item) => item._id}
-          renderItem={renderMessage}
-          ListHeaderComponent={renderHeader}
-          ListEmptyComponent={renderEmpty}
-          inverted
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.3}
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingVertical: 8,
-          }}
-        />
-
-        {/* Input */}
-        <ChatInput
-          onSend={handleSendMessage}
-          disabled={sendMessageMutation.isPending}
-        />
-      </KeyboardAvoidingView>
+          {/* Input */}
+          <ChatInput
+            onSend={handleSendMessage}
+            disabled={sendMessageMutation.isPending}
+            placeholder="Message..."
+          />
+        </KeyboardAvoidingView>
+      </YStack>
     </ScreenLayout>
   );
 }
