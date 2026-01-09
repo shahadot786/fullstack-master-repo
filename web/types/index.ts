@@ -197,3 +197,40 @@ export interface ChatQueryParams {
   before?: string;
 }
 
+
+// ============================================
+// Weather Types
+// ============================================
+
+export interface WeatherForecast {
+  dt: number;
+  temp: number;
+  description: string;
+  icon: string;
+  condition: string;
+}
+
+export interface WeatherData {
+  city: string;
+  country: string;
+  description: string;
+  temp: number;
+  feelsLike: number;
+  tempMin: number;
+  tempMax: number;
+  humidity: number;
+  windSpeed: number;
+  icon: string;
+  condition: string;
+  sunrise: number;
+  sunset: number;
+  dt: number;
+  forecast?: WeatherForecast[];
+}
+
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  message?: string;
+  data?: T;
+  error?: string;
+}

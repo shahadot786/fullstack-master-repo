@@ -50,7 +50,13 @@ export default function ChatScreen() {
 
     const conversations = useMemo(() => {
         if (!conversationsData?.pages) return [];
-        return conversationsData.pages.flatMap((page) => page.data);
+        const all = conversationsData.pages.flatMap((page) => page.data);
+        // Sort by the most recent activity (last message or update time)
+        return [...all].sort((a, b) => {
+            const dateA = new Date(a.lastMessage?.createdAt || a.updatedAt || a.createdAt).getTime();
+            const dateB = new Date(b.lastMessage?.createdAt || b.updatedAt || b.createdAt).getTime();
+            return dateB - dateA; // Descending: newest first
+        });
     }, [conversationsData]);
 
     const shoutboxMessages = useMemo(() => {

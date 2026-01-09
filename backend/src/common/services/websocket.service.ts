@@ -8,7 +8,7 @@ let io: Server;
 export const initializeWebSocket = (server: HTTPServer): Server => {
     io = new Server(server, {
         cors: {
-            origin: config.cors.origin,
+            origin: config.nodeEnv === "development" ? "*" : config.cors.origin,
             methods: ["GET", "POST"],
             credentials: true,
         },
@@ -38,6 +38,7 @@ export const initializeWebSocket = (server: HTTPServer): Server => {
         }
 
         if (!token) {
+            console.log("🔌 WebSocket Connection Refused: No token provided");
             return next(new Error("Authentication error: No token provided"));
         }
 
@@ -46,9 +47,11 @@ export const initializeWebSocket = (server: HTTPServer): Server => {
                 id: string;
                 email: string;
             };
+            console.log(`🔌 WebSocket User Authenticated: ${decoded.email}`);
             socket.data.user = decoded;
             next();
         } catch (error) {
+            console.log("🔌 WebSocket Connection Refused: Invalid token");
             next(new Error("Authentication error: Invalid token"));
         }
     });

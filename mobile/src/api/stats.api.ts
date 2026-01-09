@@ -17,13 +17,14 @@ export const statsApi = {
         try {
             const response = await apiClient.get(API_ENDPOINTS.STATS);
             
-            if (!response.data.data) {
-                return {} as ServiceStats;
+            if (!response.data || !response.data.data) {
+                throw new Error("Invalid stats data received from server");
             }
             
             return response.data.data;
-        } catch (_error: any) {
-            return {} as ServiceStats;
+        } catch (error: any) {
+            console.error("Stats API Error:", error);
+            throw error;
         }
     },
 };

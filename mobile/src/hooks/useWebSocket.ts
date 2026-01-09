@@ -29,10 +29,17 @@ export const useWebSocket = () => {
 
     // Update connection status
     const handleConnect = () => {
+      console.log("🔌 WebSocket Connected");
       setIsConnected(true);
     };
 
-    const handleDisconnect = () => {
+    const handleDisconnect = (reason: string) => {
+      console.log("🔌 WebSocket Disconnected:", reason);
+      setIsConnected(false);
+    };
+
+    const handleConnectError = (error: any) => {
+      console.error("🔌 WebSocket Connection Error:", error.message);
       setIsConnected(false);
     };
 
@@ -92,6 +99,7 @@ export const useWebSocket = () => {
     // Register event listeners
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
+    socket.on("connect_error", handleConnectError);
     socket.on("todo:created", handleTodoCreated);
     socket.on("todo:updated", handleTodoUpdated);
     socket.on("todo:deleted", handleTodoDeleted);
@@ -109,6 +117,7 @@ export const useWebSocket = () => {
     return () => {
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
+      socket.off("connect_error", handleConnectError);
       socket.off("todo:created", handleTodoCreated);
       socket.off("todo:updated", handleTodoUpdated);
       socket.off("todo:deleted", handleTodoDeleted);

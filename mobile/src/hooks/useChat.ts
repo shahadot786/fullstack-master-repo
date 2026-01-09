@@ -66,8 +66,8 @@ export const useMessages = (conversationId: string) => {
       if (!lastPage.pagination.hasMore || lastPage.data.length === 0) {
         return undefined;
       }
-      // Return the ID of the oldest message for cursor-based pagination
-      return lastPage.data[0]?._id;
+      // Return the ID of the oldest message in the current set for cursor-based pagination
+      return lastPage.data[lastPage.data.length - 1]?._id;
     },
     enabled: !!conversationId,
   });

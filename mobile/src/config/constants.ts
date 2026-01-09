@@ -17,7 +17,7 @@ export const API_BASE_URL = Platform.select({
   ios:
     process.env.API_BASE_URL_IOS ||
     process.env.API_BASE_URL ||
-    "http://localhost:8000/api",
+    "http://127.0.0.1:8000/api",
   default: process.env.API_BASE_URL || "http://localhost:8000/api",
 }) as string;
 

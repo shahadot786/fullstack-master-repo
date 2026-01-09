@@ -2,20 +2,23 @@ import { io, Socket } from "socket.io-client";
 import { API_BASE_URL } from "@/config/constants";
 
 let socket: Socket | null = null;
+let currentToken: string | null = null;
 
 // Remove /api suffix from API_BASE_URL for WebSocket connection
 const WEBSOCKET_URL = API_BASE_URL.replace('/api', '');
 
 export const initializeWebSocket = (token: string): Socket => {
-  // If socket already exists and is connected, return it
-  if (socket?.connected) {
+  // If socket already exists and token is the same, return it
+  if (socket && currentToken === token) {
     return socket;
   }
 
-  // Disconnect existing socket if any
+  // If socket exists but token changed, disconnect it
   if (socket) {
     socket.disconnect();
   }
+
+  currentToken = token;
 
   // Create new socket connection
   socket = io(WEBSOCKET_URL, {
@@ -31,15 +34,15 @@ export const initializeWebSocket = (token: string): Socket => {
 
   // Connection event handlers
   socket.on("connect", () => {
-    // Connected
+    console.log("🔌 [SocketService] Connected to", WEBSOCKET_URL);
   });
 
-  socket.on("disconnect", (reason) => {
-    // Disconnected
+  socket.on("disconnect", (reason: string) => {
+    console.log("🔌 [SocketService] Disconnected:", reason);
   });
 
-  socket.on("connect_error", (error) => {
-    // Connection error
+  socket.on("connect_error", (error: Error) => {
+    console.error("🔌 [SocketService] Connection Error:", error.message);
   });
 
   return socket;
@@ -49,6 +52,7 @@ export const disconnectWebSocket = (): void => {
   if (socket) {
     socket.disconnect();
     socket = null;
+    currentToken = null;
   }
 };
 
