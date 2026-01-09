@@ -303,3 +303,37 @@ export interface WeatherForecast {
     icon: string;
     condition: string;
 }
+
+// ============================================
+// URL Shortener Types
+// ============================================
+
+export interface Url {
+    _id: string;
+    userId: string;
+    originalUrl: string;
+    shortId: string;
+    clicks: number;
+    title?: string;
+    lastClickedAt?: Date;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface CreateUrlDto {
+    originalUrl: string;
+    title?: string;
+}
+
+export interface UrlQueryParams {
+    page?: number;
+    limit?: number;
+    sortBy?: "createdAt" | "clicks";
+    sortOrder?: "asc" | "desc";
+}
+
+export interface UrlsResponse {
+    data: Url[];
+    pagination: PaginationMeta;
+}

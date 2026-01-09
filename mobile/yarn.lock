@@ -2224,6 +2224,7 @@
 "@repo/shared@file:../shared":
   version "1.0.0"
   dependencies:
+    nanoid "^3.3.4"
     zod "^3.22.4"
 
 "@rtsao/scc@^1.1.0":
@@ -5165,6 +5166,11 @@ expo-build-properties@~1.0.10:
     ajv "^8.11.0"
     semver "^7.6.0"
 
+expo-clipboard@~8.0.8:
+  version "8.0.8"
+  resolved "https://registry.yarnpkg.com/expo-clipboard/-/expo-clipboard-8.0.8.tgz#5e52054a4bbaebef090ec6fe5eaa200072ff94f7"
+  integrity sha512-VKoBkHIpZZDJTB0jRO4/PZskHdMNOEz3P/41tmM6fDuODMpqhvyWK053X0ebspkxiawJX9lX33JXHBCvVsTTOA==
+
 expo-constants@~18.0.11, expo-constants@~18.0.12:
   version "18.0.12"
   resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-18.0.12.tgz#3e67f7109ffd03eaa5514c19875a767c39f5a2ca"
@@ -7167,7 +7173,7 @@ mz@^2.7.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nanoid@^3.3.1, nanoid@^3.3.11, nanoid@^3.3.7, nanoid@^3.3.8:
+nanoid@^3.3.1, nanoid@^3.3.11, nanoid@^3.3.4, nanoid@^3.3.7, nanoid@^3.3.8:
   version "3.3.11"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.11.tgz#4f4f112cefbe303202f2199838128936266d185b"
   integrity sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==

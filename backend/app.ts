@@ -17,6 +17,7 @@ import analyticsRoutes from "@services/analytics/analytics.routes";
 import chatRoutes from "@services/chat/chat.routes";
 import { shoutboxRoutes } from "@services/shoutbox";
 import { weatherRoutes } from "@services/weather";
+import urlRoutes from "@services/url/url.routes";
 
 const app = express();
 
@@ -72,6 +73,7 @@ app.use("/api/analytics", analyticsRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/shoutbox", shoutboxRoutes);
 app.use("/api/weather", weatherRoutes);
+app.use("/api/url", urlRoutes);
 
 // 404 handler
 app.use((req, res) => {

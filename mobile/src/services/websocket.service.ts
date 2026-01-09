@@ -25,6 +25,7 @@ export const initializeWebSocket = (token: string): Socket => {
     auth: {
       token,
     },
+    transports: ["websocket"], // Force WebSocket transport to avoid xhr poll errors on RN
     autoConnect: true,
     reconnection: true,
     reconnectionDelay: 1000,
@@ -42,7 +43,7 @@ export const initializeWebSocket = (token: string): Socket => {
   });
 
   socket.on("connect_error", (error: Error) => {
-    console.error("🔌 [SocketService] Connection Error:", error.message);
+    console.error("🔌 [SocketService] Connection Error:", error.message, error);
   });
 
   return socket;

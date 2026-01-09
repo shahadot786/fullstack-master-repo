@@ -11,6 +11,7 @@ import {
 } from "@/config/constants";
 import { StorageUtils } from "@/utils/storage";
 import { ApiError } from "@/types";
+import { useAuthStore } from "@/store/authStore";
 
 /**
  * API Client
@@ -126,9 +127,8 @@ apiClient.interceptors.response.use(
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
           response.data;
 
-        // Save new tokens
-        StorageUtils.setString(STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
-        StorageUtils.setString(STORAGE_KEYS.REFRESH_TOKEN, newRefreshToken);
+        // Save new tokens to storage and update store state
+        useAuthStore.getState().setTokens(newAccessToken, newRefreshToken);
 
         // Update authorization header
         if (originalRequest.headers) {
@@ -185,10 +185,7 @@ const formatError = (error: AxiosError): ApiError => {
  * Handle logout (clear storage)
  */
 const handleLogout = () => {
-  StorageUtils.remove(STORAGE_KEYS.ACCESS_TOKEN);
-  StorageUtils.remove(STORAGE_KEYS.REFRESH_TOKEN);
-  StorageUtils.remove(STORAGE_KEYS.USER);
-
+  useAuthStore.getState().logout();
   // Note: Navigation to login screen will be handled by the app's auth state
 };
 

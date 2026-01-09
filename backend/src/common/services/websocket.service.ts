@@ -50,9 +50,9 @@ export const initializeWebSocket = (server: HTTPServer): Server => {
             console.log(`🔌 WebSocket User Authenticated: ${decoded.email}`);
             socket.data.user = decoded;
             next();
-        } catch (error) {
-            console.log("🔌 WebSocket Connection Refused: Invalid token");
-            next(new Error("Authentication error: Invalid token"));
+        } catch (error: any) {
+            console.log(`🔌 WebSocket Connection Refused: ${error.message}`);
+            next(new Error(`Authentication error: ${error.message}`));
         }
     });
 

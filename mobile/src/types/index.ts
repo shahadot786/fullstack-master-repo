@@ -368,3 +368,42 @@ export interface WeatherData {
     dt: number;
     forecast?: WeatherForecast[];
 }
+
+// ============================================================================
+// URL Shortener Types
+// ============================================================================
+
+export interface Url {
+    _id: string;
+    userId: string;
+    originalUrl: string;
+    shortId: string;
+    clicks: number;
+    title?: string;
+    lastClickedAt?: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface CreateUrlDto {
+    originalUrl: string;
+    title?: string;
+}
+
+export interface UrlQueryParams {
+    page?: number;
+    limit?: number;
+    sortBy?: 'createdAt' | 'clicks';
+    sortOrder?: 'asc' | 'desc';
+}
+
+export interface UrlsResponse {
+    data: Url[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
+}

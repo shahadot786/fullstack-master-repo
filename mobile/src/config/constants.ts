@@ -60,6 +60,10 @@ export const API_ENDPOINTS = {
   },
   // Stats endpoint
   STATS: "/stats",
+  // URL Shortener endpoints
+  URL_BASE: "/url",
+  URL_SHORTEN: "/url/shorten",
+  URL_MY_URLS: "/url/my-urls",
 } as const;
 
 // Storage Keys (MMKV)

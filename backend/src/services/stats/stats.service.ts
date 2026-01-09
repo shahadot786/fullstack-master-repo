@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Todo from "../todo/todo.model";
+import Url from "../url/url.model";
 
 /**
  * Stats Service
@@ -92,6 +94,12 @@ export const getStats = async (userId: string): Promise<ServiceStats> => {
                 completed: false,
                 dueDate: { $lt: now },
             }),
+            Url.countDocuments({ userId }),
+            Url.aggregate([
+                { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+                { $group: { _id: null, totalClicks: { $sum: "$clicks" } } }
+            ]),
+            Url.countDocuments({ userId, isActive: true }),
         ]);
 
         // Race between queries and timeout
@@ -102,10 +110,13 @@ export const getStats = async (userId: string): Promise<ServiceStats> => {
             highPriorityTodos,
             todayDueTodos,
             overdueTodos,
+            totalUrls,
+            urlClicksData,
+            activeUrls,
         ] = await Promise.race([
             statsQueries,
             timeout(10000) // 10 second timeout
-        ]) as number[];
+        ]) as [number, number, number, number, number, number, number, any[], number];
 
         // Return stats with real todo data and dummy data for other services
         return {
@@ -155,9 +166,9 @@ export const getStats = async (userId: string): Promise<ServiceStats> => {
                 savedLocations: 0,
             },
             urlShortener: {
-                totalUrls: 0,
-                totalClicks: 0,
-                activeLinks: 0,
+                totalUrls: totalUrls || 0,
+                totalClicks: urlClicksData?.[0]?.totalClicks || 0,
+                activeLinks: activeUrls || 0,
             },
         };
     } catch (error: any) {
