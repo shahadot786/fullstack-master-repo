@@ -147,7 +147,7 @@ export default function NewChatScreen() {
   );
 
   return (
-    <ScreenLayout>
+    <ScreenLayout showHeader={false}>
       <YStack flex={1} backgroundColor={isDark ? '#000000' : '#ffffff'}>
         {/* Header */}
         <XStack

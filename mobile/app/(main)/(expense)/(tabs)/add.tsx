@@ -177,7 +177,7 @@ export default function AddExpenseScreen() {
   };
 
   return (
-    <ScreenLayout>
+    <ScreenLayout showHeader={false}>
       {/* Add Category Overlay (Custom Modal to avoid nesting issues on iOS) */}
       {showAddModal && (
         <YStack

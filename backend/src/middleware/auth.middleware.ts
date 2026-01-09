@@ -19,8 +19,8 @@ export const authenticate = (
         let token: string | undefined;
 
         // Try to get token from cookie first (for web)
-        if (req.cookies?.accessToken) {
-            token = req.cookies.accessToken;
+        if (req.cookies?.__nexus__production__token__access__token) {
+            token = req.cookies.__nexus__production__token__access__token;
         }
         // Fall back to Authorization header (for mobile)
         else {

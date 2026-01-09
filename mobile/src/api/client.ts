@@ -124,8 +124,9 @@ apiClient.interceptors.response.use(
           { __nexus__production__token__refresh__token: refreshToken }
         );
 
+        // Backend returns: { success: true, data: { tokens: { accessToken, refreshToken } } }
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-          response.data;
+          response.data.data.tokens;
 
         // Save new tokens to storage and update store state
         useAuthStore.getState().setTokens(newAccessToken, newRefreshToken);

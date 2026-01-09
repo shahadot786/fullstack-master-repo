@@ -51,7 +51,7 @@ export interface ResendOTPRequest {
 }
 
 export interface RefreshTokenRequest {
-    refreshToken: string;
+    __nexus__production__token__refresh__token: string;
 }
 
 export interface RequestPasswordResetRequest {
