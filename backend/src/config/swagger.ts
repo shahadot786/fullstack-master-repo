@@ -39,6 +39,10 @@ const options: swaggerJsdoc.Options = {
                 name: "Todos",
                 description: "TODO management endpoints",
             },
+            {
+                name: "Weather",
+                description: "Weather information endpoints",
+            },
         ],
     },
     apis: ["./src/services/**/*.routes.ts"],

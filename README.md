@@ -118,25 +118,28 @@ A production-ready, type-safe fullstack monorepo template featuring **Backend (N
   - Token refresh and rotation
   - Protected routes with middleware
 - **TODO Service** - Full CRUD example with user scoping
+- **Expense Tracker** - Comprehensive expense management with custom categories and analytics
+- **Chat Service** - Real-time private and group messaging with Socket.IO
+- **Shoutbox** - Global real-time chat for all authenticated users
+- **Weather Service** - Multi-provider weather data (OpenWeather, WeatherAPI) with rate limiting
+- **URL Shortener** - URL management with short ID generation and click tracking
+- **Analytics Service** - Global and user-specific statistics for various services
+- **Upload Service** - Cloudinary integration for profile and group image management
 - **Redis Caching** - Upstash Redis integration with TLS support
-- **WebSocket** - Real-time notifications with Socket.IO
+- **WebSocket** - Real-time notifications and messaging with Socket.IO
 - **Validation** - Zod schemas for request validation
 - **API Documentation** - Swagger/OpenAPI at `/api-docs`
 - **Testing** - Jest + Supertest E2E tests with 80%+ coverage
 - **Security** - Helmet, CORS, rate limiting, bcrypt password hashing
-- **Email Service** - Nodemailer integration for OTP delivery
+- **Email Service** - Resend and Nodemailer integration for OTP and system emails
 
 #### 🚧 Placeholder Services (Ready for Implementation)
-The monorepo includes placeholder service directories for common application features:
+The monorepo includes placeholder service directories for remaining features:
 - `aiqa` - AI/QA service
-- `chat` - Real-time chat
 - `delivery` - Delivery tracking
-- `expense` - Expense management
 - `notes` - Note-taking
 - `shop` - E-commerce
 - `social` - Social features
-- `urlshort` - URL shortener
-- `weather` - Weather service
 
 > See [Creating New Service Guide](./docs/CREATING_NEW_SERVICE.md) to implement these services.
 
@@ -155,8 +158,13 @@ The monorepo includes placeholder service directories for common application fea
 - **Dashboard Layout** - Responsive sidebar navigation with theme toggle
 - **Feature Modules** - 11 feature pages matching backend services
   - Todos (fully functional)
-  - Profile management
-  - Placeholder pages for all services (aiqa, chat, delivery, expense, notes, shop, social, urlshort, weather)
+  - Chat & Shoutbox (real-time messaging)
+  - Expense Tracker (categories, analytics)
+  - Weather (live updates)
+  - URL Shortener (management dashboard)
+  - Analytics (visualized stats)
+  - Profile (management, image uploads)
+  - Placeholder pages for remaining services (aiqa, delivery, notes, shop, social)
 - **State Management** - Zustand stores with React Query for server state
 - **Form Handling** - React Hook Form with Zod validation
 - **Real-time Updates** - Socket.IO client integration
@@ -171,22 +179,23 @@ The monorepo includes placeholder service directories for common application fea
   - Login, Register, Email Verification
   - Forgot Password, Reset Password
   - Persistent sessions with MMKV storage
-- **TODO Management** - Full CRUD with optimistic updates
-- **UI Components** - Tamagui + React Native Paper
-- **State Management** - Zustand with MMKV persistence
-- **Forms** - React Hook Form + Zod validation
-- **API Client** - Axios with TypeScript interfaces
-- **Error Handling** - User-friendly error messages
-- **Loading States** - Proper loading indicators throughout
+- **Feature Modules** - Complete feature set matching parity
+  - TODO Management - Full CRUD with optimistic updates
+  - Chat & Shoutbox - Real-time private/group messaging
+  - Expense Management - Track daily expenses and categories
+  - Weather Dashboard - Live weather data
+  - URL Shortener - Mobile-native URL management
+  - Analytics - User and service statistics
+  - Profile management (Change Email, Password, Profile Image)
 
 ---
 
 ## 📊 Project Status
 
 ### Fully Implemented ✅
-- **Backend**: Authentication service, TODO service, WebSocket, Redis caching
-- **Web**: Auth pages, dashboard layout, todos page, profile page
-- **Mobile**: Complete auth flow, todo management, profile screen
+- **Backend**: Auth, Todo, Expense, Chat, Shoutbox, Weather, URL, Analytics, Upload
+- **Web**: Auth, Dashboard, Todos, Chat, Expense, Weather, URL Shortener, Analytics, Profile
+- **Mobile**: Auth, Todos, Chat, Expense, Weather, URL Shortener, Analytics, Profile Edit
 - **Shared**: Types, validation schemas, constants, utilities
 
 ### Ready for Implementation 🚧
@@ -560,7 +569,7 @@ sequenceDiagram
     Backend->>MongoDB: Create user
     Backend->>Redis: Store OTP
     Backend->>Email: Send OTP
-    Backend->>Frontend: Access + Refresh tokens
+    Backend->>Frontend: __nexus__production__token__access__token + __nexus__production__token__refresh__token
     Frontend->>User: Check email for OTP
 
     User->>Frontend: Enter OTP

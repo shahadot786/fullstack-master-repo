@@ -4,13 +4,14 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 import {
-  API_BASE_URL,
+  API_BASE_URL_PRODUCTION,
   API_ENDPOINTS,
   STORAGE_KEYS,
   APP_CONFIG,
 } from "@/config/constants";
 import { StorageUtils } from "@/utils/storage";
 import { ApiError } from "@/types";
+import { useAuthStore } from "@/store/authStore";
 
 /**
  * API Client
@@ -23,7 +24,7 @@ import { ApiError } from "@/types";
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL_PRODUCTION,
   timeout: APP_CONFIG.REQUEST_TIMEOUT,
   headers: {
     "Content-Type": "application/json",
@@ -119,16 +120,15 @@ apiClient.interceptors.response.use(
       try {
         // Attempt to refresh token
         const response = await axios.post(
-          `${API_BASE_URL}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
-          { refreshToken }
+          `${API_BASE_URL_PRODUCTION}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
+          { __nexus__production__token__refresh__token: refreshToken }
         );
 
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
           response.data;
 
-        // Save new tokens
-        StorageUtils.setString(STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
-        StorageUtils.setString(STORAGE_KEYS.REFRESH_TOKEN, newRefreshToken);
+        // Save new tokens to storage and update store state
+        useAuthStore.getState().setTokens(newAccessToken, newRefreshToken);
 
         // Update authorization header
         if (originalRequest.headers) {
@@ -185,10 +185,7 @@ const formatError = (error: AxiosError): ApiError => {
  * Handle logout (clear storage)
  */
 const handleLogout = () => {
-  StorageUtils.remove(STORAGE_KEYS.ACCESS_TOKEN);
-  StorageUtils.remove(STORAGE_KEYS.REFRESH_TOKEN);
-  StorageUtils.remove(STORAGE_KEYS.USER);
-
+  useAuthStore.getState().logout();
   // Note: Navigation to login screen will be handled by the app's auth state
 };
 

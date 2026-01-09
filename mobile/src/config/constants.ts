@@ -3,23 +3,10 @@
  *
  * Centralized configuration for API endpoints, storage keys, and app settings.
  */
-
-import { Platform } from "react-native";
-
 // API Configuration
 // For Android physical devices, use your computer's local IP address
 // For iOS simulator/emulator, localhost works fine
-export const API_BASE_URL = Platform.select({
-  android:
-    process.env.API_BASE_URL_ANDROID ||
-    process.env.API_BASE_URL ||
-    "http://192.168.68.121:8000/api",
-  ios:
-    process.env.API_BASE_URL_IOS ||
-    process.env.API_BASE_URL ||
-    "http://localhost:8000/api",
-  default: process.env.API_BASE_URL || "http://localhost:8000/api",
-}) as string;
+export const API_BASE_URL_PRODUCTION = process.env.API_BASE_URL_PRODUCTION || "https://nexus-backend001.onrender.com/api"
 
 export const API_ENDPOINTS = {
   // Auth endpoints
@@ -49,14 +36,27 @@ export const API_ENDPOINTS = {
     BASE: "/todos",
     BY_ID: (id: string) => `/todos/${id}`,
   },
+  // Chat endpoints
+  CHAT: {
+    CONVERSATIONS: "/chat/conversations",
+    CONVERSATION_BY_ID: (id: string) => `/chat/conversations/${id}`,
+    MESSAGES: (conversationId: string) => `/chat/conversations/${conversationId}/messages`,
+    MARK_READ: (conversationId: string) => `/chat/conversations/${conversationId}/read`,
+    DELETE_MESSAGE: (id: string) => `/chat/messages/${id}`,
+    UNREAD: "/chat/unread",
+  },
   // Stats endpoint
   STATS: "/stats",
+  // URL Shortener endpoints
+  URL_BASE: "/url",
+  URL_SHORTEN: "/url/shorten",
+  URL_MY_URLS: "/url/my-urls",
 } as const;
 
 // Storage Keys (MMKV)
 export const STORAGE_KEYS = {
-  ACCESS_TOKEN: "access_token",
-  REFRESH_TOKEN: "refresh_token",
+  ACCESS_TOKEN: "__nexus__production__token__access__token",
+  REFRESH_TOKEN: "__nexus__production__token__refresh__token",
   USER: "user",
   ONBOARDING_COMPLETED: "onboarding_completed",
   THEME: "theme",

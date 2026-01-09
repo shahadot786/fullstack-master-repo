@@ -24,6 +24,9 @@ interface Config {
     otp: {
         expiryMinutes: number;
     };
+    weather: {
+        apiKey: string;
+    };
 }
 
 const requiredEnvVars = ["MONGO_URI", "JWT_SECRET", "JWT_REFRESH_SECRET"];
@@ -57,5 +60,8 @@ export const config: Config = {
     },
     otp: {
         expiryMinutes: parseInt(process.env.OTP_EXPIRY_MINUTES || "10", 10),
+    },
+    weather: {
+        apiKey: process.env.WEATHER_API_KEY || "",
     },
 };

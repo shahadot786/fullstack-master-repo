@@ -25,10 +25,10 @@ import { Todo, loginSchema, API_ENDPOINTS } from "@fullstack-master/shared";
 
 ## Structure
 
-- **types/**: TypeScript interfaces and types
-- **validation/**: Zod validation schemas
-- **constants/**: API endpoints, error messages, HTTP status codes
-- **utils/**: Common utility functions
+- **types/**: TypeScript interfaces for User, Todo, Expense, Chat, etc.
+- **validation/**: Zod schemas for Auth, Todos, Expense, Chat, Shoutbox, Weather, and URL
+- **constants/**: API endpoints, error messages, and shared configuration
+- **utils/**: Common utility functions and formatters
 
 ## Scripts
 

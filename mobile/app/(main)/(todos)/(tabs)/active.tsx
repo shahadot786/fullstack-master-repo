@@ -9,7 +9,7 @@ import { ScreenLayout } from '@/components/common/ScreenLayout';
 
 export default function ActiveTodosScreen() {
     const router = useRouter();
-    const { data, isLoading } = useTodos({ completed: false });
+    const { data } = useTodos({ completed: false });
 
     const handleCreate = () => {
         router.push('/(main)/(todos)/create' as any);

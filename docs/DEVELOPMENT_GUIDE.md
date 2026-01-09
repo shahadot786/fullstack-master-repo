@@ -66,6 +66,12 @@ Required environment variables:
 - `REDIS_DATABASE_URI` - Redis connection string (Upstash)
 - `EMAIL_USER` - Email for sending OTPs
 - `EMAIL_PASSWORD` - Email app password
+- `RESEND_API_KEY` - API key for Resend email service
+- `CLOUDINARY_CLOUD_NAME` - Cloudinary configuration
+- `CLOUDINARY_API_KEY` - Cloudinary configuration
+- `CLOUDINARY_API_SECRET` - Cloudinary configuration
+- `OPENWEATHER_API_KEY` - OpenWeatherMap API key
+- `WEATHER_API_KEY` - WeatherAPI.com API key
 
 #### Web
 

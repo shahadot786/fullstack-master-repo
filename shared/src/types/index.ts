@@ -186,3 +186,220 @@ export interface PaginationMeta {
     total: number;
     totalPages: number;
 }
+
+// ============================================
+// Chat Types
+// ============================================
+
+export type MessageType = "text" | "image" | "file";
+export type ConversationType = "direct" | "group";
+
+export interface ChatUser {
+    _id: string;
+    name: string;
+    email: string;
+    profileImage?: string;
+}
+
+export interface ReadReceipt {
+    userId: string;
+    readAt: Date;
+}
+
+export interface Message {
+    _id: string;
+    conversationId: string;
+    senderId: ChatUser | string;
+    content: string;
+    messageType: MessageType;
+    imageUrl?: string;
+    fileName?: string;
+    fileSize?: number;
+    readBy: ReadReceipt[];
+    isDeleted: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface LastMessage {
+    content: string;
+    senderId: string;
+    messageType: MessageType;
+    createdAt: Date;
+}
+
+export interface Conversation {
+    _id: string;
+    participants: ChatUser[];
+    type: ConversationType;
+    name?: string;
+    image?: string;
+    lastMessage?: LastMessage;
+    createdBy: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface CreateConversationDto {
+    participantIds: string[];
+    type?: ConversationType;
+    name?: string;
+}
+
+export interface SendMessageDto {
+    content?: string;
+    messageType?: MessageType;
+    imageUrl?: string;
+    fileName?: string;
+    fileSize?: number;
+}
+
+export interface ConversationsResponse {
+    data: Conversation[];
+    pagination: PaginationMeta;
+}
+
+export interface MessagesResponse {
+    data: Message[];
+    pagination: {
+        total: number;
+        hasMore: boolean;
+    };
+}
+
+export interface ChatQueryParams {
+    page?: number;
+    limit?: number;
+    before?: string;
+}
+
+
+// ============================================
+// Weather Types
+// ============================================
+
+export interface WeatherData {
+    city: string;
+    country: string;
+    description: string;
+    temp: number;
+    feelsLike: number;
+    tempMin: number;
+    tempMax: number;
+    humidity: number;
+    windSpeed: number;
+    icon: string;
+    condition: string;
+    sunrise: number;
+    sunset: number;
+    dt: number;
+    forecast?: WeatherForecast[];
+}
+
+export interface WeatherForecast {
+    dt: number;
+    temp: number;
+    description: string;
+    icon: string;
+    condition: string;
+}
+
+// ============================================
+// URL Shortener Types
+// ============================================
+
+export interface Url {
+    _id: string;
+    userId: string;
+    originalUrl: string;
+    shortId: string;
+    clicks: number;
+    title?: string;
+    lastClickedAt?: Date;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface CreateUrlDto {
+    originalUrl: string;
+    title?: string;
+}
+
+export interface UrlQueryParams {
+    page?: number;
+    limit?: number;
+    sortBy?: "createdAt" | "clicks";
+    sortOrder?: "asc" | "desc";
+}
+
+export interface UrlsResponse {
+    data: Url[];
+    pagination: PaginationMeta;
+}
+
+// ============================================
+// Expense Tracker Types
+// ============================================
+
+export type ExpenseCategory = 
+    | "Food"
+    | "Transport"
+    | "Shopping"
+    | "Bills"
+    | "Entertainment"
+    | "Health"
+    | "Education"
+    | "Other";
+
+export type PaymentMethod = "Cash" | "Card" | "bKash" | "Nagad" | "Upay" | "Rocket" | "Bank Transfer";
+
+export interface Expense {
+    _id: string;
+    userId: string;
+    amount: number;
+    category: string;
+    description?: string;
+    date: Date;
+    paymentMethod: PaymentMethod;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface CreateExpenseDto {
+    amount: number;
+    category: string;
+    description?: string;
+    date?: Date;
+    paymentMethod?: PaymentMethod;
+}
+
+export interface UpdateExpenseDto {
+    amount?: number;
+    category?: string;
+    description?: string;
+    date?: Date;
+    paymentMethod?: PaymentMethod;
+}
+
+export interface ExpenseQueryParams {
+    page?: number;
+    limit?: number;
+    category?: string;
+    startDate?: string;
+    endDate?: string;
+    sortBy?: "date" | "amount" | "createdAt";
+    sortOrder?: "asc" | "desc";
+}
+
+export interface ExpenseStats {
+    total: number;
+    count: number;
+    byCategory: { category: string; total: number; count: number }[];
+    byPaymentMethod: { method: string; total: number; count: number }[];
+}
+
+export interface ExpensesResponse {
+    data: Expense[];
+    pagination: PaginationMeta;
+}
