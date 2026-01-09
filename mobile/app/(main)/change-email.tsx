@@ -48,7 +48,7 @@ export default function ChangeEmailScreen() {
         try {
             setIsLoading(true);
             await userApi.requestEmailChange(data.newEmail);
-            
+
             // Navigate to verification screen with email param
             Alert.alert(
                 'Verification Code Sent',
@@ -144,7 +144,7 @@ export default function ChangeEmailScreen() {
                                         Email Verification Required
                                     </Text>
                                     <Text fontSize="$3" color="#1e40af" lineHeight={18}>
-                                        You'll receive a verification code at your new email address. 
+                                        You&apos;ll receive a verification code at your new email address.
                                         Your email will be updated after successful verification.
                                     </Text>
                                 </YStack>

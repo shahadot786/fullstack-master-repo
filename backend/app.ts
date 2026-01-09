@@ -14,6 +14,8 @@ import statsRoutes from "@services/stats/stats.routes";
 import uploadRoutes from "@services/upload/upload.routes";
 import userRoutes from "@services/user/user.routes";
 import analyticsRoutes from "@services/analytics/analytics.routes";
+import chatRoutes from "@services/chat/chat.routes";
+import { shoutboxRoutes } from "@services/shoutbox";
 
 const app = express();
 
@@ -66,6 +68,8 @@ app.use("/api/stats", statsRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/shoutbox", shoutboxRoutes);
 
 // 404 handler
 app.use((req, res) => {

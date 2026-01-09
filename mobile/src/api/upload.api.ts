@@ -83,4 +83,16 @@ export const uploadApi = {
     });
     return response.data.data;
   },
+
+  /**
+   * Upload an image (alias for uploadFile)
+   * Convenient method specifically for image uploads
+   */
+  uploadImage: async (
+    imageUri: string,
+    folder: string = "chat-images"
+  ): Promise<UploadResponse> => {
+    return uploadApi.uploadFile(imageUri, folder);
+  },
 };
+

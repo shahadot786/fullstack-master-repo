@@ -38,23 +38,55 @@ export const useWebSocket = () => {
 
     // Listen to todo events and update React Query cache
     const handleTodoCreated = ({ todo }: { todo: Todo }) => {
-      // Invalidate todos query to refetch
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     };
 
     const handleTodoUpdated = ({ todo }: { todo: Todo }) => {
-      // Invalidate todos query to refetch
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     };
 
     const handleTodoDeleted = ({ todoId }: { todoId: string }) => {
-      // Invalidate todos query to refetch
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     };
 
     const handleTodosDeletedAll = () => {
-      // Invalidate todos query to refetch
       queryClient.invalidateQueries({ queryKey: ["todos"] });
+    };
+
+    // Chat Events
+    const handleNewMessage = ({ message, conversationId }: { message: any; conversationId: string }) => {
+      queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+    };
+
+    const handleNewConversation = ({ conversation }: { conversation: any }) => {
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+    };
+
+    // Shoutbox Events
+    const handleShoutboxMessage = ({ message }: { message: any }) => {
+      queryClient.setQueryData(["shoutbox-messages"], (oldData: any) => {
+        if (!oldData) return undefined;
+        
+        const pages = [...oldData.pages];
+        const lastPageIndex = pages.length - 1;
+        
+        const exists = pages.some((page: any) => 
+          page.data.some((m: any) => m._id === message._id)
+        );
+        if (exists) return oldData;
+
+        pages[lastPageIndex] = {
+          ...pages[lastPageIndex],
+          data: [...pages[lastPageIndex].data, message],
+        };
+
+        return {
+          ...oldData,
+          pages,
+        };
+      });
+      queryClient.invalidateQueries({ queryKey: ["shoutbox-messages"] });
     };
 
     // Register event listeners
@@ -64,6 +96,11 @@ export const useWebSocket = () => {
     socket.on("todo:updated", handleTodoUpdated);
     socket.on("todo:deleted", handleTodoDeleted);
     socket.on("todos:deleted_all", handleTodosDeletedAll);
+    
+    // Chat & Shoutbox
+    socket.on("chat:message", handleNewMessage);
+    socket.on("chat:new_conversation", handleNewConversation);
+    socket.on("shoutbox:message", handleShoutboxMessage);
 
     // Set initial connection status
     setIsConnected(socket.connected);
@@ -76,6 +113,10 @@ export const useWebSocket = () => {
       socket.off("todo:updated", handleTodoUpdated);
       socket.off("todo:deleted", handleTodoDeleted);
       socket.off("todos:deleted_all", handleTodosDeletedAll);
+      
+      socket.off("chat:message", handleNewMessage);
+      socket.off("chat:new_conversation", handleNewConversation);
+      socket.off("shoutbox:message", handleShoutboxMessage);
     };
   }, [accessToken, user, queryClient]);
 

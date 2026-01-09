@@ -49,6 +49,15 @@ export const API_ENDPOINTS = {
     BASE: "/todos",
     BY_ID: (id: string) => `/todos/${id}`,
   },
+  // Chat endpoints
+  CHAT: {
+    CONVERSATIONS: "/chat/conversations",
+    CONVERSATION_BY_ID: (id: string) => `/chat/conversations/${id}`,
+    MESSAGES: (conversationId: string) => `/chat/conversations/${conversationId}/messages`,
+    MARK_READ: (conversationId: string) => `/chat/conversations/${conversationId}/read`,
+    DELETE_MESSAGE: (id: string) => `/chat/messages/${id}`,
+    UNREAD: "/chat/unread",
+  },
   // Stats endpoint
   STATS: "/stats",
 } as const;

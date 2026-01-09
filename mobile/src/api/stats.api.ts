@@ -22,7 +22,7 @@ export const statsApi = {
             }
             
             return response.data.data;
-        } catch (error: any) {
+        } catch (_error: any) {
             return {} as ServiceStats;
         }
     },

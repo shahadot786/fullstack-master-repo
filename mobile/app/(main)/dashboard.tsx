@@ -41,9 +41,9 @@ export default function DashboardScreen() {
                         {(error as any)?.message || 'Unable to connect to server. Please check your connection.'}
                     </Text>
                     <YStack marginTop="$4">
-                        <Button 
+                        <Button
                             title="Try Again"
-                            onPress={() => refetch()} 
+                            onPress={() => refetch()}
                         />
                     </YStack>
                 </YStack>
@@ -83,7 +83,7 @@ export default function DashboardScreen() {
                             Welcome back, {user?.name?.split(' ')[0] || 'User'}! 👋
                         </Text>
                         <Text color={secondaryTextColor} fontSize="$4">
-                            Here's an overview of your services
+                            Here&apos;s an overview of your services
                         </Text>
                     </YStack>
 

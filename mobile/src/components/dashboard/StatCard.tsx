@@ -3,18 +3,18 @@ import { Pressable } from 'react-native';
 import { YStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '@/hooks/useTheme';
+
 
 interface StatCardProps {
     title: string;
     value: number | string;
     icon: keyof typeof Ionicons.glyphMap;
-    gradientColors: string[];
+    gradientColors: [string, string, ...string[]];
     onPress?: () => void;
 }
 
 export function StatCard({ title, value, icon, gradientColors, onPress }: StatCardProps) {
-    const { isDark } = useTheme();
+
 
     return (
         <Pressable
