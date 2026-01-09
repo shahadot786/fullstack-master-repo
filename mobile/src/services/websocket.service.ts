@@ -43,7 +43,7 @@ export const initializeWebSocket = (token: string): Socket => {
   });
 
   socket.on("connect_error", (error: Error) => {
-    console.error("🔌 [SocketService] Connection Error:", error.message, error);
+    console.log("🔌 [SocketService] Connection Error:", error.message, error);
   });
 
   return socket;

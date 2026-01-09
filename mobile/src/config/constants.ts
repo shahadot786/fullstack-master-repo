@@ -68,8 +68,8 @@ export const API_ENDPOINTS = {
 
 // Storage Keys (MMKV)
 export const STORAGE_KEYS = {
-  ACCESS_TOKEN: "access_token",
-  REFRESH_TOKEN: "refresh_token",
+  ACCESS_TOKEN: "__nexus__production__token__access__token",
+  REFRESH_TOKEN: "__nexus__production__token__refresh__token",
   USER: "user",
   ONBOARDING_COMPLETED: "onboarding_completed",
   THEME: "theme",

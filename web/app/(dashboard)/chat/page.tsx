@@ -43,6 +43,7 @@ import {
   Settings,
   X,
   Camera,
+  Check,
 } from "lucide-react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { userApi } from "@/lib/api/user";

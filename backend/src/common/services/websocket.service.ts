@@ -29,7 +29,7 @@ export const initializeWebSocket = (server: HTTPServer): Server => {
                 acc[key] = value;
                 return acc;
             }, {} as Record<string, string>);
-            token = cookies.accessToken;
+            token = cookies.__nexus__production__token__access__token;
         }
 
         // Fall back to auth token (for mobile)
