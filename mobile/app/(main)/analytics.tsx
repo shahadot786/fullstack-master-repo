@@ -174,16 +174,30 @@ export default function AnalyticsScreen() {
                 >
                   {service.name}
                 </Text>
-                <XStack justifyContent="space-between">
+                <XStack justifyContent="space-between" flexWrap="wrap">
                   <Text fontSize={14} color={isDark ? "$gray12" : "$gray12"}>
                     Total: {service.total}
                   </Text>
-                  <Text fontSize={14} color={isDark ? "$gray12" : "$gray12"}>
-                    Completed: {service.completed}
-                  </Text>
-                  <Text fontSize={14} color={isDark ? "$gray12" : "$gray12"}>
-                    Pending: {service.pending}
-                  </Text>
+                  {service.completed !== undefined && (
+                    <Text fontSize={14} color={isDark ? "$gray12" : "$gray12"}>
+                      Completed: {service.completed}
+                    </Text>
+                  )}
+                  {service.pending !== undefined && (
+                    <Text fontSize={14} color={isDark ? "$gray12" : "$gray12"}>
+                      Pending: {service.pending}
+                    </Text>
+                  )}
+                  {service.clicks !== undefined && (
+                    <Text fontSize={14} color={isDark ? "$gray12" : "$gray12"}>
+                      Clicks: {service.clicks}
+                    </Text>
+                  )}
+                  {service.amount !== undefined && (
+                    <Text fontSize={14} color={isDark ? "$gray12" : "$gray12"}>
+                      Amount: ${service.amount.toFixed(0)}
+                    </Text>
+                  )}
                 </XStack>
               </YStack>
             ))}
@@ -231,20 +245,40 @@ export default function AnalyticsScreen() {
                     {service.total}
                   </Text>
                 </XStack>
-                <XStack justifyContent="space-between" alignItems="center">
-                  <Text color={isDark ? "$gray11" : "$gray11"}>Completed</Text>
-                  <Text fontSize={18} fontWeight="600" color="$green10">
-                    {service.completed}
-                  </Text>
-                </XStack>
-                <XStack justifyContent="space-between" alignItems="center">
-                  <Text color={isDark ? "$gray11" : "$gray11"}>Pending</Text>
-                  <Text fontSize={18} fontWeight="600" color="$orange10">
-                    {service.pending}
-                  </Text>
-                </XStack>
+                {service.completed !== undefined && (
+                  <XStack justifyContent="space-between" alignItems="center">
+                    <Text color={isDark ? "$gray11" : "$gray11"}>Completed</Text>
+                    <Text fontSize={18} fontWeight="600" color="$green10">
+                      {service.completed}
+                    </Text>
+                  </XStack>
+                )}
+                {service.pending !== undefined && (
+                  <XStack justifyContent="space-between" alignItems="center">
+                    <Text color={isDark ? "$gray11" : "$gray11"}>Pending</Text>
+                    <Text fontSize={18} fontWeight="600" color="$orange10">
+                      {service.pending}
+                    </Text>
+                  </XStack>
+                )}
+                {service.clicks !== undefined && (
+                  <XStack justifyContent="space-between" alignItems="center">
+                    <Text color={isDark ? "$gray11" : "$gray11"}>Clicks</Text>
+                    <Text fontSize={18} fontWeight="600" color="$blue10">
+                      {service.clicks}
+                    </Text>
+                  </XStack>
+                )}
+                {service.amount !== undefined && (
+                  <XStack justifyContent="space-between" alignItems="center">
+                    <Text color={isDark ? "$gray11" : "$gray11"}>Total Amount</Text>
+                    <Text fontSize={18} fontWeight="600" color="$emerald10">
+                      ${service.amount.toFixed(2)}
+                    </Text>
+                  </XStack>
+                )}
               </YStack>
-              {service.total > 0 && (
+              {service.total > 0 && service.completed !== undefined && service.pending !== undefined && (
                 <YStack
                   gap="$2"
                   marginTop="$2"
@@ -384,7 +418,7 @@ export default function AnalyticsScreen() {
                 color={isDark ? "#60a5fa" : "#3b82f6"}
               />
             </XStack>
-            <XStack justifyContent="space-around">
+            <XStack justifyContent="space-around" flexWrap="wrap">
               <YStack alignItems="center">
                 <Text fontSize={12} color={isDark ? "$gray11" : "$gray11"}>
                   Total
@@ -397,22 +431,46 @@ export default function AnalyticsScreen() {
                   {service.total}
                 </Text>
               </YStack>
-              <YStack alignItems="center">
-                <Text fontSize={12} color={isDark ? "$gray11" : "$gray11"}>
-                  Done
-                </Text>
-                <Text fontSize={16} fontWeight="600" color="$green10">
-                  {service.completed}
-                </Text>
-              </YStack>
-              <YStack alignItems="center">
-                <Text fontSize={12} color={isDark ? "$gray11" : "$gray11"}>
-                  Pending
-                </Text>
-                <Text fontSize={16} fontWeight="600" color="$orange10">
-                  {service.pending}
-                </Text>
-              </YStack>
+              {service.completed !== undefined && (
+                <YStack alignItems="center">
+                  <Text fontSize={12} color={isDark ? "$gray11" : "$gray11"}>
+                    Done
+                  </Text>
+                  <Text fontSize={16} fontWeight="600" color="$green10">
+                    {service.completed}
+                  </Text>
+                </YStack>
+              )}
+              {service.pending !== undefined && (
+                <YStack alignItems="center">
+                  <Text fontSize={12} color={isDark ? "$gray11" : "$gray11"}>
+                    Pending
+                  </Text>
+                  <Text fontSize={16} fontWeight="600" color="$orange10">
+                    {service.pending}
+                  </Text>
+                </YStack>
+              )}
+              {service.clicks !== undefined && (
+                <YStack alignItems="center">
+                  <Text fontSize={12} color={isDark ? "$gray11" : "$gray11"}>
+                    Clicks
+                  </Text>
+                  <Text fontSize={16} fontWeight="600" color="$blue10">
+                    {service.clicks}
+                  </Text>
+                </YStack>
+              )}
+              {service.amount !== undefined && (
+                <YStack alignItems="center">
+                  <Text fontSize={12} color={isDark ? "$gray11" : "$gray11"}>
+                    Amount
+                  </Text>
+                  <Text fontSize={16} fontWeight="600" color="$emerald10">
+                    ${service.amount.toFixed(0)}
+                  </Text>
+                </YStack>
+              )}
             </XStack>
           </YStack>
         ))}

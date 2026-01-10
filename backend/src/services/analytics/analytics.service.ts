@@ -1,5 +1,9 @@
 import Todo from "./../todo/todo.model";
 import User from "@services/auth/auth.model";
+import Url from "./../url/url.model";
+import Expense from "./../expense/expense.model";
+import { ShoutboxMessage } from "./../shoutbox/shoutbox.model";
+import { Message } from "./../chat/chat.model";
 
 /**
  * Analytics service
@@ -11,8 +15,10 @@ import User from "@services/auth/auth.model";
 type service = {
   name: string;
   total: number;
-  completed: number;
-  pending: number;
+  completed?: number;
+  pending?: number;
+  clicks?: number;
+  amount?: number;
 };
 
 type user = {
@@ -24,15 +30,17 @@ type user = {
 };
 
 type services = {
-  name:string;
-  total:number;
-  completed:number;
-  pending:number;
-}
+  name: string;
+  total: number;
+  completed?: number;
+  pending?: number;
+  clicks?: number;
+  amount?: number;
+};
 
 export interface AnalyticsStats {
   users: user[];
-  services:services[]
+  services: services[];
 }
 
 export const getAnalyticsStats = async (
@@ -41,25 +49,56 @@ export const getAnalyticsStats = async (
 ): Promise<AnalyticsStats & { pagination: { page: number; limit: number; total: number; totalPages: number } }> => {
   try {
     const users = await User.find().select("-password").sort({ createdAt: -1 });
-    const todos = await Todo.find().sort({ createdAt: -1 });
+    
+    // Fetch all global data
+    const [todos, urls, expenses, shoutboxMessages, chatMessages] = await Promise.all([
+      Todo.find().sort({ createdAt: -1 }),
+      Url.find(),
+      Expense.find(),
+      ShoutboxMessage.find(),
+      Message.find()
+    ]);
 
     // Calculate global service statistics
-    const globalTodoStats = {
-      name: "Todo",
-      total: todos.length,
-      completed: todos.filter((todo) => todo.completed).length,
-      pending: todos.filter((todo) => !todo.completed).length,
-    };
+    const globalServices: services[] = [
+      {
+        name: "Todo",
+        total: todos.length,
+        completed: todos.filter((todo) => todo.completed).length,
+        pending: todos.filter((todo) => !todo.completed).length,
+      },
+      {
+        name: "URL Shortener",
+        total: urls.length,
+        clicks: urls.reduce((sum, url) => sum + (url.clicks || 0), 0),
+      },
+      {
+        name: "Expense",
+        total: expenses.length,
+        amount: expenses.reduce((sum, exp) => sum + (exp.amount || 0), 0),
+      },
+      {
+        name: "Chat",
+        total: chatMessages.length,
+      },
+      {
+        name: "Shoutbox",
+        total: shoutboxMessages.length,
+      }
+    ];
 
     // Map users with their service activities
     const usersWithActivities = users.map((user) => {
-      // Filter todos for this specific user
-      const userTodos = todos.filter(
-        (todo) => todo.userId.toString() === user._id.toString()
-      );
+      const userIdStr = user._id.toString();
+      
+      const userTodos = todos.filter((todo) => todo.userId.toString() === userIdStr);
+      const userUrls = urls.filter((url) => url.userId.toString() === userIdStr);
+      const userExpenses = expenses.filter((exp) => exp.userId.toString() === userIdStr);
+      const userChatMessages = chatMessages.filter((msg) => msg.senderId.toString() === userIdStr);
+      const userShoutboxMessages = shoutboxMessages.filter((msg) => msg.senderId.toString() === userIdStr);
 
       return {
-        id: user._id.toString(),
+        id: userIdStr,
         name: user.name,
         imageUrl: user.profileImage || "",
         createdAt: user.createdAt,
@@ -70,6 +109,24 @@ export const getAnalyticsStats = async (
             completed: userTodos.filter((todo) => todo.completed).length,
             pending: userTodos.filter((todo) => !todo.completed).length,
           },
+          {
+            name: "URL Shortener",
+            total: userUrls.length,
+            clicks: userUrls.reduce((sum, url) => sum + (url.clicks || 0), 0),
+          },
+          {
+            name: "Expense",
+            total: userExpenses.length,
+            amount: userExpenses.reduce((sum, exp) => sum + (exp.amount || 0), 0),
+          },
+          {
+            name: "Chat",
+            total: userChatMessages.length,
+          },
+          {
+            name: "Shoutbox",
+            total: userShoutboxMessages.length,
+          }
         ],
       };
     });
@@ -83,7 +140,7 @@ export const getAnalyticsStats = async (
 
     return {
       users: paginatedUsers,
-      services: [globalTodoStats],
+      services: globalServices,
       pagination: {
         page,
         limit,

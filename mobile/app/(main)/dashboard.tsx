@@ -259,6 +259,17 @@ export default function DashboardScreen() {
                                 { label: 'Clicks', value: stats?.urlShortener?.totalClicks ?? 0 },
                             ]}
                         />
+
+                        {/* Shoutbox */}
+                        <ServiceCard
+                            title="Shoutbox"
+                            icon="megaphone"
+                            iconColor="#f43f5e"
+                            route="/(main)/(chat)/(tabs)/shoutbox"
+                            stats={[
+                                { label: 'Total Shouts', value: stats?.shoutbox?.totalMessages ?? 0 },
+                            ]}
+                        />
                     </YStack>
 
                     {/* Bottom Padding */}

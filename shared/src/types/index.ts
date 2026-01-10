@@ -155,8 +155,10 @@ export interface ErrorResponse {
 export interface AnalyticsService {
     name: string;
     total: number;
-    completed: number;
-    pending: number;
+    completed?: number;
+    pending?: number;
+    clicks?: number;
+    amount?: number;
 }
 
 export interface AnalyticsUser {

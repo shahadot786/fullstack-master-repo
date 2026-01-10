@@ -221,6 +221,17 @@ export default function DashboardPage() {
               { label: "Clicks", value: stats?.urlShortener.totalClicks || 0 },
             ]}
           />
+
+          {/* Shoutbox */}
+          <ServiceStats
+            title="Shoutbox"
+            icon={MessageSquare}
+            iconColor="#f43f5e"
+            href="/chat"
+            stats={[
+              { label: "Total Shouts", value: stats?.shoutbox?.totalMessages || 0 },
+            ]}
+          />
         </div>
       </div>
     </div>

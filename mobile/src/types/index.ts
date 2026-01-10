@@ -236,6 +236,9 @@ export interface ServiceStats {
         totalClicks: number;
         activeLinks: number;
     };
+    shoutbox: {
+        totalMessages: number;
+    };
 }
 
 // ============================================================================
