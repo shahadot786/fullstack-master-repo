@@ -32,7 +32,11 @@ export default function ShoutboxScreen() {
   const shoutboxMessages = useMemo(() => {
     if (!shoutboxData?.pages) return [];
     const all = shoutboxData.pages.flatMap((page) => page.data);
-    return [...all].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return [...all].sort((a, b) => {
+      const dateA = new Date(a.updatedAt || a.createdAt).getTime();
+      const dateB = new Date(b.updatedAt || b.createdAt).getTime();
+      return dateA - dateB;
+    });
   }, [shoutboxData]);
 
   const handleSendShout = async () => {
@@ -59,10 +63,10 @@ export default function ShoutboxScreen() {
       <YStack backgroundColor={isDark ? '#1a1a1a' : '#f8fafc'} padding="$6" borderRadius="$6" marginBottom="$4">
         <Ionicons name="megaphone-outline" size={48} color={isDark ? '#404040' : '#cbd5e1'} />
       </YStack>
-      <Text fontSize="$5" fontWeight="600" color={isDark ? '#fafafa' : '#1e293b'} marginBottom="$2">
+      <Text fontSize={18} fontWeight="600" color={isDark ? '#fafafa' : '#1e293b'} marginBottom="$2">
         Shoutbox is Empty
       </Text>
-      <Text fontSize="$3" color={isDark ? '#737373' : '#64748b'} textAlign="center">
+      <Text fontSize={14} color={isDark ? '#737373' : '#64748b'} textAlign="center">
         Be the first one to say something to everyone!
       </Text>
     </YStack>
@@ -100,25 +104,24 @@ export default function ShoutboxScreen() {
           borderBottomColor={isDark ? '#262626' : '#f3f4f6'}
         >
           <YStack>
-            <Text fontSize="$6" fontWeight="bold" color={isDark ? '#fafafa' : '#111827'}>
+            <Text fontSize={20} fontWeight="bold" color={isDark ? '#fafafa' : '#111827'}>
               Shoutbox
             </Text>
-            <Text fontSize="$2" color="#10b981" fontWeight="600">
+            <Text fontSize={12} color="#10b981" fontWeight="600">
               &bull; Public Room
             </Text>
           </YStack>
         </XStack>
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior="padding"
           style={{ flex: 1 }}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 80}
         >
           <FlatList
             data={shoutboxMessages}
             keyExtractor={(item) => item._id}
             renderItem={renderItem}
-            inverted
             ListEmptyComponent={renderEmpty}
             ListFooterComponent={renderFooter}
             onEndReached={() => hasNextPage && fetchNextPage()}

@@ -70,7 +70,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({ todo }) => {
             <YStack gap="$2">
                 <XStack justifyContent="space-between" alignItems="flex-start">
                     <XStack flex={1} gap="$3" alignItems="flex-start">
-                        <Pressable 
+                        <Pressable
                             onPress={handleToggle}
                             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                             style={{
@@ -93,7 +93,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({ todo }) => {
                             <Pressable onPress={handleEdit}>
                                 <YStack gap="$1">
                                     <Text
-                                        fontSize="$5"
+                                        fontSize={18}
                                         fontWeight="600"
                                         color="$color"
                                         textDecorationLine={todo.completed ? 'line-through' : 'none'}
@@ -103,7 +103,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({ todo }) => {
                                     </Text>
                                     {todo.description && (
                                         <Text
-                                            fontSize="$3"
+                                            fontSize={14}
                                             color="$color"
                                             opacity={0.7}
                                             numberOfLines={2}
@@ -127,7 +127,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({ todo }) => {
                         paddingVertical="$1"
                         borderRadius="$2"
                     >
-                        <Text fontSize="$2" color="white" fontWeight="600">
+                        <Text fontSize={12} color="white" fontWeight="600">
                             {todo.priority.toUpperCase()}
                         </Text>
                     </XStack>
@@ -137,14 +137,14 @@ export const TodoCard: React.FC<TodoCardProps> = ({ todo }) => {
                         paddingVertical="$1"
                         borderRadius="$2"
                     >
-                        <Text fontSize="$2" color="white" fontWeight="600">
+                        <Text fontSize={12} color="white" fontWeight="600">
                             {todo.type}
                         </Text>
                     </XStack>
                     {todo.dueDate && (
                         <XStack gap="$1" alignItems="center">
                             <Ionicons name="calendar-outline" size={14} color="#666" />
-                            <Text fontSize="$2" color="$color" opacity={0.6}>
+                            <Text fontSize={12} color="$color" opacity={0.6}>
                                 {formatDate(todo.dueDate)}
                             </Text>
                         </XStack>

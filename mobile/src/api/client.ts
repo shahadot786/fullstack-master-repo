@@ -111,22 +111,33 @@ apiClient.interceptors.response.use(
 
       const refreshToken = StorageUtils.getString(STORAGE_KEYS.REFRESH_TOKEN);
 
+      console.log('[RefreshToken] Starting token refresh...');
+      console.log('[RefreshToken] Refresh token exists:', !!refreshToken);
+      console.log('[RefreshToken] Token length:', refreshToken?.length || 0);
+
       if (!refreshToken) {
         // No refresh token, logout user
+        console.log('[RefreshToken] No refresh token found, logging out...');
         handleLogout();
         return Promise.reject(formatError(error));
       }
 
       try {
         // Attempt to refresh token
+        console.log('[RefreshToken] Sending refresh request to:', `${API_BASE_URL_PRODUCTION}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`);
         const response = await axios.post(
           `${API_BASE_URL_PRODUCTION}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
           { __nexus__production__token__refresh__token: refreshToken }
         );
 
+        console.log('[RefreshToken] Response received:', JSON.stringify(response.data, null, 2));
+
         // Backend returns: { success: true, data: { tokens: { accessToken, refreshToken } } }
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
           response.data.data.tokens;
+
+        console.log('[RefreshToken] New access token received:', !!newAccessToken);
+        console.log('[RefreshToken] New refresh token received:', !!newRefreshToken);
 
         // Save new tokens to storage and update store state
         useAuthStore.getState().setTokens(newAccessToken, newRefreshToken);
@@ -140,10 +151,12 @@ apiClient.interceptors.response.use(
         processQueue();
         isRefreshing = false;
 
+        console.log('[RefreshToken] Token refresh successful, retrying original request...');
         // Retry original request
         return apiClient(originalRequest);
-      } catch (refreshError) {
+      } catch (refreshError: any) {
         // Refresh failed, logout user
+        console.log('[RefreshToken] Token refresh failed:', refreshError?.response?.data || refreshError?.message);
         processQueue(refreshError);
         isRefreshing = false;
         handleLogout();

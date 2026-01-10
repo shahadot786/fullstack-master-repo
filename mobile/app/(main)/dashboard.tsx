@@ -229,7 +229,7 @@ export default function DashboardScreen() {
                             title="Expense Tracker"
                             icon="wallet"
                             iconColor="#84cc16"
-                            route="/(main)/expense"
+                            route="/(main)/(expense)/(tabs)"
                             stats={[
                                 { label: 'Total', value: `$${stats?.expense?.totalExpenses ?? 0}` },
                                 { label: 'This Month', value: `$${stats?.expense?.thisMonth ?? 0}` },
@@ -257,6 +257,17 @@ export default function DashboardScreen() {
                             stats={[
                                 { label: 'URLs', value: stats?.urlShortener?.totalUrls ?? 0 },
                                 { label: 'Clicks', value: stats?.urlShortener?.totalClicks ?? 0 },
+                            ]}
+                        />
+
+                        {/* Shoutbox */}
+                        <ServiceCard
+                            title="Shoutbox"
+                            icon="megaphone"
+                            iconColor="#f43f5e"
+                            route="/(main)/(chat)/(tabs)/shoutbox"
+                            stats={[
+                                { label: 'Total Shouts', value: stats?.shoutbox?.totalMessages ?? 0 },
                             ]}
                         />
                     </YStack>

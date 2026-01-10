@@ -36,10 +36,10 @@ export function StatCard({ title, value, icon, gradientColors, onPress }: StatCa
             >
                 <YStack gap="$2">
                     <Ionicons name={icon} size={32} color="white" />
-                    <Text color="white" fontSize="$8" fontWeight="700">
+                    <Text color="white" fontSize={28} fontWeight="700">
                         {value}
                     </Text>
-                    <Text color="white" fontSize="$3" opacity={0.9}>
+                    <Text color="white" fontSize={14} opacity={0.9}>
                         {title}
                     </Text>
                 </YStack>

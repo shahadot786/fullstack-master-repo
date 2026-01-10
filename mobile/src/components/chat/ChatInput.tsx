@@ -163,7 +163,7 @@ export function ChatInput({
               <Ionicons name="close" size={16} color="white" />
             </Pressable>
           </YStack>
-          <Text flex={1} color={isDark ? '#a3a3a3' : '#64748b'} fontSize="$2" fontWeight="500">
+          <Text flex={1} color={isDark ? '#a3a3a3' : '#64748b'} fontSize={12} fontWeight="500">
             {isUploading ? 'Uploading to cloud...' : 'Image attachment ready'}
           </Text>
         </XStack>

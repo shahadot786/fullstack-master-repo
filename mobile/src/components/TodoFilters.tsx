@@ -101,7 +101,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
                         borderBottomWidth={1}
                         borderBottomColor={isDark ? '#262626' : '#e5e5e5'}
                     >
-                        <Text fontSize="$6" fontWeight="700" color="$color">
+                        <Text fontSize={20} fontWeight="700" color="$color">
                             Filters
                         </Text>
                         <Pressable onPress={onClose}>
@@ -113,7 +113,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
                         <YStack padding="$4" gap="$5">
                             {/* Status Filter */}
                             <YStack gap="$2">
-                                <Text fontSize="$4" fontWeight="600" color="$color">
+                                <Text fontSize={16} fontWeight="600" color="$color">
                                     Status
                                 </Text>
                                 <XStack gap="$2">
@@ -130,7 +130,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
                                         }}
                                     >
                                         <Text
-                                            fontSize="$3"
+                                            fontSize={14}
                                             fontWeight={filters.completed === undefined ? '600' : '400'}
                                             color={filters.completed === undefined ? '#3b82f6' : '$color'}
                                         >
@@ -150,7 +150,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
                                         }}
                                     >
                                         <Text
-                                            fontSize="$3"
+                                            fontSize={14}
                                             fontWeight={filters.completed === false ? '600' : '400'}
                                             color={filters.completed === false ? '#f59e0b' : '$color'}
                                         >
@@ -170,7 +170,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
                                         }}
                                     >
                                         <Text
-                                            fontSize="$3"
+                                            fontSize={14}
                                             fontWeight={filters.completed === true ? '600' : '400'}
                                             color={filters.completed === true ? '#22c55e' : '$color'}
                                         >
@@ -182,7 +182,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
 
                             {/* Priority Filter */}
                             <YStack gap="$2">
-                                <Text fontSize="$4" fontWeight="600" color="$color">
+                                <Text fontSize={16} fontWeight="600" color="$color">
                                     Priority
                                 </Text>
                                 <XStack gap="$2" flexWrap="wrap">
@@ -199,7 +199,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
                                         }}
                                     >
                                         <Text
-                                            fontSize="$3"
+                                            fontSize={14}
                                             fontWeight={!filters.priority ? '600' : '400'}
                                             color={!filters.priority ? '#3b82f6' : '$color'}
                                         >
@@ -221,7 +221,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
                                             }}
                                         >
                                             <Text
-                                                fontSize="$3"
+                                                fontSize={14}
                                                 fontWeight={filters.priority === option.value ? '600' : '400'}
                                                 color={filters.priority === option.value ? option.color : '$color'}
                                             >
@@ -234,7 +234,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
 
                             {/* Type Filter */}
                             <YStack gap="$2">
-                                <Text fontSize="$4" fontWeight="600" color="$color">
+                                <Text fontSize={16} fontWeight="600" color="$color">
                                     Type
                                 </Text>
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -251,7 +251,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
                                             }}
                                         >
                                             <Text
-                                                fontSize="$3"
+                                                fontSize={14}
                                                 fontWeight={!filters.type ? '600' : '400'}
                                                 color={!filters.type ? '#3b82f6' : '$color'}
                                             >
@@ -272,7 +272,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
                                                 }}
                                             >
                                                 <Text
-                                                    fontSize="$3"
+                                                    fontSize={14}
                                                     fontWeight={filters.type === option.value ? '600' : '400'}
                                                     color={filters.type === option.value ? option.color : '$color'}
                                                 >
@@ -286,7 +286,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
 
                             {/* Date Range Filter */}
                             <YStack gap="$2">
-                                <Text fontSize="$4" fontWeight="600" color="$color">
+                                <Text fontSize={16} fontWeight="600" color="$color">
                                     Due Date Range
                                 </Text>
                                 <YStack gap="$3">
@@ -385,7 +385,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
                                 alignItems: 'center',
                             }}
                         >
-                            <Text fontSize="$4" fontWeight="600" color="$color">
+                            <Text fontSize={16} fontWeight="600" color="$color">
                                 Clear
                             </Text>
                         </Pressable>
@@ -399,7 +399,7 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
                                 alignItems: 'center',
                             }}
                         >
-                            <Text fontSize="$4" fontWeight="600" color="white">
+                            <Text fontSize={16} fontWeight="600" color="white">
                                 Apply
                             </Text>
                         </Pressable>

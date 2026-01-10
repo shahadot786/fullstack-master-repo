@@ -50,7 +50,7 @@ export function ShoutboxBubble({ message, isOwn }: ShoutboxBubbleProps) {
               alignItems="center"
               justifyContent="center"
             >
-              <Text color="white" fontSize="$1" fontWeight="600">
+              <Text color="white" fontSize={11} fontWeight="600">
                 {getInitials(sender.name)}
               </Text>
             </Avatar.Fallback>
@@ -70,13 +70,13 @@ export function ShoutboxBubble({ message, isOwn }: ShoutboxBubbleProps) {
       >
         {/* Sender name */}
         {!isOwn && (
-          <Text fontSize="$1" color={senderNameColor} fontWeight="700" marginBottom="$0.5">
+          <Text fontSize={11} color={senderNameColor} fontWeight="700" marginBottom="$0.5">
             {sender.name}
           </Text>
         )}
 
         {/* Message content */}
-        <Text color={textColor} fontSize="$3.5" lineHeight={20}>{message.content}</Text>
+        <Text color={textColor} fontSize={15} lineHeight={20}>{message.content}</Text>
 
         {/* Time */}
         <XStack
@@ -86,7 +86,7 @@ export function ShoutboxBubble({ message, isOwn }: ShoutboxBubbleProps) {
           justifyContent={isOwn ? 'flex-end' : 'flex-start'}
         >
           <Text
-            fontSize="$1"
+            fontSize={11}
             color={secondaryTextColor}
           >
             {formatTime(message.createdAt)}
