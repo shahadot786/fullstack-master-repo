@@ -42,7 +42,7 @@ jobs:
         if: steps.check_changes.outputs.should_deploy == 'true'
         run: |
           response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}")
-          if [ "$response" -eq 200 ] || [ "$response" -eq 201 ]; then
+          if [ "$response" -eq 200 ] || [ "$response" -eq 201 ] || [ "$response" -eq 202 ]; then
             echo "✅ Deployment triggered successfully (HTTP $response)"
           else
             echo "❌ Deployment trigger failed (HTTP $response)"
