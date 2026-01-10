@@ -110,7 +110,7 @@ export default function MainLayout() {
         }}
       />
       <Drawer.Screen
-        name="chat"
+        name="(chat)"
         options={{
           drawerLabel: "Chat",
           title: "Chat",
@@ -160,7 +160,7 @@ export default function MainLayout() {
         }}
       />
       <Drawer.Screen
-        name="expense"
+        name="(expense)"
         options={{
           drawerLabel: "Expense Tracker",
           title: "Expense Tracker",

@@ -161,24 +161,48 @@ export default function PublicAnalyticsPage() {
                         {service.total}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Completed
-                      </span>
-                      <span className="text-xl font-semibold text-green-600">
-                        {service.completed}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Pending
-                      </span>
-                      <span className="text-xl font-semibold text-amber-600">
-                        {service.pending}
-                      </span>
-                    </div>
+                    {service.completed !== undefined && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Completed
+                        </span>
+                        <span className="text-xl font-semibold text-green-600">
+                          {service.completed}
+                        </span>
+                      </div>
+                    )}
+                    {service.pending !== undefined && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Pending
+                        </span>
+                        <span className="text-xl font-semibold text-amber-600">
+                          {service.pending}
+                        </span>
+                      </div>
+                    )}
+                    {service.clicks !== undefined && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Clicks
+                        </span>
+                        <span className="text-xl font-semibold text-indigo-600">
+                          {service.clicks}
+                        </span>
+                      </div>
+                    )}
+                    {service.amount !== undefined && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600 dark:text-gray-400">
+                          Total Amount
+                        </span>
+                        <span className="text-xl font-semibold text-emerald-600">
+                          ${service.amount.toFixed(2)}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  {service.total > 0 && (
+                  {service.total > 0 && service.completed !== undefined && service.pending !== undefined && (
                     <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-600 dark:text-gray-400">
@@ -195,9 +219,8 @@ export default function PublicAnalyticsPage() {
                         <div
                           className="bg-linear-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all"
                           style={{
-                            width: `${
-                              (service.completed / service.total) * 100
-                            }%`,
+                            width: `${(service.completed / service.total) * 100
+                              }%`,
                           }}
                         ></div>
                       </div>
@@ -280,22 +303,46 @@ export default function PublicAnalyticsPage() {
                               {service.total}
                             </div>
                           </div>
-                          <div className="text-center">
-                            <div className="text-gray-600 dark:text-gray-400">
-                              Done
+                          {service.completed !== undefined && (
+                            <div className="text-center">
+                              <div className="text-gray-600 dark:text-gray-400">
+                                Done
+                              </div>
+                              <div className="font-semibold text-green-600">
+                                {service.completed}
+                              </div>
                             </div>
-                            <div className="font-semibold text-green-600">
-                              {service.completed}
+                          )}
+                          {service.pending !== undefined && (
+                            <div className="text-center">
+                              <div className="text-gray-600 dark:text-gray-400">
+                                Pending
+                              </div>
+                              <div className="font-semibold text-amber-600">
+                                {service.pending}
+                              </div>
                             </div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-gray-600 dark:text-gray-400">
-                              Pending
+                          )}
+                          {service.clicks !== undefined && (
+                            <div className="text-center">
+                              <div className="text-gray-600 dark:text-gray-400">
+                                Clicks
+                              </div>
+                              <div className="font-semibold text-indigo-600">
+                                {service.clicks}
+                              </div>
                             </div>
-                            <div className="font-semibold text-amber-600">
-                              {service.pending}
+                          )}
+                          {service.amount !== undefined && (
+                            <div className="text-center">
+                              <div className="text-gray-600 dark:text-gray-400">
+                                Amount
+                              </div>
+                              <div className="font-semibold text-emerald-600">
+                                ${service.amount.toFixed(0)}
+                              </div>
                             </div>
-                          </div>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -324,11 +371,10 @@ export default function PublicAnalyticsPage() {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`w-10 h-10 rounded-lg font-medium transition-colors ${
-                        currentPage === page
-                          ? "bg-linear-to-r from-blue-600 to-purple-600 text-white"
-                          : "bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
-                      }`}
+                      className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === page
+                        ? "bg-linear-to-r from-blue-600 to-purple-600 text-white"
+                        : "bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        }`}
                     >
                       {page}
                     </button>

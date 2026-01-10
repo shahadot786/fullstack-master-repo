@@ -66,7 +66,7 @@ export const getAccessTokenFromCookie = (): string | null => {
   const cookies = document.cookie.split(';');
   for (const cookie of cookies) {
     const [name, value] = cookie.trim().split('=');
-    if (name === 'accessToken') {
+    if (name === '__nexus__production__token__access__token') {
       return decodeURIComponent(value);
     }
   }

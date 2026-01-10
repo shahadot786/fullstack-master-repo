@@ -51,6 +51,38 @@ router.post("/", validate(createTodoValidation), controller.createTodo);
 
 /**
  * @swagger
+ * /api/todos/export:
+ *   get:
+ *     summary: Export todos as CSV
+ *     tags: [Todos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: completed
+ *         schema:
+ *           type: boolean
+ *       - in: query
+ *         name: priority
+ *         schema:
+ *           type: string
+ *           enum: [low, medium, high]
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: CSV file downloaded successfully
+ *         content:
+ *           text/csv:
+ *             schema:
+ *               type: string
+ */
+router.get("/export", validate(queryTodosValidation), controller.exportTodos);
+
+/**
+ * @swagger
  * /api/todos:
  *   get:
  *     summary: Get all todos for authenticated user

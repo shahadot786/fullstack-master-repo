@@ -25,13 +25,13 @@ export const setAuthCookies = (res: Response, accessToken: string, refreshToken:
     };
 
     // Access token - short-lived (10 minutes)
-    res.cookie('accessToken', accessToken, {
+    res.cookie('__nexus__production__token__access__token', accessToken, {
         ...cookieOptions,
         maxAge: 10 * 60 * 1000, // 10 minutes
     });
 
     // Refresh token - long-lived (30 days)
-    res.cookie('refreshToken', refreshToken, {
+    res.cookie('__nexus__production__token__refresh__token', refreshToken, {
         ...cookieOptions,
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
@@ -51,6 +51,6 @@ export const clearAuthCookies = (res: Response): void => {
         ...(cookieDomain && { domain: cookieDomain }),
     };
 
-    res.clearCookie('accessToken', cookieOptions);
-    res.clearCookie('refreshToken', cookieOptions);
+    res.clearCookie('__nexus__production__token__access__token', cookieOptions);
+    res.clearCookie('__nexus__production__token__refresh__token', cookieOptions);
 };

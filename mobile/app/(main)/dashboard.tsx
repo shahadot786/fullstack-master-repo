@@ -41,9 +41,9 @@ export default function DashboardScreen() {
                         {(error as any)?.message || 'Unable to connect to server. Please check your connection.'}
                     </Text>
                     <YStack marginTop="$4">
-                        <Button 
+                        <Button
                             title="Try Again"
-                            onPress={() => refetch()} 
+                            onPress={() => refetch()}
                         />
                     </YStack>
                 </YStack>
@@ -83,7 +83,7 @@ export default function DashboardScreen() {
                             Welcome back, {user?.name?.split(' ')[0] || 'User'}! 👋
                         </Text>
                         <Text color={secondaryTextColor} fontSize="$4">
-                            Here's an overview of your services
+                            Here&apos;s an overview of your services
                         </Text>
                     </YStack>
 
@@ -169,7 +169,7 @@ export default function DashboardScreen() {
                             title="Chat"
                             icon="chatbubbles"
                             iconColor="#8b5cf6"
-                            route="/(main)/chat"
+                            route="/(main)/(chat)/(tabs)"
                             stats={[
                                 { label: 'Conversations', value: stats?.chat?.totalConversations ?? 0 },
                                 { label: 'Unread', value: stats?.chat?.unreadMessages ?? 0 },
@@ -229,7 +229,7 @@ export default function DashboardScreen() {
                             title="Expense Tracker"
                             icon="wallet"
                             iconColor="#84cc16"
-                            route="/(main)/expense"
+                            route="/(main)/(expense)/(tabs)"
                             stats={[
                                 { label: 'Total', value: `$${stats?.expense?.totalExpenses ?? 0}` },
                                 { label: 'This Month', value: `$${stats?.expense?.thisMonth ?? 0}` },
@@ -257,6 +257,17 @@ export default function DashboardScreen() {
                             stats={[
                                 { label: 'URLs', value: stats?.urlShortener?.totalUrls ?? 0 },
                                 { label: 'Clicks', value: stats?.urlShortener?.totalClicks ?? 0 },
+                            ]}
+                        />
+
+                        {/* Shoutbox */}
+                        <ServiceCard
+                            title="Shoutbox"
+                            icon="megaphone"
+                            iconColor="#f43f5e"
+                            route="/(main)/(chat)/(tabs)/shoutbox"
+                            stats={[
+                                { label: 'Total Shouts', value: stats?.shoutbox?.totalMessages ?? 0 },
                             ]}
                         />
                     </YStack>

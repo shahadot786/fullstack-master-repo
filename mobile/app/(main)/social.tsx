@@ -18,7 +18,7 @@ export default function SocialScreen() {
                 >
                     <Ionicons name="people" size={40} color="white" />
                 </YStack>
-                <Text color="$color" fontSize="$6" fontWeight="600" marginTop="$2">
+                <Text color="$color" fontSize={20} fontWeight="600" marginTop="$2">
                     Social
                 </Text>
                 <Text color="$color" opacity={0.5} textAlign="center" paddingHorizontal="$6">

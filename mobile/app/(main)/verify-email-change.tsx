@@ -165,7 +165,7 @@ export default function VerifyEmailChangeScreen() {
                         {/* Resend Code */}
                         <YStack alignItems="center">
                             <Text fontSize="$3" color={secondaryTextColor} marginBottom="$2">
-                                Didn't receive the code?
+                                Didn&apos;t receive the code?
                             </Text>
                             <Button
                                 title={isResending ? 'Resending...' : 'Resend Code'}

@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nexus Web Application
 
-## Getting Started
+A modern, high-performance web dashboard built with Next.js 15, Tailwind CSS, and TanStack Query.
 
-First, run the development server:
+## ✨ Features
+
+- **Auth System** - Full authentication flow with secure cookie-based session management.
+- **Real-time Chat** - Private messaging and global Shoutbox with Socket.IO.
+- **Expense Dashboard** - Visualize spending with custom categories and analytics.
+- **Weather** - Dynamic weather dashboard with location-based data.
+- **Todo Management** - Advanced todo list with priority levels and filtering.
+- **URL Shortener** - Management dashboard for shortening and tracking links.
+- **Analytics** - Data-driven insights into your productivity and usage.
+- **Responsive Design** - Optimized for all screen sizes with dark/light mode support.
+
+## 🚀 Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS + Shadcn UI
+- **State Management**: Zustand (Client) + TanStack Query (Server)
+- **Forms**: React Hook Form + Zod
+- **Real-time**: Socket.IO Client
+- **Authentication**: JWT via HTTP-only Cookies
+
+## 🛠️ Getting Started
 
 ```bash
-npm run dev
-# or
+# Install dependencies
+yarn install
+
+# Start development server
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🏗️ Project Structure
 
-## Learn More
+- `app/` - Next.js App Router and page definitions.
+- `components/` - Shared UI and feature-specific components.
+- `lib/` - API clients, state stores, and utility functions.
+- `hooks/` - Custom React hooks for data fetching and UI logic.
+- `types/` - Shared TypeScript interfaces.
 
-To learn more about Next.js, take a look at the following resources:
+## 📖 Documentation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For detailed information on the full stack structure, see the [main README](../README.md).

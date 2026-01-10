@@ -54,9 +54,26 @@ yarn android
 - ✅ Create, read, update, delete todos
 - ✅ Priority levels (Low, Medium, High)
 - ✅ Filter by status (All, Active, Completed)
-- ✅ Toggle completion status
-- ✅ Pull-to-refresh
-- ✅ Empty states
+- ✅ Multi-select and bulk actions
+- ✅ CSV export functionality
+
+### Real-time Chat & Shoutbox
+- ✅ Private and group conversations
+- ✅ Global Shoutbox for all users
+- ✅ Real-time message indicators
+- ✅ Image sharing support
+- ✅ Emoji picker integration
+
+### Expense Tracker
+- ✅ Daily expense logging
+- ✅ Custom category management with icons/colors
+- ✅ Visual spending analytics
+- ✅ Monthly budget tracking
+
+### Weather & Analytics
+- ✅ Live weather updates
+- ✅ Global activity analytics
+- ✅ URL Shortener management dashboard
 
 ### Settings
 - ✅ User profile display
@@ -98,14 +115,14 @@ mobile/
 Create a `.env` file:
 
 ```env
-API_BASE_URL=http://localhost:8000/api
+API_BASE_URL_PRODUCTION=http://localhost:8000/api
 APP_NAME=Nexus
 ```
 
-**Important**: For physical device testing, update `API_BASE_URL` to your machine's IP address:
+**Important**: For physical device testing, update `API_BASE_URL_PRODUCTION` to your machine's IP address:
 
 ```env
-API_BASE_URL=http://192.168.1.x:8000/api
+API_BASE_URL_PRODUCTION=http://192.168.1.x:8000/api
 ```
 
 ### Font Files
@@ -180,7 +197,7 @@ The app connects to the following backend endpoints:
 ## 🐛 Troubleshooting
 
 ### Cannot connect to API
-Update `API_BASE_URL` in `.env` to your machine's IP address.
+Update `API_BASE_URL_PRODUCTION` in `.env` to your machine's IP address.
 
 ### Font loading error
 Add font files to `assets/fonts/` or disable font loading in `app/_layout.tsx`.

@@ -22,14 +22,14 @@ const services = [
   { name: "Dashboard", href: "/", icon: LayoutGrid, active: true },
   { name: "Todo", href: "/todos", icon: CheckSquare, active: true },
   { name: "Notes", href: "/notes", icon: FileText, active: false },
-  { name: "Chat", href: "/chat", icon: MessageSquare, active: false },
+  { name: "Chat", href: "/chat", icon: MessageSquare, active: true },
   { name: "AI Q&A", href: "/aiqa", icon: Brain, active: false },
   { name: "Delivery", href: "/delivery", icon: Truck, active: false },
-  { name: "Expense", href: "/expense", icon: DollarSign, active: false },
+  { name: "Expense", href: "/expense", icon: DollarSign, active: true },
   { name: "Shop", href: "/shop", icon: ShoppingBag, active: false },
   { name: "Social", href: "/social", icon: Users, active: false },
-  { name: "URL Shortener", href: "/urlshort", icon: LinkIcon, active: false },
-  { name: "Weather", href: "/weather", icon: Cloud, active: false },
+  { name: "URL Shortener", href: "/urlshort", icon: LinkIcon, active: true },
+  { name: "Weather", href: "/weather", icon: Cloud, active: true },
 ];
 
 export function Sidebar({

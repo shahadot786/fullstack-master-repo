@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { View } from 'react-native';
 import { Stack } from 'expo-router';
 import { TamaguiProvider, Theme } from 'tamagui';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -10,6 +11,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useAppStore } from '@/store/appStore';
 import { useTheme } from '@/hooks/useTheme';
 import { queryClient } from '@/utils/client';
+import { InAppNotificationBanner } from '@/components/notifications/InAppNotificationBanner';
 
 // Keep splash screen visible while loading
 SplashScreen.preventAutoHideAsync();
@@ -46,12 +48,15 @@ export default function RootLayout() {
       <TamaguiProvider config={tamaguiConfig} defaultTheme={theme}>
         <Theme name={theme}>
           <QueryClientProvider client={queryClient}>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="onboarding" />
-              <Stack.Screen name="(auth)" />
-              <Stack.Screen name="(main)" />
-            </Stack>
+            <View style={{ flex: 1 }}>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="onboarding" />
+                <Stack.Screen name="(auth)" />
+                <Stack.Screen name="(main)" />
+              </Stack>
+              <InAppNotificationBanner />
+            </View>
           </QueryClientProvider>
         </Theme>
       </TamaguiProvider>

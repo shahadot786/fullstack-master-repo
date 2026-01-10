@@ -68,8 +68,17 @@ export const login = asyncHandler(
 
 export const refreshToken = asyncHandler(
     async (req: AuthRequest, res: Response) => {
+        // Debug logging
+        console.log('[RefreshToken Backend] Request received');
+        console.log('[RefreshToken Backend] Cookies:', req.cookies);
+        console.log('[RefreshToken Backend] Body:', req.body);
+        console.log('[RefreshToken Backend] Cookie token exists:', !!req.cookies?.__nexus__production__token__refresh__token);
+        console.log('[RefreshToken Backend] Body token exists:', !!req.body.__nexus__production__token__refresh__token);
+
         // Support both cookie-based (web) and body-based (mobile) refresh tokens
-        const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+        const refreshToken = req.cookies?.__nexus__production__token__refresh__token || req.body.__nexus__production__token__refresh__token;
+
+        console.log('[RefreshToken Backend] Using token:', refreshToken ? 'found' : 'not found');
 
         if (!refreshToken) {
             throw new UnauthorizedError("Refresh token not provided");
@@ -80,6 +89,8 @@ export const refreshToken = asyncHandler(
 
         // Set new cookies (for web clients)
         setAuthCookies(res, accessToken, newRefreshToken);
+
+        console.log('[RefreshToken Backend] Token refresh successful, returning new tokens');
 
         sendSuccess(res, {
             tokens: { accessToken, refreshToken: newRefreshToken },

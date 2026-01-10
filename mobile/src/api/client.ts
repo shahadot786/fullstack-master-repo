@@ -4,13 +4,14 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 import {
-  API_BASE_URL,
+  API_BASE_URL_PRODUCTION,
   API_ENDPOINTS,
   STORAGE_KEYS,
   APP_CONFIG,
 } from "@/config/constants";
 import { StorageUtils } from "@/utils/storage";
 import { ApiError } from "@/types";
+import { useAuthStore } from "@/store/authStore";
 
 /**
  * API Client
@@ -23,7 +24,7 @@ import { ApiError } from "@/types";
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL_PRODUCTION,
   timeout: APP_CONFIG.REQUEST_TIMEOUT,
   headers: {
     "Content-Type": "application/json",
@@ -110,25 +111,36 @@ apiClient.interceptors.response.use(
 
       const refreshToken = StorageUtils.getString(STORAGE_KEYS.REFRESH_TOKEN);
 
+      console.log('[RefreshToken] Starting token refresh...');
+      console.log('[RefreshToken] Refresh token exists:', !!refreshToken);
+      console.log('[RefreshToken] Token length:', refreshToken?.length || 0);
+
       if (!refreshToken) {
         // No refresh token, logout user
+        console.log('[RefreshToken] No refresh token found, logging out...');
         handleLogout();
         return Promise.reject(formatError(error));
       }
 
       try {
         // Attempt to refresh token
+        console.log('[RefreshToken] Sending refresh request to:', `${API_BASE_URL_PRODUCTION}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`);
         const response = await axios.post(
-          `${API_BASE_URL}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
-          { refreshToken }
+          `${API_BASE_URL_PRODUCTION}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`,
+          { __nexus__production__token__refresh__token: refreshToken }
         );
 
-        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-          response.data;
+        console.log('[RefreshToken] Response received:', JSON.stringify(response.data, null, 2));
 
-        // Save new tokens
-        StorageUtils.setString(STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
-        StorageUtils.setString(STORAGE_KEYS.REFRESH_TOKEN, newRefreshToken);
+        // Backend returns: { success: true, data: { tokens: { accessToken, refreshToken } } }
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+          response.data.data.tokens;
+
+        console.log('[RefreshToken] New access token received:', !!newAccessToken);
+        console.log('[RefreshToken] New refresh token received:', !!newRefreshToken);
+
+        // Save new tokens to storage and update store state
+        useAuthStore.getState().setTokens(newAccessToken, newRefreshToken);
 
         // Update authorization header
         if (originalRequest.headers) {
@@ -139,10 +151,12 @@ apiClient.interceptors.response.use(
         processQueue();
         isRefreshing = false;
 
+        console.log('[RefreshToken] Token refresh successful, retrying original request...');
         // Retry original request
         return apiClient(originalRequest);
-      } catch (refreshError) {
+      } catch (refreshError: any) {
         // Refresh failed, logout user
+        console.log('[RefreshToken] Token refresh failed:', refreshError?.response?.data || refreshError?.message);
         processQueue(refreshError);
         isRefreshing = false;
         handleLogout();
@@ -167,6 +181,7 @@ const formatError = (error: AxiosError): ApiError => {
       errors: data?.errors,
     };
   } else if (error.request) {
+    console.log(JSON.stringify(error, null, 4));
     // Request made but no response
     return {
       message: "Network error. Please check your connection.",
@@ -184,10 +199,7 @@ const formatError = (error: AxiosError): ApiError => {
  * Handle logout (clear storage)
  */
 const handleLogout = () => {
-  StorageUtils.remove(STORAGE_KEYS.ACCESS_TOKEN);
-  StorageUtils.remove(STORAGE_KEYS.REFRESH_TOKEN);
-  StorageUtils.remove(STORAGE_KEYS.USER);
-
+  useAuthStore.getState().logout();
   // Note: Navigation to login screen will be handled by the app's auth state
 };
 

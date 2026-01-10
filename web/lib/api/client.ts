@@ -71,6 +71,32 @@ apiClient.interceptors.request.use(
 
 
 /**
+ * Format error to consistent structure
+ */
+const formatError = (error: AxiosError): any => {
+  if (error.response) {
+    // Server responded with error
+    const data = error.response.data as any;
+    return {
+      message: data?.message || "An error occurred",
+      statusCode: error.response.status,
+      errors: data?.errors,
+    };
+  } else if (error.request) {
+    // Request made but no response
+    return {
+      message: "Network error. Please check your connection.",
+      statusCode: 0,
+    };
+  } else {
+    // Something else happened
+    return {
+      message: error.message || "An unexpected error occurred",
+    };
+  }
+};
+
+/**
  * Response Interceptor
  * Handles 401 errors and auto-refreshes tokens
  */
@@ -92,7 +118,7 @@ apiClient.interceptors.response.use(
       );
 
       if (isAuthEndpoint && !isRefreshEndpoint) {
-        return Promise.reject(error);
+        return Promise.reject(formatError(error));
       }
 
       if (isRefreshing) {
@@ -122,7 +148,7 @@ apiClient.interceptors.response.use(
 
         // Retry original request with new access token (set as cookie)
         return apiClient(originalRequest);
-      } catch (refreshError) {
+      } catch (refreshError: any) {
         // Refresh failed, clear queue and redirect to login
         processQueue(refreshError);
         isRefreshing = false;
@@ -132,11 +158,11 @@ apiClient.interceptors.response.use(
           window.location.href = "/login";
         }
 
-        return Promise.reject(refreshError);
+        return Promise.reject(formatError(refreshError));
       }
     }
 
-    return Promise.reject(error);
+    return Promise.reject(formatError(error));
   }
 );
 

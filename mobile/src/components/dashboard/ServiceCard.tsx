@@ -48,7 +48,7 @@ export function ServiceCard({ title, icon, stats, route, iconColor }: ServiceCar
                     >
                         <Ionicons name={icon} size={24} color={iconColor} />
                     </YStack>
-                    <Text color={textColor} fontSize="$5" fontWeight="600" flex={1}>
+                    <Text color={textColor} fontSize={18} fontWeight="600" flex={1}>
                         {title}
                     </Text>
                     <Ionicons name="chevron-forward" size={20} color={secondaryTextColor} />
@@ -57,10 +57,10 @@ export function ServiceCard({ title, icon, stats, route, iconColor }: ServiceCar
                 <XStack gap="$4" flexWrap="wrap">
                     {stats.map((stat, index) => (
                         <YStack key={index} flex={1} minWidth={80}>
-                            <Text color={textColor} fontSize="$6" fontWeight="700">
+                            <Text color={textColor} fontSize={20} fontWeight="700">
                                 {stat.value}
                             </Text>
-                            <Text color={secondaryTextColor} fontSize="$2">
+                            <Text color={secondaryTextColor} fontSize={12}>
                                 {stat.label}
                             </Text>
                         </YStack>

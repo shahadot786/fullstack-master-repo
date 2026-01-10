@@ -30,7 +30,7 @@ const StyledInput = styled(TamaguiInput, {
   borderRadius: "$4",
   paddingVertical: "$0",
   paddingHorizontal: "$4",
-  fontSize: "$4",
+  fontSize: 16,
   backgroundColor: "$background",
   color: "$color",
 
@@ -69,7 +69,7 @@ export const Input: React.FC<InputProps> = ({
 
   return (
     <YStack gap="$2" width="100%">
-      <Label fontSize="$4" fontWeight="500" color="$color">
+      <Label fontSize={16} fontWeight="500" color="$color">
         {label}
       </Label>
       <XStack position="relative" width="100%">
@@ -107,7 +107,7 @@ export const Input: React.FC<InputProps> = ({
         )}
       </XStack>
       {error && (
-        <Text fontSize="$3" color="$error">
+        <Text fontSize={14} color="$error">
           {error}
         </Text>
       )}

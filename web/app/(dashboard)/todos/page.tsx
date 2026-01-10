@@ -17,7 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Wifi, WifiOff, X } from "lucide-react";
+import { Plus, Wifi, WifiOff, X, Download } from "lucide-react";
+import { todosApi } from "@/lib/api/todos";
 
 export default function TodosPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -29,6 +30,7 @@ export default function TodosPage() {
   const [dueDateToFilter, setDueDateToFilter] = useState<string>("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [isExporting, setIsExporting] = useState(false);
 
   const { data, isLoading, error } = useGetTodos({
     page,
@@ -89,6 +91,37 @@ export default function TodosPage() {
     setIsFormOpen(true);
   }, []);
 
+  const handleExport = useCallback(async () => {
+    try {
+      setIsExporting(true);
+      const blob = await todosApi.exportTodos({
+        completed: completedFilter === "all" ? undefined : completedFilter === "completed",
+        priority: priorityFilter === "all" ? undefined : (priorityFilter as TodoPriority),
+        type: typeFilter === "all" ? undefined : (typeFilter as TodoType),
+        dueDateFrom: dueDateFromFilter || undefined,
+        dueDateTo: dueDateToFilter || undefined,
+      });
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      const date = new Date().toISOString().split('T')[0];
+      link.download = `todos-${date}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      // Export successful - file downloaded
+    } catch (error) {
+      console.error("Export error:", error);
+      alert("Failed to export todos. Please try again.");
+    } finally {
+      setIsExporting(false);
+    }
+  }, [completedFilter, priorityFilter, typeFilter, dueDateFromFilter, dueDateToFilter]);
+
   if (isLoading) {
     return <LoaderModal text="Loading Todos..." />;
   }
@@ -138,10 +171,21 @@ export default function TodosPage() {
               </div>
             </div>
           </div>
-          <Button onClick={handleCreateNew} className="w-full sm:w-auto">
-            <Plus className="w-4 h-4 mr-2" />
-            New Todo
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Button
+              onClick={handleExport}
+              variant="outline"
+              disabled={isExporting || todos.length === 0}
+              className="w-full sm:w-auto"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              {isExporting ? "Exporting..." : "Export CSV"}
+            </Button>
+            <Button onClick={handleCreateNew} className="w-full sm:w-auto">
+              <Plus className="w-4 h-4 mr-2" />
+              New Todo
+            </Button>
+          </div>
         </div>
 
         {/* Filters */}

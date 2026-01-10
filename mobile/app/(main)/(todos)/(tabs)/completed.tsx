@@ -7,7 +7,7 @@ import { useTodos } from '@/hooks/useTodos';
 import { ScreenLayout } from '@/components/common/ScreenLayout';
 
 export default function CompletedTodosScreen() {
-    const { data, isLoading } = useTodos({ completed: true });
+    const { data } = useTodos({ completed: true });
 
 
 

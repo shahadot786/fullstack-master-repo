@@ -1,0 +1,62 @@
+name: Deploy Backend to Render
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'backend/**'
+      - 'shared/**'
+  workflow_dispatch:  # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  deploy:
+    name: Trigger Render Deployment
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Fetch last 2 commits to detect changes
+      
+      - name: Check for backend or shared changes
+        id: check_changes
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Manual trigger - deploying"
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          else
+            # Check if there are changes in backend or shared directories
+            CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+            if echo "$CHANGED_FILES" | grep -qE '^(backend|shared)/'; then
+              echo "Backend or shared files changed - deploying"
+              echo "should_deploy=true" >> $GITHUB_OUTPUT
+            else
+              echo "No backend or shared changes - skipping deployment"
+              echo "should_deploy=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+      
+      - name: Trigger Render Deploy Hook
+        if: steps.check_changes.outputs.should_deploy == 'true'
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}")
+          if [ "$response" -eq 200 ] || [ "$response" -eq 201 ]; then
+            echo "✅ Deployment triggered successfully (HTTP $response)"
+          else
+            echo "❌ Deployment trigger failed (HTTP $response)"
+            exit 1
+          fi
+      
+      - name: Deployment Status
+        if: steps.check_changes.outputs.should_deploy == 'true'
+        run: |
+          echo "🚀 Deployment request sent to Render"
+          echo "📊 Check your Render dashboard for deployment progress"
+          echo "🔗 Dashboard: https://dashboard.render.com/"
+      
+      - name: Skip Deployment
+        if: steps.check_changes.outputs.should_deploy == 'false'
+        run: |
+          echo "⏭️  No backend or shared changes detected - deployment skipped"

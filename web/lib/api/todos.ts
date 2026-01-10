@@ -47,4 +47,12 @@ export const todosApi = {
   deleteAllTodos: async (): Promise<void> => {
     await apiClient.delete("/todos");
   },
+
+  exportTodos: async (params?: GetTodosParams): Promise<Blob> => {
+    const response = await apiClient.get("/todos/export", {
+      params,
+      responseType: "blob",
+    });
+    return response.data;
+  },
 };

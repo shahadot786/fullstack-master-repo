@@ -8,7 +8,7 @@ let io: Server;
 export const initializeWebSocket = (server: HTTPServer): Server => {
     io = new Server(server, {
         cors: {
-            origin: config.cors.origin,
+            origin: config.nodeEnv === "development" ? "*" : config.cors.origin,
             methods: ["GET", "POST"],
             credentials: true,
         },
@@ -29,7 +29,7 @@ export const initializeWebSocket = (server: HTTPServer): Server => {
                 acc[key] = value;
                 return acc;
             }, {} as Record<string, string>);
-            token = cookies.accessToken;
+            token = cookies.__nexus__production__token__access__token;
         }
 
         // Fall back to auth token (for mobile)
@@ -38,6 +38,7 @@ export const initializeWebSocket = (server: HTTPServer): Server => {
         }
 
         if (!token) {
+            console.log("🔌 WebSocket Connection Refused: No token provided");
             return next(new Error("Authentication error: No token provided"));
         }
 
@@ -46,10 +47,12 @@ export const initializeWebSocket = (server: HTTPServer): Server => {
                 id: string;
                 email: string;
             };
+            console.log(`🔌 WebSocket User Authenticated: ${decoded.email}`);
             socket.data.user = decoded;
             next();
-        } catch (error) {
-            next(new Error("Authentication error: Invalid token"));
+        } catch (error: any) {
+            console.log(`🔌 WebSocket Connection Refused: ${error.message}`);
+            next(new Error(`Authentication error: ${error.message}`));
         }
     });
 

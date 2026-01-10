@@ -63,8 +63,9 @@ export const deleteProfile = asyncHandler(async (req: AuthRequest, res: Response
 export const getAllUsers = asyncHandler(async (req: AuthRequest, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 50;
     const skip = parseInt(req.query.skip as string) || 0;
+    const search = req.query.search as string;
 
-    const result = await userService.getAllUsers(limit, skip);
+    const result = await userService.getAllUsers(limit, skip, search);
 
     sendSuccess(res, result);
 });

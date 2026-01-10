@@ -22,12 +22,7 @@ export const useStats = () => {
     return useQuery<ServiceStats>({
         queryKey: [QUERY_KEYS.STATS],
         queryFn: async () => {
-            try {
-                const result = await statsApi.getStats();
-                return result;
-            } catch (error: any) {
-               return error;
-            }
+             return await statsApi.getStats();
         },
         enabled: isAuthenticated, // Only fetch when user is authenticated
         staleTime: 1000 * 60 * 5, // 5 minutes

@@ -3,18 +3,18 @@ import { Pressable } from 'react-native';
 import { YStack, Text } from 'tamagui';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '@/hooks/useTheme';
+
 
 interface StatCardProps {
     title: string;
     value: number | string;
     icon: keyof typeof Ionicons.glyphMap;
-    gradientColors: string[];
+    gradientColors: [string, string, ...string[]];
     onPress?: () => void;
 }
 
 export function StatCard({ title, value, icon, gradientColors, onPress }: StatCardProps) {
-    const { isDark } = useTheme();
+
 
     return (
         <Pressable
@@ -36,10 +36,10 @@ export function StatCard({ title, value, icon, gradientColors, onPress }: StatCa
             >
                 <YStack gap="$2">
                     <Ionicons name={icon} size={32} color="white" />
-                    <Text color="white" fontSize="$8" fontWeight="700">
+                    <Text color="white" fontSize={28} fontWeight="700">
                         {value}
                     </Text>
-                    <Text color="white" fontSize="$3" opacity={0.9}>
+                    <Text color="white" fontSize={14} opacity={0.9}>
                         {title}
                     </Text>
                 </YStack>

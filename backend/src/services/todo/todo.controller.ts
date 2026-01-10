@@ -50,6 +50,22 @@ export const deleteAllTodos = asyncHandler(async (req: AuthRequest, res: Respons
   sendSuccess(res, { deletedCount: result.deletedCount }, "All todos deleted successfully");
 });
 
+export const exportTodos = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const userId = req.user!.id;
+  const csvData = await todoService.exportTodosToCSV(userId, req.query as any);
+
+  // Generate filename with current date
+  const date = new Date().toISOString().split('T')[0];
+  const filename = `todos-${date}.csv`;
+
+  // Set headers for CSV download
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  
+  res.send(csvData);
+});
+
+
 
 
 

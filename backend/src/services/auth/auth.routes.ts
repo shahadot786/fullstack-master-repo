@@ -169,18 +169,21 @@ router.post("/login", validate(loginValidation), controller.login);
  * /api/auth/refresh-token:
  *   post:
  *     summary: Refresh access token
+ *     description: |
+ *       Refreshes the access token using a refresh token.
+ *       - **Web clients**: Send refresh token via cookie (automatically handled by browser)
+ *       - **Mobile clients**: Send refresh token in request body
  *     tags: [Auth]
  *     requestBody:
- *       required: true
+ *       required: false
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - refreshToken
  *             properties:
- *               refreshToken:
+ *               __nexus__production__token__refresh__token:
  *                 type: string
+ *                 description: Refresh token (required for mobile clients, optional for web clients using cookies)
  *     responses:
  *       200:
  *         description: Token refreshed successfully

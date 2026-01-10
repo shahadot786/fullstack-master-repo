@@ -178,15 +178,25 @@ export const deleteProfile = async (userId: string): Promise<void> => {
  */
 export const getAllUsers = async (
     limit: number = 50,
-    skip: number = 0
+    skip: number = 0,
+    search?: string
 ): Promise<{ users: any[]; total: number }> => {
-    const users = await User.find()
+    const query: any = {};
+
+    if (search) {
+        query.$or = [
+            { name: { $regex: search, $options: 'i' } },
+            { email: { $regex: search, $options: 'i' } },
+        ];
+    }
+
+    const users = await User.find(query)
         .select('-password')
         .sort({ createdAt: -1 })
         .limit(limit)
         .skip(skip);
 
-    const total = await User.countDocuments();
+    const total = await User.countDocuments(query);
 
     return {
         users,
