@@ -100,7 +100,7 @@ export default function AnalyticsScreen() {
             color={isDark ? "#ef4444" : "#dc2626"}
           />
           <Text
-            fontSize="$6"
+            fontSize={20}
             fontWeight="bold"
             color={isDark ? "$red10" : "$red11"}
             marginTop="$4"
@@ -108,7 +108,7 @@ export default function AnalyticsScreen() {
             Error Loading Analytics
           </Text>
           <Text
-            fontSize="$4"
+            fontSize={16}
             color={isDark ? "$gray11" : "$gray12"}
             marginTop="$2"
             textAlign="center"
@@ -125,13 +125,13 @@ export default function AnalyticsScreen() {
       {/* Header */}
       <YStack gap="$2">
         <Text
-          fontSize="$8"
+          fontSize={28}
           fontWeight="bold"
           color={isDark ? "$gray12" : "$gray12"}
         >
           📊 Global Analytics
         </Text>
-        <Text fontSize="$4" color={isDark ? "$gray11" : "$gray11"}>
+        <Text fontSize={16} color={isDark ? "$gray11" : "$gray11"}>
           Real-time insights into platform activity
         </Text>
       </YStack>
@@ -152,7 +152,7 @@ export default function AnalyticsScreen() {
                 color={isDark ? "$gray12" : "$gray12"}
               />
               <Text
-                fontSize="$6"
+                fontSize={20}
                 fontWeight="bold"
                 color={isDark ? "$gray12" : "$gray12"}
               >
@@ -168,20 +168,20 @@ export default function AnalyticsScreen() {
                 gap="$2"
               >
                 <Text
-                  fontSize="$5"
+                  fontSize={18}
                   fontWeight="600"
                   color={isDark ? "$gray12" : "$gray12"}
                 >
                   {service.name}
                 </Text>
                 <XStack justifyContent="space-between">
-                  <Text fontSize="$3" color={isDark ? "$gray12" : "$gray12"}>
+                  <Text fontSize={14} color={isDark ? "$gray12" : "$gray12"}>
                     Total: {service.total}
                   </Text>
-                  <Text fontSize="$3" color={isDark ? "$gray12" : "$gray12"}>
+                  <Text fontSize={14} color={isDark ? "$gray12" : "$gray12"}>
                     Completed: {service.completed}
                   </Text>
-                  <Text fontSize="$3" color={isDark ? "$gray12" : "$gray12"}>
+                  <Text fontSize={14} color={isDark ? "$gray12" : "$gray12"}>
                     Pending: {service.pending}
                   </Text>
                 </XStack>
@@ -200,7 +200,7 @@ export default function AnalyticsScreen() {
             color={isDark ? "#60a5fa" : "#3b82f6"}
           />
           <Text
-            fontSize="$6"
+            fontSize={20}
             fontWeight="bold"
             color={isDark ? "$gray12" : "$gray12"}
           >
@@ -218,7 +218,7 @@ export default function AnalyticsScreen() {
           >
             <YStack gap="$3">
               <Text
-                fontSize="$5"
+                fontSize={18}
                 fontWeight="bold"
                 color={isDark ? "$gray12" : "$gray12"}
               >
@@ -227,19 +227,19 @@ export default function AnalyticsScreen() {
               <YStack gap="$2">
                 <XStack justifyContent="space-between" alignItems="center">
                   <Text color={isDark ? "$gray11" : "$gray11"}>Total</Text>
-                  <Text fontSize="$7" fontWeight="bold" color="$blue10">
+                  <Text fontSize={24} fontWeight="bold" color="$blue10">
                     {service.total}
                   </Text>
                 </XStack>
                 <XStack justifyContent="space-between" alignItems="center">
                   <Text color={isDark ? "$gray11" : "$gray11"}>Completed</Text>
-                  <Text fontSize="$5" fontWeight="600" color="$green10">
+                  <Text fontSize={18} fontWeight="600" color="$green10">
                     {service.completed}
                   </Text>
                 </XStack>
                 <XStack justifyContent="space-between" alignItems="center">
                   <Text color={isDark ? "$gray11" : "$gray11"}>Pending</Text>
-                  <Text fontSize="$5" fontWeight="600" color="$orange10">
+                  <Text fontSize={18} fontWeight="600" color="$orange10">
                     {service.pending}
                   </Text>
                 </XStack>
@@ -253,10 +253,10 @@ export default function AnalyticsScreen() {
                   borderTopColor={isDark ? "#343434FF" : "#D3D3D3FF"}
                 >
                   <XStack justifyContent="space-between">
-                    <Text fontSize="$3" color={isDark ? "$gray11" : "$gray11"}>
+                    <Text fontSize={14} color={isDark ? "$gray11" : "$gray11"}>
                       Completion Rate
                     </Text>
-                    <Text fontSize="$3" fontWeight="600" color="$blue10">
+                    <Text fontSize={14} fontWeight="600" color="$blue10">
                       {Math.round((service.completed / service.total) * 100)}%
                     </Text>
                   </XStack>
@@ -275,7 +275,7 @@ export default function AnalyticsScreen() {
           color={isDark ? "#a78bfa" : "#8b5cf6"}
         />
         <Text
-          fontSize="$6"
+          fontSize={20}
           fontWeight="bold"
           color={isDark ? "$gray12" : "$gray12"}
         >
@@ -301,8 +301,8 @@ export default function AnalyticsScreen() {
         analyticsUser.id === user?._id
           ? "$success800"
           : isDark
-          ? "#343434FF"
-          : "#D3D3D3FF"
+            ? "#343434FF"
+            : "#D3D3D3FF"
       }
     >
       <YStack gap="$3">
@@ -326,7 +326,7 @@ export default function AnalyticsScreen() {
                 justifyContent: "center",
               }}
             >
-              <Text fontSize="$7" fontWeight="bold" color="white">
+              <Text fontSize={24} fontWeight="bold" color="white">
                 {analyticsUser.name.charAt(0).toUpperCase()}
               </Text>
             </LinearGradient>
@@ -334,7 +334,7 @@ export default function AnalyticsScreen() {
           <YStack flex={1}>
             <XStack alignItems="center" gap="$2">
               <Text
-                fontSize="$5"
+                fontSize={18}
                 fontWeight="bold"
                 color={isDark ? "$gray12" : "$gray12"}
               >
@@ -347,13 +347,13 @@ export default function AnalyticsScreen() {
                   paddingVertical="$1"
                   borderRadius="$2"
                 >
-                  <Text fontSize="$2" color="$blue11" fontWeight="600">
+                  <Text fontSize={12} color="$blue11" fontWeight="600">
                     You
                   </Text>
                 </YStack>
               )}
             </XStack>
-            <Text fontSize="$3" color={isDark ? "$gray11" : "$gray11"}>
+            <Text fontSize={14} color={isDark ? "$gray11" : "$gray11"}>
               Joined {new Date(analyticsUser.createdAt).toLocaleDateString()}
             </Text>
           </YStack>
@@ -372,7 +372,7 @@ export default function AnalyticsScreen() {
           >
             <XStack justifyContent="space-between" alignItems="center">
               <Text
-                fontSize="$4"
+                fontSize={16}
                 fontWeight="600"
                 color={isDark ? "$gray12" : "$gray12"}
               >
@@ -386,11 +386,11 @@ export default function AnalyticsScreen() {
             </XStack>
             <XStack justifyContent="space-around">
               <YStack alignItems="center">
-                <Text fontSize="$2" color={isDark ? "$gray11" : "$gray11"}>
+                <Text fontSize={12} color={isDark ? "$gray11" : "$gray11"}>
                   Total
                 </Text>
                 <Text
-                  fontSize="$4"
+                  fontSize={16}
                   fontWeight="600"
                   color={isDark ? "$gray12" : "$gray12"}
                 >
@@ -398,18 +398,18 @@ export default function AnalyticsScreen() {
                 </Text>
               </YStack>
               <YStack alignItems="center">
-                <Text fontSize="$2" color={isDark ? "$gray11" : "$gray11"}>
+                <Text fontSize={12} color={isDark ? "$gray11" : "$gray11"}>
                   Done
                 </Text>
-                <Text fontSize="$4" fontWeight="600" color="$green10">
+                <Text fontSize={16} fontWeight="600" color="$green10">
                   {service.completed}
                 </Text>
               </YStack>
               <YStack alignItems="center">
-                <Text fontSize="$2" color={isDark ? "$gray11" : "$gray11"}>
+                <Text fontSize={12} color={isDark ? "$gray11" : "$gray11"}>
                   Pending
                 </Text>
-                <Text fontSize="$4" fontWeight="600" color="$orange10">
+                <Text fontSize={16} fontWeight="600" color="$orange10">
                   {service.pending}
                 </Text>
               </YStack>

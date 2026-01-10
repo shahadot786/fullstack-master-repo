@@ -80,10 +80,10 @@ export default function RegisterScreen() {
               style={{ width: 120, height: 120, marginBottom: 16 }}
               resizeMode="contain"
             />
-            <H1 color="$color" fontSize="$10" fontWeight="700">
+            <H1 color="$color" fontSize={36} fontWeight="700">
               Create Account
             </H1>
-            <Text color="$color" opacity={0.7} fontSize="$5">
+            <Text color="$color" opacity={0.7} fontSize={18}>
               Sign up to get started with Nexus
             </Text>
           </YStack>

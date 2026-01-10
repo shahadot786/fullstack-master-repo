@@ -229,7 +229,7 @@ export default function DashboardScreen() {
                             title="Expense Tracker"
                             icon="wallet"
                             iconColor="#84cc16"
-                            route="/(main)/expense"
+                            route="/(main)/(expense)/(tabs)"
                             stats={[
                                 { label: 'Total', value: `$${stats?.expense?.totalExpenses ?? 0}` },
                                 { label: 'This Month', value: `$${stats?.expense?.thisMonth ?? 0}` },

@@ -62,7 +62,7 @@ export function ChatBubble({
               alignItems="center"
               justifyContent="center"
             >
-              <Text color="white" fontSize="$1" fontWeight="600">
+              <Text color="white" fontSize={11} fontWeight="600">
                 {getInitials(sender.name)}
               </Text>
             </Avatar.Fallback>
@@ -88,7 +88,7 @@ export function ChatBubble({
         >
           {/* Sender name for group chats */}
           {!isOwn && showAvatar && sender && (
-            <Text fontSize="$1" color={senderNameColor} fontWeight="700" marginBottom="$0.5">
+            <Text fontSize={11} color={senderNameColor} fontWeight="700" marginBottom="$0.5">
               {sender.name}
             </Text>
           )}
@@ -98,7 +98,7 @@ export function ChatBubble({
             <Text
               color={secondaryTextColor}
               fontStyle="italic"
-              fontSize="$3"
+              fontSize={14}
             >
               This message was deleted
             </Text>
@@ -121,7 +121,7 @@ export function ChatBubble({
                   </XStack>
                 </YStack>
                 {message.content && (
-                  <Text color={textColor} fontSize="$3.5" lineHeight={20}>
+                  <Text color={textColor} fontSize={15} lineHeight={20}>
                     {message.content}
                   </Text>
                 )}
@@ -144,7 +144,7 @@ export function ChatBubble({
                 <Text
                   color={textColor}
                   fontWeight="600"
-                  fontSize="$3"
+                  fontSize={14}
                   numberOfLines={1}
                 >
                   {message.fileName || 'File'}
@@ -152,7 +152,7 @@ export function ChatBubble({
                 {message.fileSize && (
                   <Text
                     color={secondaryTextColor}
-                    fontSize="$1"
+                    fontSize={11}
                   >
                     {(message.fileSize / 1024).toFixed(1)} KB
                   </Text>
@@ -160,7 +160,7 @@ export function ChatBubble({
               </YStack>
             </XStack>
           ) : (
-            <Text color={textColor} fontSize="$3.5" lineHeight={20}>{message.content}</Text>
+            <Text color={textColor} fontSize={15} lineHeight={20}>{message.content}</Text>
           )}
 
           {/* Time and read status */}
@@ -171,7 +171,7 @@ export function ChatBubble({
             justifyContent={isOwn ? 'flex-end' : 'flex-start'}
           >
             <Text
-              fontSize="$1"
+              fontSize={11}
               color={secondaryTextColor}
             >
               {formatTime(message.createdAt)}

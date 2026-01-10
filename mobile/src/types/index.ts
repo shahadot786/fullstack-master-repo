@@ -310,6 +310,7 @@ export interface ShoutboxMessage {
     senderId: ChatUser;
     content: string;
     createdAt: string;
+    updatedAt: string;
 }
 
 export interface ConversationsResponse {

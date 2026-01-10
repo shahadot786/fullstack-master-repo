@@ -3,6 +3,7 @@ import apiClient from "./client";
 const SHOUTBOX_API = "/shoutbox";
 
 export interface ShoutboxMessage {
+  updatedAt: string;
   _id: string;
   senderId: {
     _id: string;

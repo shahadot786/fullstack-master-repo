@@ -162,9 +162,9 @@ export default function ConversationScreen() {
     <ScreenLayout>
       <YStack flex={1} backgroundColor={isDark ? '#000000' : '#ffffff'}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior="padding"
           style={{ flex: 1 }}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 80}
         >
           {/* Header */}
           <XStack
@@ -197,7 +197,7 @@ export default function ConversationScreen() {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Text color="white" fontSize="$2" fontWeight="700">
+                  <Text color="white" fontSize={12} fontWeight="700">
                     {getInitials(conversationName)}
                   </Text>
                 </Avatar.Fallback>
@@ -210,13 +210,13 @@ export default function ConversationScreen() {
                 {conversationName}
               </Text>
               {conversation?.type === 'group' ? (
-                <Text fontSize="$1" color={secondaryTextColor}>
+                <Text fontSize={11} color={secondaryTextColor}>
                   {conversation.participants.length} members
                 </Text>
               ) : (
                 <XStack alignItems="center" gap="$1">
                   <YStack width={6} height={6} borderRadius={3} backgroundColor="#10b981" />
-                  <Text fontSize="$1" color={secondaryTextColor} fontWeight="500">
+                  <Text fontSize={11} color={secondaryTextColor} fontWeight="500">
                     Online
                   </Text>
                 </XStack>
