@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/authStore";
+import { useNotificationStore } from "@/store/notificationStore";
 import { initializeWebSocket, disconnectWebSocket, getSocket } from "@/services/websocket.service";
-import { Todo } from "@/types";
+import { Todo, Message, ShoutboxMessage } from "@/types";
 
 /**
  * WebSocket Hook
@@ -61,9 +62,22 @@ export const useWebSocket = () => {
     };
 
     // Chat Events
-    const handleNewMessage = ({ message, conversationId }: { message: any; conversationId: string }) => {
+    const handleNewMessage = ({ message, conversationId }: { message: Message; conversationId: string }) => {
       queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      
+      // Show in-app notification if message is from another user
+      const sender = typeof message.senderId === 'object' ? message.senderId : null;
+      if (sender && sender._id !== user._id) {
+        useNotificationStore.getState().showNotification({
+          type: 'chat',
+          title: sender.name || 'New Message',
+          message: message.content || 'Sent an attachment',
+          senderName: sender.name || 'Unknown',
+          senderImage: sender.profileImage,
+          conversationId,
+        });
+      }
     };
 
     const handleNewConversation = ({ conversation }: { conversation: any }) => {
@@ -71,7 +85,7 @@ export const useWebSocket = () => {
     };
 
     // Shoutbox Events
-    const handleShoutboxMessage = ({ message }: { message: any }) => {
+    const handleShoutboxMessage = ({ message }: { message: ShoutboxMessage }) => {
       queryClient.setQueryData(["shoutbox-messages"], (oldData: any) => {
         if (!oldData) return undefined;
         
@@ -94,6 +108,18 @@ export const useWebSocket = () => {
         };
       });
       queryClient.invalidateQueries({ queryKey: ["shoutbox-messages"] });
+      
+      // Show in-app notification if message is from another user
+      const sender = typeof message.senderId === 'object' ? message.senderId : null;
+      if (sender && sender._id !== user._id) {
+        useNotificationStore.getState().showNotification({
+          type: 'shoutbox',
+          title: 'Shoutbox',
+          message: `${sender.name}: ${message.content}`,
+          senderName: sender.name || 'Unknown',
+          senderImage: sender.profileImage,
+        });
+      }
     };
 
     // Register event listeners
