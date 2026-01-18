@@ -27,7 +27,7 @@ const services = [
   { name: "Delivery", href: "/delivery", icon: Truck, active: false },
   { name: "Expense", href: "/expense", icon: DollarSign, active: true },
   { name: "Shop", href: "/shop", icon: ShoppingBag, active: false },
-  { name: "Social", href: "/social", icon: Users, active: false },
+  { name: "Social", href: "/social", icon: Users, active: true },
   { name: "URL Shortener", href: "/urlshort", icon: LinkIcon, active: true },
   { name: "Weather", href: "/weather", icon: Cloud, active: true },
 ];
